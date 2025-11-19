@@ -15,28 +15,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KidsApp"
         android:usesCleartextTraffic="true">
-        
+
         <!-- Main Activity - Login -->
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.child.main.ChildHomeActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <!-- Parent Main Activity -->
         <activity
             android:name=".ui.parent.main.ParentMainActivity"
             android:exported="false"
             android:theme="@style/Theme.KidsApp" />
-        
+
         <!-- Child Main Activity -->
+
         <activity
             android:name=".ui.child.main.ChildMainActivity"
-            android:exported="false"
+            android:exported="false" />
+
+
+
+<!--        login-->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="true"
             android:theme="@style/Theme.KidsApp" />
     </application>
 

@@ -2,7 +2,7 @@
 <resources>
     <!-- App Name -->
     <string name="app_name">Kids App</string>
-    
+
     <!-- Auth -->
     <string name="welcome_title">Xin chào bé!</string>
     <string name="login">Đăng nhập</string>
@@ -16,7 +16,7 @@
     <string name="choose_role">Chọn vai trò</string>
     <string name="parent">Phụ huynh</string>
     <string name="child">Trẻ</string>
-    
+
     <!-- Parent -->
     <string name="parent_home">Trang chủ</string>
     <string name="parent_tasks">Mục tiêu</string>
@@ -27,7 +27,7 @@
     <string name="view_details">Xem chi tiết</string>
     <string name="today_summary">Tổng kết hôm nay</string>
     <string name="recent_activities">Hoạt động gần đây</string>
-    
+
     <!-- Child -->
     <string name="child_home">Trang chủ</string>
     <string name="child_tasks">Nhiệm vụ</string>
@@ -35,7 +35,17 @@
     <string name="child_reward">Phần thưởng</string>
     <string name="child_shop">Cửa hàng</string>
     <string name="child_profile">Hồ sơ</string>
-    
+    <string name="child_training_title">Thành tích rèn luyện</string>
+    <string name="child_level_current">Level hiện tại</string>
+    <string name="child_level_value">Level %1$d</string>
+    <string name="child_exp_label">Điểm kinh nghiệm</string>
+    <string name="child_exp_value">%1$d / %2$d exp</string>
+    <string name="child_exp_hint">Chỉ còn %1$d exp nữa để lên cấp!</string>
+    <string name="child_action_mission">Xem nhiệm vụ</string>
+    <string name="child_action_store">Mua vật phẩm</string>
+    <string name="child_action_achievement">Thành tựu</string>
+    <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
+
     <!-- Common -->
     <string name="save">Lưu</string>
     <string name="cancel">Hủy</string>
