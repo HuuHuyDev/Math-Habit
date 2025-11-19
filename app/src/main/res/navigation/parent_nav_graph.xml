@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.kidsapp.ui.parent.home.ParentHomeFragment"
+        android:label="@string/parent_home"
+        tools:layout="@layout/fragment_parent_home" />
+
+    <fragment
+        android:id="@+id/nav_tasks"
+        android:name="com.kidsapp.ui.parent.task_plan.WeeklyPlanFragment"
+        android:label="@string/parent_tasks"
+        tools:layout="@layout/fragment_weekly_plan" />
+
+    <fragment
+        android:id="@+id/nav_report"
+        android:name="com.kidsapp.ui.parent.report.ParentReportFragment"
+        android:label="@string/parent_report"
+        tools:layout="@layout/fragment_parent_report" />
+
+    <fragment
+        android:id="@+id/nav_children"
+        android:name="com.kidsapp.ui.parent.child_manage.ChildListFragment"
+        android:label="@string/parent_children"
+        tools:layout="@layout/fragment_child_list" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.kidsapp.ui.parent.profile.ParentProfileFragment"
+        android:label="@string/parent_profile"
+        tools:layout="@layout/fragment_profile_parent" />
+</navigation>
+

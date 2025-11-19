@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/parent_home" />
+    
+    <item
+        android:id="@+id/nav_tasks"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/parent_tasks" />
+    
+    <item
+        android:id="@+id/nav_report"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/parent_report" />
+    
+    <item
+        android:id="@+id/nav_children"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/parent_children" />
+    
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/parent_profile" />
+</menu>
+

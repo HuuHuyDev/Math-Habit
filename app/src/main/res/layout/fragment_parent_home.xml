@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fillViewport="true"
+    tools:context=".ui.parent.home.ParentHomeFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_20">
+
+        <!-- Header with Avatar and Greeting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_24">
+
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="@dimen/icon_size_xlarge"
+                android:layout_height="@dimen/icon_size_xlarge"
+                android:src="@mipmap/ic_launcher"
+                android:background="@drawable/bg_round_20"
+                android:scaleType="centerCrop"
+                android:layout_marginEnd="@dimen/spacing_16" />
+
+            <TextView
+                android:id="@+id/tvGreeting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hello_parent"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_title"
+                android:fontFamily="@font/inter_bold" />
+        </LinearLayout>
+
+        <!-- View Details Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_20"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="@dimen/elevation_small"
+            app:cardBackgroundColor="@color/surface">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_20">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_details"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_size_xlarge"
+                    android:fontFamily="@font/inter_medium"
+                    android:layout_marginBottom="@dimen/spacing_8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem thống kê chi tiết về hoạt động của trẻ"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_medium"
+                    android:fontFamily="@font/inter_regular" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Today Summary Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/today_summary"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_title"
+            android:fontFamily="@font/inter_bold"
+            android:layout_marginBottom="@dimen/spacing_16" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_24">
+
+            <!-- Summary Card 1 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/spacing_8"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="@dimen/elevation_small"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvSummary1Value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_headline"
+                        android:fontFamily="@font/inter_medium"
+                        android:layout_marginBottom="@dimen/spacing_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nhiệm vụ hoàn thành"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_small"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Summary Card 2 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_8"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="@dimen/elevation_small"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvSummary2Value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="450"
+                        android:textColor="@color/secondary"
+                        android:textSize="@dimen/text_size_headline"
+                        android:fontFamily="@font/inter_medium"
+                        android:layout_marginBottom="@dimen/spacing_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="XP tích lũy"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_small"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <!-- Recent Activities Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recent_activities"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_title"
+            android:fontFamily="@font/inter_bold"
+            android:layout_marginBottom="@dimen/spacing_16" />
+
+        <!-- RecyclerView for Activities -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvActivities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_activity_log" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+

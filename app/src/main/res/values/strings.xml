@@ -1,3 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MathHabit</string>
+    <!-- App Name -->
+    <string name="app_name">Kids App</string>
+    
+    <!-- Auth -->
+    <string name="welcome_title">Xin chào bé!</string>
+    <string name="login">Đăng nhập</string>
+    <string name="register">Đăng ký</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="login_with_google">Đăng nhập với Google</string>
+    <string name="login_with_facebook">Đăng nhập với Facebook</string>
+    <string name="choose_role">Chọn vai trò</string>
+    <string name="parent">Phụ huynh</string>
+    <string name="child">Trẻ</string>
+    
+    <!-- Parent -->
+    <string name="parent_home">Trang chủ</string>
+    <string name="parent_tasks">Mục tiêu</string>
+    <string name="parent_report">Báo cáo</string>
+    <string name="parent_children">Trẻ</string>
+    <string name="parent_profile">Hồ sơ</string>
+    <string name="hello_parent">Xin chào, %1$s!</string>
+    <string name="view_details">Xem chi tiết</string>
+    <string name="today_summary">Tổng kết hôm nay</string>
+    <string name="recent_activities">Hoạt động gần đây</string>
+    
+    <!-- Child -->
+    <string name="child_home">Trang chủ</string>
+    <string name="child_tasks">Nhiệm vụ</string>
+    <string name="child_quiz">Câu đố</string>
+    <string name="child_reward">Phần thưởng</string>
+    <string name="child_shop">Cửa hàng</string>
+    <string name="child_profile">Hồ sơ</string>
+    
+    <!-- Common -->
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="loading">Đang tải...</string>
+    <string name="error">Có lỗi xảy ra</string>
+    <string name="retry">Thử lại</string>
+    <string name="no_data">Không có dữ liệu</string>
 </resources>

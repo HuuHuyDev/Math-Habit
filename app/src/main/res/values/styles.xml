@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Card Style -->
+    <style name="CardStyle">
+        <item name="android:layout_margin">@dimen/spacing_16</item>
+        <item name="cardCornerRadius">@dimen/radius_card</item>
+        <item name="cardElevation">@dimen/elevation_small</item>
+        <item name="cardBackgroundColor">@color/surface</item>
+    </style>
+    
+    <!-- Text Styles -->
+    <style name="TextHeadline">
+        <item name="android:textSize">@dimen/text_size_headline</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+    </style>
+    
+    <style name="TextTitle">
+        <item name="android:textSize">@dimen/text_size_title</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+    </style>
+    
+    <style name="TextSubtitle">
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
+    </style>
+    
+    <style name="TextBody">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+    
+    <style name="TextCaption">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+</resources>
+

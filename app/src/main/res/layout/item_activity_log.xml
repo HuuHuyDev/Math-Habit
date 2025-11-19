@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_12"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="@dimen/elevation_small"
+    app:cardBackgroundColor="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_16"
+        android:gravity="center_vertical">
+
+        <!-- Avatar -->
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/icon_size_large"
+            android:layout_height="@dimen/icon_size_large"
+            android:src="@mipmap/ic_launcher"
+            android:background="@drawable/bg_round_20"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="@dimen/spacing_12" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bé An"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_medium"
+                android:fontFamily="@font/inter_medium"
+                android:layout_marginBottom="@dimen/spacing_4" />
+
+            <TextView
+                android:id="@+id/tvAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="đã hoàn thành nhiệm vụ Toán học"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_size_small"
+                android:fontFamily="@font/inter_medium" />
+        </LinearLayout>
+
+        <!-- XP and Time -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end"
+            android:layout_marginStart="@dimen/spacing_12">
+
+            <TextView
+                android:id="@+id/tvXP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+50 XP"
+                android:textColor="@color/status_success"
+                android:textSize="@dimen/text_size_medium"
+                android:fontFamily="@font/inter_medium"
+                android:layout_marginBottom="@dimen/spacing_4" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 phút trước"
+                android:textColor="@color/text_tertiary"
+                android:textSize="@dimen/text_size_small"
+                android:fontFamily="@font/inter_medium" />
+        </LinearLayout>
+
+        <!-- Icon -->
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="@dimen/icon_size_medium"
+            android:layout_height="@dimen/icon_size_medium"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginStart="@dimen/spacing_12"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
