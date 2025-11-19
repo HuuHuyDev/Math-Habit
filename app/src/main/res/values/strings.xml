@@ -2,7 +2,7 @@
 <resources>
     <!-- App Name -->
     <string name="app_name">Kids App</string>
-    
+
     <!-- Auth -->
     <string name="welcome_title">Xin chào bé!</string>
     <string name="login">Đăng nhập</string>
@@ -16,7 +16,7 @@
     <string name="choose_role">Chọn vai trò</string>
     <string name="parent">Phụ huynh</string>
     <string name="child">Trẻ</string>
-    
+
     <!-- Parent -->
     <string name="parent_home">Trang chủ</string>
     <string name="parent_tasks">Mục tiêu</string>
@@ -27,7 +27,7 @@
     <string name="view_details">Xem chi tiết</string>
     <string name="today_summary">Tổng kết hôm nay</string>
     <string name="recent_activities">Hoạt động gần đây</string>
-    
+
     <!-- Child -->
     <string name="child_home">Trang chủ</string>
     <string name="child_tasks">Nhiệm vụ</string>
@@ -35,7 +35,7 @@
     <string name="child_reward">Phần thưởng</string>
     <string name="child_shop">Cửa hàng</string>
     <string name="child_profile">Hồ sơ</string>
-    
+
     <!-- Common -->
     <string name="save">Lưu</string>
     <string name="cancel">Hủy</string>
@@ -45,4 +45,6 @@
     <string name="error">Có lỗi xảy ra</string>
     <string name="retry">Thử lại</string>
     <string name="no_data">Không có dữ liệu</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
