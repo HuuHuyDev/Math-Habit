@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:Background="@android:color/white"
+                    android:background="@android:color/white"
                     android:padding="@dimen/spacing_20">
 
                     <TextView
