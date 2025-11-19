@@ -68,6 +68,12 @@ public class LoginFragment extends Fragment {
             Toast.makeText(getContext(), "Đăng nhập với Facebook", Toast.LENGTH_SHORT).show();
             // TODO: Implement Facebook login
         });
+
+        // Register
+        binding.tvRegister.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Đi tới đăng ký", Toast.LENGTH_SHORT).show();
+            // TODO: Navigate to register fragment
+        });
     }
 
     private boolean validateInput(String email, String password) {

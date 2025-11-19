@@ -40,5 +40,8 @@
     <!-- Standard Colors -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="facebook_blue">#1877F2</color>
+    <color name="google_border">#E0E0E0</color>
+    <color name="input_icon_tint">#9CA3AF</color>
     <color name="transparent">#00000000</color>
 </resources>
