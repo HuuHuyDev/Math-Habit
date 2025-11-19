@@ -56,6 +56,11 @@ public class LoginFragment extends Fragment {
             // Navigate to forgot password fragment
             Navigation.findNavController(v).navigate(R.id.action_login_to_forgot_password);
         });
+
+        binding.tvRegister.setOnClickListener(v -> {
+            // Navigate to register fragment
+            Navigation.findNavController(v).navigate(R.id.action_login_to_register);
+        });
         
         // Google login
         binding.btnLoginGoogle.setOnClickListener(v -> {
@@ -69,11 +74,6 @@ public class LoginFragment extends Fragment {
             // TODO: Implement Facebook login
         });
 
-        // Register
-        binding.tvRegister.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Đi tới đăng ký", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to register fragment
-        });
     }
 
     private boolean validateInput(String email, String password) {

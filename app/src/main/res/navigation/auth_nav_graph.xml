@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_login_to_forgot_password"
             app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
     </fragment>
 
     <fragment
@@ -31,5 +34,10 @@
         android:name="com.kidsapp.ui.auth.ForgotPasswordFragment"
         android:label="Quên mật khẩu"
         tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.kidsapp.ui.auth.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" />
 </navigation>
 

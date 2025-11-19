@@ -40,8 +40,9 @@
     </style>
 
     <style name="LoginSocialButton" parent="Widget.Material3.Button">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:backgroundTint">@null</item>
+
         <item name="cornerRadius">@dimen/radius_button</item>
         <item name="android:fontFamily">@font/inter_medium</item>
         <item name="android:textSize">@dimen/text_size_large</item>
