@@ -1,8 +1,13 @@
 package com.kidsapp.ui.child.main;
 
 import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,33 +29,22 @@ public class ChildMainActivity extends AppCompatActivity {
         binding = ActivityChildMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setupNavigation();
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_child_main);
+
+        // Gắn fragment vào container
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.home.ChildHomeFragment())
+                    .commit();
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
     }
 
-    private void setupNavigation() {
-        // Get NavController
-        navController = Navigation.findNavController(this, R.id.navHostFragment);
-        
-        // Setup Bottom Navigation
-        BottomNavigationView bottomNav = binding.bottomNavigationView;
-        NavigationUI.setupWithNavController(bottomNav, navController);
-        
-        // Configure AppBar
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-            R.id.nav_home,
-            R.id.nav_tasks,
-            R.id.nav_quiz,
-            R.id.nav_reward,
-            R.id.nav_shop,
-            R.id.nav_profile
-        ).build();
-        
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        return navController.navigateUp() || super.onSupportNavigateUp();
-    }
 }
 
