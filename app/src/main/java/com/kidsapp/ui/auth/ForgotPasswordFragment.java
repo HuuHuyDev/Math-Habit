@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentForgotPasswordBinding;
+import androidx.navigation.Navigation;
 
 /**
  * Forgot Password Fragment
@@ -22,6 +23,18 @@ public class ForgotPasswordFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentForgotPasswordBinding.inflate(inflater, container, false);
         return binding.getRoot();
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupClickListeners();
+    }
+
+    private void setupClickListeners() {
+        binding.tvBackToLogin.setOnClickListener(v -> {;
+            // Navigate back to login fragment
+            Navigation.findNavController(v).navigate(R.id.action_forgotPassword_to_login);
+        });
     }
 
     @Override
