@@ -8,15 +8,16 @@
     android:padding="@dimen/spacing_20"
     tools:context=".ui.child.profile.ChildProfileFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.kidsapp.ui.child.components.HeaderUserView
+        android:id="@+id/headerUser"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hồ sơ Trẻ"
-        android:textSize="@dimen/text_size_title"
-        android:textColor="@color/text_primary"
-        android:fontFamily="@font/inter_bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

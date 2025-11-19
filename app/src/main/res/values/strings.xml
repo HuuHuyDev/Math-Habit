@@ -35,6 +35,16 @@
     <string name="child_reward">Phần thưởng</string>
     <string name="child_shop">Cửa hàng</string>
     <string name="child_profile">Hồ sơ</string>
+    <string name="child_training_title">Thành tích rèn luyện</string>
+    <string name="child_level_current">Level hiện tại</string>
+    <string name="child_level_value">Level %1$d</string>
+    <string name="child_exp_label">Điểm kinh nghiệm</string>
+    <string name="child_exp_value">%1$d / %2$d exp</string>
+    <string name="child_exp_hint">Chỉ còn %1$d exp nữa để lên cấp!</string>
+    <string name="child_action_mission">Xem nhiệm vụ</string>
+    <string name="child_action_store">Mua vật phẩm</string>
+    <string name="child_action_achievement">Thành tựu</string>
+    <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
 
     <!-- Common -->
     <string name="save">Lưu</string>
