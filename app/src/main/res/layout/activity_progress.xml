@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8F5FF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- HEADER -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:background="@drawable/bg_header_gradient"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tvHello103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello !"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvName103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvHello103"
+                android:text="Hồ Hữu Huy"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/ivBell103"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/bg_card_white" />
+
+            <ImageView
+                android:id="@+id/ivAvatar103"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/ivBell103"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/ic_launcher_foreground"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
+
+        <!-- CARD LEVEL -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_white"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTitleLevel103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thành tích rèn luyện"
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvLevel103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Level 15"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+
+            <ProgressBar
+                android:id="@+id/pbExp103"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="8dp"
+                android:max="150"
+                android:progress="100" />
+
+            <TextView
+                android:id="@+id/tvExpHint103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chỉ còn 50 exp nữa để lên cấp!🔥"
+                android:textColor="#3A7BFA"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- CARD XEM TIẾN ĐỘ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_white"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTodayTitle103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xem tiến độ hôm nay"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Hàng Thói quen 3/4 -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvTypeTab103"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thói quen"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvHabitCount103"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3/4"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pbHabit103"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="6dp"
+                android:max="4"
+                android:progress="3" />
+
+            <TextView
+                android:id="@+id/tvStreak103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Chuỗi ngày: 2 🔥"
+                android:textColor="#555555" />
+
+            <TextView
+                android:id="@+id/tvCoinXp103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+12 coin  • +20 XP hôm nay"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
+
+            <!-- Khu vực phần trăm + mô tả -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Tạm thời dùng số thay cho vòng tròn custom -->
+                <TextView
+                    android:id="@+id/tvPercent103"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="75%"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:textColor="#3A7BFA" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:id="@+id/tvHabitFraction103"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3/4 thói quen đã hoàn thành"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvHabitDesc103"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cố lên! Hoàn thành nốt phần còn lại nhé 💪"
+                        android:textSize="13sp"
+                        android:textColor="#555555"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- RecyclerView danh sách thói quen -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHabits103"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <Button
+                android:id="@+id/btnCompleteRest103"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hoàn thành phần còn lại"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button_primary"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
