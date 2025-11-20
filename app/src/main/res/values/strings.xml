@@ -45,6 +45,15 @@
     <string name="child_action_store">Mua vật phẩm</string>
     <string name="child_action_achievement">Thành tựu</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
+    <string name="choose_mode">Chọn chế độ</string>
+    <string name="choose_mode_desc">Bạn muốn ôn tập trước hay bắt đầu làm bài?</string>
+    <string name="choose_mode_practice">Ôn tập</string>
+    <string name="choose_mode_start">Bắt đầu</string>
+    <string name="practice_hint_start">Hãy chọn đáp án mà bạn nghĩ là đúng nhé!</string>
+    <string name="practice_pet_correct">Giỏi lắm! Bạn làm đúng rồi!</string>
+    <string name="practice_pet_wrong">Đừng lo, mình sẽ giải thích giúp bạn.</string>
+    <string name="practice_complete">Hoàn thành</string>
+    <string name="practice_question_prompt">Hãy chọn đáp án đúng?</string>
 
     <!-- Task -->
     <string name="task_back">Quay lại</string>
