@@ -66,11 +66,31 @@
     <string name="task_tab_history">Lịch sử</string>
     <string name="task_start">Bắt đầu</string>
 
+    <!-- Exam -->
+    <string name="exam_title">Bài kiểm tra</string>
+    <string name="exam_question_progress">Câu hỏi</string>
+    <string name="exam_question_placeholder">Nội dung câu hỏi sẽ hiển thị tại đây</string>
+    <string name="exam_option_placeholder">Nội dung đáp án</string>
+    <string name="submit_exam">Nộp bài</string>
+    <string name="exam_result_title">Kết quả bài kiểm tra</string>
+    <string name="exam_result_score_title">Điểm số</string>
+    <string name="exam_result_correct">Đúng</string>
+    <string name="exam_result_wrong">Sai</string>
+    <string name="exam_result_total">Tổng</string>
+    <string name="exam_wrong_review_title">Những câu cần xem lại</string>
+    <string name="exam_time_up">Hết giờ! Hệ thống đã nộp bài giúp bạn.</string>
+    <string name="exam_all_correct">Tuyệt vời! Bạn đã trả lời đúng tất cả.</string>
+    <string name="percent_value">%1$d%%</string>
+
     <!-- Common -->
+    <string name="back">Quay lại</string>
     <string name="save">Lưu</string>
     <string name="cancel">Hủy</string>
     <string name="delete">Xóa</string>
     <string name="edit">Chỉnh sửa</string>
+    <string name="task_timer">Đồng hồ đếm ngược</string>
+    <string name="previous">Trước</string>
+    <string name="next">Tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="error">Có lỗi xảy ra</string>
     <string name="retry">Thử lại</string>

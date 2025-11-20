@@ -22,7 +22,6 @@ import com.kidsapp.R;
  * Bottom sheet cho phép chọn chế độ làm bài (Ôn tập / Bắt đầu).
  */
 public class ChooseModeBottomSheet extends BottomSheetDialogFragment {
-
     public interface ModeListener {
         void onModeSelected(@NonNull DetailTaskFragment.TaskMode mode);
     }
