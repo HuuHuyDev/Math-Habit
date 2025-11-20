@@ -52,5 +52,13 @@
         <item name="android:insetRight">0dp</item>
     </style>
 
-</resources>
+    <style name="ThemeOverlay.Kids.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:windowAnimationStyle">@style/AnimationKidsBottomSheet</item>
+    </style>
 
+    <style name="AnimationKidsBottomSheet">
+        <item name="android:windowEnterAnimation">@anim/bottom_sheet_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/bottom_sheet_slide_down</item>
+    </style>
+
+</resources>

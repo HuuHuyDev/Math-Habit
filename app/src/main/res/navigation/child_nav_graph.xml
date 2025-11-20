@@ -40,6 +40,17 @@
         android:name="com.kidsapp.ui.child.profile.ChildProfileFragment"
         android:label="@string/child_profile"
         tools:layout="@layout/fragment_profile_child" />
+    <fragment
+        android:id="@+id/Nav_practice"
+        android:name="com.kidsapp.ui.child.profile.ChildProfileFragment"
+        android:label="@string/child_profile"
+        tools:layout="@layout/fragment_practice" />
+
+    <fragment
+        android:id="@+id/Nav_detail_task"
+        android:name="com.kidsapp.ui.child.profile.ChildProfileFragment"
+        android:label="@string/child_profile"
+        tools:layout="@layout/fragment_detail_task" />
 
 </navigation>
 
