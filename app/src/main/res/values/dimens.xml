@@ -43,4 +43,5 @@
     <dimen name="elevation_small">4dp</dimen>
     <dimen name="elevation_medium">8dp</dimen>
     <dimen name="elevation_large">12dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
