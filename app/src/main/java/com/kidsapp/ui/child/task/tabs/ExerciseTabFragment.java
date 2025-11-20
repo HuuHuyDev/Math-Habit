@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.kidsapp.R;
+import com.kidsapp.ui.child.detailTask.DetailTaskFragment;
 import com.kidsapp.ui.child.task.Task;
 import com.kidsapp.ui.child.task.TaskListAdapter;
 import java.util.ArrayList;
@@ -44,11 +45,19 @@ public class ExerciseTabFragment extends Fragment {
     private void setupRecyclerView() {
         List<Task> tasks = createSampleTasks();
         adapter = new TaskListAdapter(tasks);
-        adapter.setOnTaskClickListener(task ->
-                Toast.makeText(requireContext(), "Chọn: " + task.getTitle(), Toast.LENGTH_SHORT).show());
-
+        adapter.setOnTaskClickListener(task -> openDetail(task));
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerViewTasks.setAdapter(adapter);
+    }
+    private void openDetail(Task task) {
+        // TODO: thay task.getTitle() bằng taskId thực tế
+        DetailTaskFragment fragment = DetailTaskFragment.newInstance(task.getTitle());
+    
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.childHomeHost, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private List<Task> createSampleTasks() {

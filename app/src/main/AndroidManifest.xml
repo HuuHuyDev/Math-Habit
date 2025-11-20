@@ -18,7 +18,7 @@
 
         <!-- Child Main Activity -->
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.child.main.ChildMainActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp">
             <intent-filter>
@@ -41,7 +41,7 @@
 
         <!-- Main Activity - Login -->
         <activity
-            android:name=".ui.child.main.ChildMainActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp" />
     </application>
