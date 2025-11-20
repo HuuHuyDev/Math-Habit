@@ -46,6 +46,15 @@
     <string name="child_action_achievement">Thành tựu</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
 
+    <!-- Task -->
+    <string name="task_back">Quay lại</string>
+    <string name="task_search_hint">Tìm kiếm…</string>
+    <string name="task_tab_homework">Việc nhà</string>
+    <string name="task_tab_personal">Cá nhân</string>
+    <string name="task_tab_exercise">Bài tập</string>
+    <string name="task_tab_history">Lịch sử</string>
+    <string name="task_start">Bắt đầu</string>
+
     <!-- Common -->
     <string name="save">Lưu</string>
     <string name="cancel">Hủy</string>

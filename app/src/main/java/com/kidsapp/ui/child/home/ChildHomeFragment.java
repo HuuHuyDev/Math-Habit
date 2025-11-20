@@ -59,23 +59,29 @@ public class ChildHomeFragment extends Fragment {
     }
 
     private void setupActionCards() {
+        // Xem nhiệm vụ - chuyển đến ChildTaskListFragment
         configureAction(actionListBinding.actionMission.getRoot(),
                 R.drawable.bg_action_blue,
                 R.drawable.ic_task,
-                getString(R.string.child_action_mission));
+                getString(R.string.child_action_mission),
+                () -> navigateToTaskList());
 
+        // Mua vật phẩm - chuyển đến ShopFragment
         configureAction(actionListBinding.actionStore.getRoot(),
                 R.drawable.bg_action_purple,
                 R.drawable.ic_store,
-                getString(R.string.child_action_store));
+                getString(R.string.child_action_store),
+                () -> navigateToShop());
 
+        // Thành tựu - chuyển đến RewardFragment (Achievement)
         configureAction(actionListBinding.actionAchievement.getRoot(),
                 R.drawable.bg_action_orange,
                 R.drawable.ic_trophy,
-                getString(R.string.child_action_achievement));
+                getString(R.string.child_action_achievement),
+                () -> navigateToAchievement());
     }
 
-    private void configureAction(View actionView, int backgroundRes, int iconRes, String title) {
+    private void configureAction(View actionView, int backgroundRes, int iconRes, String title, Runnable onClick) {
         FrameLayout iconContainer = actionView.findViewById(R.id.iconContainer);
         ImageView icon = actionView.findViewById(R.id.imgIcon);
         TextView titleView = actionView.findViewById(R.id.txtActionTitle);
@@ -84,8 +90,37 @@ public class ChildHomeFragment extends Fragment {
         icon.setImageResource(iconRes);
         titleView.setText(title);
 
-        actionView.setOnClickListener(v ->
-                Toast.makeText(requireContext(), R.string.feature_coming_soon, Toast.LENGTH_SHORT).show());
+        actionView.setOnClickListener(v -> onClick.run());
+    }
+
+    private void navigateToTaskList() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.task.ChildTaskListFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    private void navigateToShop() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.shop.ShopFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    private void navigateToAchievement() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.reward.RewardFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override

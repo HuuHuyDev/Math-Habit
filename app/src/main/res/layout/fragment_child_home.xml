@@ -42,6 +42,8 @@
                 android:id="@+id/cardStats"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/spacing_20"
+                android:layout_marginTop="@dimen/spacing_20"
                 android:layout_marginBottom="@dimen/spacing_16"
                 app:cardCornerRadius="@dimen/radius_card"
                 app:cardElevation="@dimen/elevation_medium"
@@ -54,25 +56,33 @@
                     android:background="@android:color/white"
                     android:padding="@dimen/spacing_20">
 
+                    <!-- Title -->
                     <TextView
+                        android:id="@+id/txtTrainingTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/child_training_title"
+                        android:text="Thành tích rèn luyện"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/text_size_title"
                         android:textStyle="bold" />
 
+                    <!-- LEVEL SECTION -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_16"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Badge Level -->
+
+                        <!-- Info -->
 
                         <FrameLayout
                             android:layout_width="70dp"
                             android:layout_height="70dp"
-                            android:background="@drawable/bg_level_badge">
+                            android:background="@drawable/bg_level_badge"
+                            android:padding="@dimen/spacing_8">
 
                             <TextView
                                 android:id="@+id/txtLevel"
@@ -95,7 +105,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/child_level_current"
+                                android:text="LEVEL HIỆN TẠI"
                                 android:textAllCaps="true"
                                 android:textColor="@color/text_secondary"
                                 android:textSize="@dimen/text_size_small"
@@ -111,11 +121,12 @@
                                 android:textSize="@dimen/text_size_headline"
                                 android:textStyle="bold" />
 
+                            <!-- EXP LABEL -->
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_16"
-                                android:text="@string/child_exp_label"
+                                android:text="ĐIỂM KINH NGHIỆM"
                                 android:textAllCaps="true"
                                 android:textColor="@color/text_secondary"
                                 android:textSize="@dimen/text_size_small"
@@ -131,6 +142,7 @@
                                 android:textSize="@dimen/text_size_large"
                                 android:textStyle="bold" />
 
+                            <!-- PROGRESS BAR -->
                             <com.google.android.material.progressindicator.LinearProgressIndicator
                                 android:id="@+id/progressExp"
                                 style="@style/Widget.MaterialComponents.LinearProgressIndicator"
@@ -142,15 +154,16 @@
                                 app:trackColor="@color/text_hint"
                                 app:trackCornerRadius="16dp" />
 
+                            <!-- EXP Hint Box -->
                             <LinearLayout
                                 android:id="@+id/layoutExpHint"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_12"
-                                android:background="@drawable/bg_exp_hint"
-                                android:gravity="center_vertical"
+                                android:padding="@dimen/spacing_12"
                                 android:orientation="horizontal"
-                                android:padding="@dimen/spacing_12">
+                                android:background="@drawable/bg_exp_hint"
+                                android:gravity="center_vertical">
 
                                 <ImageView
                                     android:layout_width="20dp"
@@ -163,15 +176,19 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/spacing_8"
+                                    android:text="Chỉ còn 50 exp nữa để lên cấp!"
                                     android:textColor="@color/status_warning"
                                     android:textSize="@dimen/text_size_medium"
-                                    android:textStyle="bold"
-                                    tools:text="Chỉ còn 50 exp nữa để lên cấp!" />
+                                    android:textStyle="bold" />
                             </LinearLayout>
+
                         </LinearLayout>
+
                     </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
 
             <include
                 android:id="@+id/actionsContainer"
