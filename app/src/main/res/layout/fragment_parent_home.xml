@@ -61,19 +61,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_8"
+                    android:fontFamily="@font/inter_medium"
                     android:text="@string/view_details"
                     android:textColor="@color/text_primary"
-                    android:textSize="@dimen/text_size_xlarge"
-                    android:fontFamily="@font/inter_medium"
-                    android:layout_marginBottom="@dimen/spacing_8" />
+                    android:textSize="@dimen/text_size_xlarge" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
                     android:text="Xem thống kê chi tiết về hoạt động của trẻ"
                     android:textColor="@color/text_secondary"
-                    android:textSize="@dimen/text_size_medium"
-                    android:fontFamily="@font/inter_regular" />
+                    android:textSize="@dimen/text_size_medium" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -187,7 +187,6 @@
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             tools:listitem="@layout/item_activity_log" />
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
 
