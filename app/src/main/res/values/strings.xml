@@ -24,6 +24,8 @@
     <string name="parent_children">Trẻ</string>
     <string name="parent_profile">Hồ sơ</string>
     <string name="hello_parent">Xin chào, %1$s!</string>
+    <string name="parent_header_title">Hello, Parent!</string>
+    <string name="parent_header_subtitle">Xin chào Phụ huynh!</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="today_summary">Tổng kết hôm nay</string>
     <string name="recent_activities">Hoạt động gần đây</string>

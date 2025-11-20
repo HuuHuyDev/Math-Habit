@@ -26,11 +26,9 @@ public class ChildMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         binding = ActivityChildMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_child_main);
 
         // Gắn fragment vào container
         if (savedInstanceState == null) {
