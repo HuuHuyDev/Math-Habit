@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentDetailTaskBinding;
 import com.kidsapp.ui.child.practice.PracticeFragment;
+import com.kidsapp.ui.child.quizz.ExamFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,14 +160,12 @@ public class DetailTaskFragment extends Fragment {
             openPracticeFragment();
             return;
         }
-        if (startTaskClickListener != null && taskId != null) {
-            startTaskClickListener.onStartTask(taskId, mode);
-        } else {
-            String action = mode == TaskMode.PRACTICE ? "Ôn tập" : "Bắt đầu làm bài";
-            Toast.makeText(requireContext(),
-                    action + ": " + (taskId != null ? taskId : ""),
-                    Toast.LENGTH_SHORT).show();
+        if (mode == TaskMode.START) {
+            openExamFragment();
+            return;
         }
+
+        Toast.makeText(requireContext(), "Không xác định chế độ!", Toast.LENGTH_SHORT).show();
     }
 
     private void openPracticeFragment() {
@@ -179,7 +178,15 @@ public class DetailTaskFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+    private void openExamFragment() {
+        if (getActivity() == null) return;
 
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.childHomeHost, new ExamFragment())
+                .addToBackStack(null)
+                .commit();
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
