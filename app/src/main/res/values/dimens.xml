@@ -65,9 +65,9 @@
     <dimen name="elevation_small">4dp</dimen>
     <dimen name="elevation_medium">8dp</dimen>
     <dimen name="elevation_large">12dp</dimen>
-<<<<<<< HEAD
+
     <dimen name="text_margin">16dp</dimen>
-=======
+
 
     <!-- Circular Progress -->
     <dimen name="progress_stroke_width">8dp</dimen>
@@ -77,5 +77,5 @@
 
     <!-- Animations -->
     <dimen name="anim_translate_y">16dp</dimen>
->>>>>>> feature/parent-home-ui
+
 </resources>
