@@ -16,9 +16,9 @@
         android:theme="@style/Theme.KidsApp"
         android:usesCleartextTraffic="true">
 
-        <!-- Child Main Activity -->
+        <!-- Parent Main Activity -->
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.parent.main.ParentMainActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp">
             <intent-filter>
@@ -28,20 +28,15 @@
             </intent-filter>
         </activity>
 
-        <!-- Parent Main Activity -->
+        <!-- Child Main Activity -->
         <activity
-            android:name=".ui.parent.main.ParentMainActivity"
+            android:name=".ui.child.main.ChildMainActivity"
             android:exported="false"
             android:theme="@style/Theme.KidsApp" />
 
-        <!-- Child Main Activity -->
-
-
-
-
         <!-- Main Activity - Login -->
         <activity
-            android:name=".ui.child.main.ChildMainActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp" />
     </application>

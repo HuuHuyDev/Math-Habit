@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNav"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bottom_nav_height"
+    android:background="@drawable/bg_bottom_nav"
+    android:paddingStart="@dimen/spacing_8"
+    android:paddingEnd="@dimen/spacing_8"
+    android:paddingTop="@dimen/spacing_8"
+    android:paddingBottom="@dimen/spacing_8"
+    android:elevation="8dp">
+
+    <!-- Home -->
+    <LinearLayout
+        android:id="@+id/nav_home"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="@dimen/spacing_8"
+        android:paddingBottom="@dimen/spacing_8"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Icon Container - Chỉ bọc icon -->
+        <FrameLayout
+            android:id="@+id/iconContainer_home"
+            android:layout_width="@dimen/icon_size_xlarge"
+            android:layout_height="@dimen/icon_size_xlarge"
+            android:background="@drawable/bg_icon_inactive"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/icon_home"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_home_parent" />
+        </FrameLayout>
+
+        <!-- Text Label -->
+        <TextView
+            android:id="@+id/label_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trang chủ"
+            android:textSize="@dimen/text_size_xsmall"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Tasks (Mục tiêu) -->
+    <LinearLayout
+        android:id="@+id/nav_tasks"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="@dimen/spacing_8"
+        android:paddingBottom="@dimen/spacing_8"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Icon Container - Chỉ bọc icon -->
+        <FrameLayout
+            android:id="@+id/iconContainer_tasks"
+            android:layout_width="@dimen/icon_size_xlarge"
+            android:layout_height="@dimen/icon_size_xlarge"
+            android:background="@drawable/bg_icon_inactive"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/icon_tasks"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_target" />
+        </FrameLayout>
+
+        <!-- Text Label -->
+        <TextView
+            android:id="@+id/label_tasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mục tiêu"
+            android:textSize="@dimen/text_size_xsmall"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Report -->
+    <LinearLayout
+        android:id="@+id/nav_report"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="@dimen/spacing_8"
+        android:paddingBottom="@dimen/spacing_8"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Icon Container - Chỉ bọc icon -->
+        <FrameLayout
+            android:id="@+id/iconContainer_report"
+            android:layout_width="@dimen/icon_size_xlarge"
+            android:layout_height="@dimen/icon_size_xlarge"
+            android:background="@drawable/bg_icon_inactive"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/icon_report"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_report" />
+        </FrameLayout>
+
+        <!-- Text Label -->
+        <TextView
+            android:id="@+id/label_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Báo cáo"
+            android:textSize="@dimen/text_size_xsmall"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Children -->
+    <LinearLayout
+        android:id="@+id/nav_children"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="@dimen/spacing_8"
+        android:paddingBottom="@dimen/spacing_8"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Icon Container - Chỉ bọc icon -->
+        <FrameLayout
+            android:id="@+id/iconContainer_children"
+            android:layout_width="@dimen/icon_size_xlarge"
+            android:layout_height="@dimen/icon_size_xlarge"
+            android:background="@drawable/bg_icon_inactive"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/icon_children"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_children" />
+        </FrameLayout>
+
+        <!-- Text Label -->
+        <TextView
+            android:id="@+id/label_children"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trẻ"
+            android:textSize="@dimen/text_size_xsmall"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Profile -->
+    <LinearLayout
+        android:id="@+id/nav_profile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="@dimen/spacing_8"
+        android:paddingBottom="@dimen/spacing_8"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Icon Container - Chỉ bọc icon -->
+        <FrameLayout
+            android:id="@+id/iconContainer_profile"
+            android:layout_width="@dimen/icon_size_xlarge"
+            android:layout_height="@dimen/icon_size_xlarge"
+            android:background="@drawable/bg_icon_inactive"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/icon_profile"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_profile" />
+        </FrameLayout>
+
+        <!-- Text Label -->
+        <TextView
+            android:id="@+id/label_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hồ sơ"
+            android:textSize="@dimen/text_size_xsmall"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+</LinearLayout>
