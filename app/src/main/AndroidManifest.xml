@@ -13,25 +13,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-                 
-<!-- TienDoHomNay -->
-  
-        android:theme="@style/Theme.MathHabit">
-        <activity
-            android:name=".ui.HomeUserActivity"
-            android:exported="false" />
-        <activity android:name=".ProgressActivity"
-            android:exported="true">
-
-        android:theme="@style/Theme.KidsApp"
-        android:usesCleartextTraffic="true">
+         >
 
         <!-- Parent Main Activity -->
         <activity
             android:name=".ui.child.main.ChildMainActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp">
-<!--  develop -->
+            <!--  develop -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

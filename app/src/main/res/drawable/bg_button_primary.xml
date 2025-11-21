@@ -1,10 +1,3 @@
-<!-- <<<<<<< feature/ui-Tien-do-hom-nay -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="#3A7BFA"/>
-    <corners android:radius="12dp"/>
-</shape>
-<!-- ======= -->
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
@@ -14,5 +7,3 @@
         android:endColor="@color/gradient_end" />
     <corners android:radius="@dimen/radius_button" />
 </shape>
-
-<!-- >>>>>>> develop -->

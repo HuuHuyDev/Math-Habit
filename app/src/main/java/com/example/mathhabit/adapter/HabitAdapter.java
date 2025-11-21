@@ -9,8 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mathhabit.R;
 import com.example.mathhabit.model.Habit;
+import com.kidsapp.R;
 
 import java.util.List;
 

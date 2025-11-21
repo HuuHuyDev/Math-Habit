@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mathhabit.adapter.HabitAdapter;
 import com.example.mathhabit.model.Habit;
+import com.kidsapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
