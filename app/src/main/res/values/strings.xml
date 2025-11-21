@@ -65,6 +65,7 @@
     <string name="task_tab_exercise">Bài tập</string>
     <string name="task_tab_history">Lịch sử</string>
     <string name="task_start">Bắt đầu</string>
+    <string name="task_complete">bạn đã hoàn thành</string>
 
     <!-- Exam -->
     <string name="exam_title">Bài kiểm tra</string>
