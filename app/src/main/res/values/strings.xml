@@ -1,3 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MathHabit</string>
+    <!-- App Name -->
+    <string name="app_name">Kids App</string>
+
+    <!-- Auth -->
+    <string name="welcome_title">Xin chào bé!</string>
+    <string name="login">Đăng nhập</string>
+    <string name="register">Đăng ký</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="email">Email hoặc tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="login_with_google">Đăng nhập với Google</string>
+    <string name="login_with_facebook">Đăng nhập với Facebook</string>
+    <string name="choose_role">Chọn vai trò</string>
+    <string name="parent">Phụ huynh</string>
+    <string name="child">Trẻ</string>
+
+    <!-- Parent -->
+    <string name="parent_home">Trang chủ</string>
+    <string name="parent_tasks">Mục tiêu</string>
+    <string name="parent_report">Báo cáo</string>
+    <string name="parent_children">Trẻ</string>
+    <string name="parent_profile">Hồ sơ</string>
+    <string name="hello_parent">Xin chào, %1$s!</string>
+    <string name="parent_header_title">Hello, Parent!</string>
+    <string name="parent_header_subtitle">Xin chào Phụ huynh!</string>
+    <string name="view_details">Xem chi tiết</string>
+    <string name="today_summary">Tổng kết hôm nay</string>
+    <string name="recent_activities">Hoạt động gần đây</string>
+
+    <!-- Child -->
+    <string name="child_home">Trang chủ</string>
+    <string name="child_tasks">Nhiệm vụ</string>
+    <string name="child_quiz">Câu đố</string>
+    <string name="child_reward">Phần thưởng</string>
+    <string name="child_shop">Cửa hàng</string>
+    <string name="child_profile">Hồ sơ</string>
+    <string name="child_training_title">Thành tích rèn luyện</string>
+    <string name="child_level_current">Level hiện tại</string>
+    <string name="child_level_value">Level %1$d</string>
+    <string name="child_exp_label">Điểm kinh nghiệm</string>
+    <string name="child_exp_value">%1$d / %2$d exp</string>
+    <string name="child_exp_hint">Chỉ còn %1$d exp nữa để lên cấp!</string>
+    <string name="child_action_mission">Xem nhiệm vụ</string>
+    <string name="child_action_store">Mua vật phẩm</string>
+    <string name="child_action_achievement">Thành tựu</string>
+    <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
+    <string name="choose_mode">Chọn chế độ</string>
+    <string name="choose_mode_desc">Bạn muốn ôn tập trước hay bắt đầu làm bài?</string>
+    <string name="choose_mode_practice">Ôn tập</string>
+    <string name="choose_mode_start">Bắt đầu</string>
+    <string name="practice_hint_start">Hãy chọn đáp án mà bạn nghĩ là đúng nhé!</string>
+    <string name="practice_pet_correct">Giỏi lắm! Bạn làm đúng rồi!</string>
+    <string name="practice_pet_wrong">Đừng lo, mình sẽ giải thích giúp bạn.</string>
+    <string name="practice_complete">Hoàn thành</string>
+    <string name="practice_question_prompt">Hãy chọn đáp án đúng?</string>
+
+    <!-- Task -->
+    <string name="task_back">Quay lại</string>
+    <string name="task_search_hint">Tìm kiếm…</string>
+    <string name="task_tab_homework">Việc nhà</string>
+    <string name="task_tab_personal">Cá nhân</string>
+    <string name="task_tab_exercise">Bài tập</string>
+    <string name="task_tab_history">Lịch sử</string>
+    <string name="task_start">Bắt đầu</string>
+
+    <!-- Exam -->
+    <string name="exam_title">Bài kiểm tra</string>
+    <string name="exam_question_progress">Câu hỏi</string>
+    <string name="exam_question_placeholder">Nội dung câu hỏi sẽ hiển thị tại đây</string>
+    <string name="exam_option_placeholder">Nội dung đáp án</string>
+    <string name="submit_exam">Nộp bài</string>
+    <string name="exam_result_title">Kết quả bài kiểm tra</string>
+    <string name="exam_result_score_title">Điểm số</string>
+    <string name="exam_result_correct">Đúng</string>
+    <string name="exam_result_wrong">Sai</string>
+    <string name="exam_result_total">Tổng</string>
+    <string name="exam_wrong_review_title">Những câu cần xem lại</string>
+    <string name="exam_time_up">Hết giờ! Hệ thống đã nộp bài giúp bạn.</string>
+    <string name="exam_all_correct">Tuyệt vời! Bạn đã trả lời đúng tất cả.</string>
+    <string name="percent_value">%1$d%%</string>
+
+    <!-- Common -->
+    <string name="back">Quay lại</string>
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="task_timer">Đồng hồ đếm ngược</string>
+    <string name="previous">Trước</string>
+    <string name="next">Tiếp</string>
+    <string name="loading">Đang tải...</string>
+    <string name="error">Có lỗi xảy ra</string>
+    <string name="retry">Thử lại</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

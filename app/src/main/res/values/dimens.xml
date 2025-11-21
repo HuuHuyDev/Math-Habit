@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_2">2dp</dimen>
+    <dimen name="spacing_4">4dp</dimen>
+    <dimen name="spacing_6">6dp</dimen>
+    <dimen name="spacing_8">8dp</dimen>
+    <dimen name="spacing_10">10dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
+    <dimen name="spacing_16">16dp</dimen>
+    <dimen name="spacing_20">20dp</dimen>
+    <dimen name="spacing_24">24dp</dimen>
+    <dimen name="spacing_28">28dp</dimen>
+    <dimen name="spacing_32">32dp</dimen>
+    <dimen name="spacing_40">40dp</dimen>
+
+    <!-- Parent Header -->
+    <dimen name="header_height">260dp</dimen>
+    <dimen name="header_radius">32dp</dimen>
+    <dimen name="padding_large">20dp</dimen>
+    <dimen name="avatar_size">56dp</dimen>
+    <dimen name="avatar_elevation">8dp</dimen>
+
+    <!-- Bottom Navigation -->
+    <dimen name="bottom_nav_height">80dp</dimen>
+
+    <!-- Text Size -->
+    <dimen name="text_size_xsmall">12sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_xlarge">18sp</dimen>
+    <dimen name="text_size_xxlarge">20sp</dimen>
+    <dimen name="text_size_title">22sp</dimen>
+    <dimen name="text_size_headline">26sp</dimen>
+
+    <!-- Icon Size -->
+    <dimen name="icon_size_small">16dp</dimen>
+    <dimen name="icon_size_medium">24dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    <dimen name="icon_size_xlarge">48dp</dimen>
+    <dimen name="icon_circle_size">48dp</dimen>
+
+    <!-- Card / Child -->
+    <dimen name="child_card_width">320dp</dimen>
+    <dimen name="child_card_height">260dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_radius">20dp</dimen>
+    <dimen name="button_height">44dp</dimen>
+    <dimen name="list_spacing">12dp</dimen>
+    <dimen name="activity_card_radius">16dp</dimen>
+    <dimen name="activity_icon_size">40dp</dimen>
+    <dimen name="activity_icon_container">44dp</dimen>
+
+    <!-- Radius -->
+    <dimen name="radius_small">6dp</dimen>
+    <dimen name="radius_medium">10dp</dimen>
+    <dimen name="radius_large">14dp</dimen>
+    <dimen name="radius_button">5dp</dimen>
+    <dimen name="radius_card">20dp</dimen>
+    <dimen name="radius_input">16dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_xsmall">2dp</dimen>
+    <dimen name="elevation_small">4dp</dimen>
+    <dimen name="elevation_medium">8dp</dimen>
+    <dimen name="elevation_large">12dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <!-- Circular Progress -->
+    <dimen name="progress_stroke_width">8dp</dimen>
+    <dimen name="progress_text_size">16sp</dimen>
+    <dimen name="progress_view_size">120dp</dimen>
+    <dimen name="child_progress_size">60dp</dimen>
+
+    <!-- Animations -->
+    <dimen name="anim_translate_y">16dp</dimen>
+</resources>

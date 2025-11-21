@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:type="linear"
+        android:startColor="#EFF6FF"
+        android:endColor="#ECFEFF"
+        android:angle="90"/> <!-- 90 = từ trên xuống -->
+    <corners android:radius="20dp"/> <!-- nếu cần bo góc -->
+</shape>

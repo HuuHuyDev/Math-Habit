@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_12"
+    android:layout_marginHorizontal="0dp"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="@dimen/elevation_small"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="@dimen/spacing_16"
+        android:gravity="center_vertical">
+
+        <!-- Task Image -->
+        <ImageView
+            android:id="@+id/imgTask"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_task_image"
+            android:src="@drawable/ic_launcher_foreground"
+            tools:src="@drawable/ic_launcher_foreground" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:orientation="vertical">
+
+            <!-- Task Title -->
+            <TextView
+                android:id="@+id/txtTaskTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bài tập Toán lớp 1"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                tools:text="Bài tập Toán lớp 1" />
+
+            <!-- Question Count -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_small"
+                    android:layout_height="@dimen/icon_size_small"
+                    android:src="@drawable/ic_list"
+                    app:tint="@color/text_tertiary" />
+
+                <TextView
+                    android:id="@+id/txtQuestionCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_6"
+                    android:text="10 câu hỏi"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_small"
+                    tools:text="10 câu hỏi" />
+            </LinearLayout>
+
+            <!-- Duration -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_small"
+                    android:layout_height="@dimen/icon_size_small"
+                    android:src="@drawable/ic_clock"
+                    app:tint="@color/text_tertiary" />
+
+                <TextView
+                    android:id="@+id/txtDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_6"
+                    android:text="15 phút"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_small"
+                    tools:text="15 phút" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Rating -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_star"
+                app:tint="@color/status_warning" />
+
+            <TextView
+                android:id="@+id/txtRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:text="4.5"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"
+                tools:text="4.5" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

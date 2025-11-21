@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/child_nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.kidsapp.ui.child.home.ChildHomeFragment"
+        android:label="@string/child_home"
+        tools:layout="@layout/fragment_child_home" />
+
+    <fragment
+        android:id="@+id/nav_tasks"
+        android:name="com.kidsapp.ui.child.task.ChildTaskListFragment"
+        android:label="@string/child_tasks"
+        tools:layout="@layout/fragment_task_list" />
+
+    <fragment
+        android:id="@+id/nav_quiz"
+        android:name="com.kidsapp.ui.child.task.QuizFragment"
+        android:label="@string/child_quiz"
+        tools:layout="@layout/fragment_quiz" />
+
+    <fragment
+        android:id="@+id/nav_reward"
+        android:name="com.kidsapp.ui.child.reward.RewardFragment"
+        android:label="@string/child_reward"
+        tools:layout="@layout/fragment_reward" />
+
+    <fragment
+        android:id="@+id/nav_shop"
+        android:name="com.kidsapp.ui.child.shop.ShopFragment"
+        android:label="@string/child_shop"
+        tools:layout="@layout/fragment_shop" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.kidsapp.ui.child.profile.ChildProfileFragment"
+        android:label="@string/child_profile"
+        tools:layout="@layout/fragment_profile_child" />
+    <fragment
+        android:id="@+id/Nav_practice"
+        android:name="com.kidsapp.ui.child.profile.ChildProfileFragment"
+        android:label="@string/child_profile"
+        tools:layout="@layout/fragment_practice" />
+
+    <fragment
+        android:id="@+id/Nav_detail_task"
+        android:name="com.kidsapp.ui.child.profile.ChildProfileFragment"
+        android:label="@string/child_profile"
+        tools:layout="@layout/fragment_detail_task" />
+
+</navigation>
+

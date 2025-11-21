@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.kidsapp.ui.auth.LoginFragment"
+        android:label="Đăng nhập"
+        tools:layout="@layout/fragment_login">
+        
+        <action
+            android:id="@+id/action_login_to_choose_role"
+            app:destination="@id/chooseRoleFragment" />
+        
+        <action
+            android:id="@+id/action_login_to_forgot_password"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chooseRoleFragment"
+        android:name="com.kidsapp.ui.auth.ChooseRoleFragment"
+        android:label="Chọn vai trò"
+        tools:layout="@layout/fragment_choose_role" />
+
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.kidsapp.ui.auth.ForgotPasswordFragment"
+        android:label="Quên mật khẩu"
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/action_forgotPassword_to_login"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.kidsapp.ui.auth.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/loginFragment" />
+    </fragment>
+</navigation>
+

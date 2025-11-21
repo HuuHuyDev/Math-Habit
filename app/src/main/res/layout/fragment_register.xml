@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app_gradient"
+    android:fillViewport="true"
+    tools:context=".ui.auth.RegisterFragment">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_24">
+
+        <ImageView
+            android:id="@+id/ivRegisterAvatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_card_white"
+            android:padding="@dimen/spacing_12"
+            android:src="@drawable/ic_user"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvRegisterHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Tạo tài khoản mới"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_headline"
+            android:fontFamily="@font/inter_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivRegisterAvatar" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardRegister"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="@dimen/elevation_medium"
+            app:cardBackgroundColor="@color/surface"
+            app:layout_constraintTop_toBottomOf="@id/tvRegisterHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_20">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_16"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="center"
+                    android:text="Đăng ký tài khoản"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_size_title" />
+
+                <!-- Họ và tên -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilFullName"
+                    style="@style/TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:hint="Họ và tên"
+                    app:startIconDrawable="@drawable/ic_user"
+                    app:startIconTint="@color/input_icon_tint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size_medium" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Email -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilRegisterEmail"
+                    style="@style/TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:hint="Email hoặc tên đăng nhập"
+                    app:startIconDrawable="@drawable/ic_email"
+                    app:startIconTint="@color/input_icon_tint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRegisterEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="textEmailAddress"
+                        android:textSize="@dimen/text_size_medium" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Password -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilRegisterPassword"
+                    style="@style/TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:hint="Mật khẩu"
+                    app:endIconDrawable="@drawable/ic_eye"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/input_icon_tint"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="@color/input_icon_tint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRegisterPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="textPassword"
+                        android:textSize="@dimen/text_size_medium" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Confirm password -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilConfirmPassword"
+                    style="@style/TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:hint="Xác nhận mật khẩu"
+                    app:endIconDrawable="@drawable/ic_eye"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/input_icon_tint"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="@color/input_icon_tint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etConfirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="textPassword"
+                        android:textSize="@dimen/text_size_medium" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Checkbox -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbTerms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_8"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="Tôi đồng ý với "
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_medium" />
+
+                    <TextView
+                        android:id="@+id/tvTermsLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="Điều khoản sử dụng"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_medium" />
+                </LinearLayout>
+
+                <!-- Nút đăng ký -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegister"
+                    style="@style/ButtonPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:background="@drawable/bg_button_primary"
+                    android:text="Đăng ký" />
+
+                <!-- Separator -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/spacing_8">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/border" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/spacing_12"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="Hoặc đăng ký bằng"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_small" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/border" />
+                </LinearLayout>
+
+                <!-- Social buttons -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegisterFacebook"
+                    style="@style/LoginSocialButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_12"
+                    android:background="@drawable/bg_button_facebook"
+                    android:text="Đăng ký bằng Facebook"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    app:icon="@drawable/ic_facebook"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_12"
+                    app:iconTint="@color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegisterGoogle"
+                    style="@style/LoginSocialButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_button_google"
+                    android:backgroundTint="@null"
+                    android:text="Đăng ký bằng Google"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    app:icon="@drawable/ic_google"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_12"
+                    app:iconTint="@null" />
+
+                <!-- Footer đặt trong card -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="Đã có tài khoản?"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_medium" />
+
+                    <TextView
+                        android:id="@+id/tvLoginNow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_4"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="Đăng nhập ngay"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_medium" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

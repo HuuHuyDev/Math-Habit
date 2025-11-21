@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_2">2dp</dimen>
+    <dimen name="spacing_4">4dp</dimen>
+    <dimen name="spacing_6">7dp</dimen>
+    <dimen name="spacing_8">9dp</dimen>
+    <dimen name="spacing_10">11dp</dimen>
+    <dimen name="spacing_12">13dp</dimen>
+    <dimen name="spacing_16">18dp</dimen>
+    <dimen name="spacing_20">22dp</dimen>
+    <dimen name="spacing_24">26dp</dimen>
+    <dimen name="spacing_28">31dp</dimen>
+    <dimen name="spacing_32">35dp</dimen>
+    <dimen name="spacing_40">44dp</dimen>
+
+    <!-- Text Size -->
+    <dimen name="text_size_xsmall">13sp</dimen>
+    <dimen name="text_size_small">15sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">20sp</dimen>
+    <dimen name="text_size_xlarge">20sp</dimen>
+    <dimen name="text_size_xxlarge">22sp</dimen>
+    <dimen name="text_size_title">24sp</dimen>
+    <dimen name="text_size_headline">29sp</dimen>
+
+    <!-- Icon Size -->
+    <dimen name="icon_size_small">18dp</dimen>
+    <dimen name="icon_size_medium">26dp</dimen>
+    <dimen name="icon_size_large">35dp</dimen>
+    <dimen name="icon_size_xlarge">53dp</dimen>
+
+    <!-- Radius -->
+    <dimen name="radius_small">7dp</dimen>
+    <dimen name="radius_medium">11dp</dimen>
+    <dimen name="radius_large">15dp</dimen>
+    <dimen name="radius_button">26dp</dimen>
+    <dimen name="radius_card">22dp</dimen>
+    <dimen name="radius_input">18dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_xsmall">2dp</dimen>
+    <dimen name="elevation_small">4dp</dimen>
+    <dimen name="elevation_medium">9dp</dimen>
+    <dimen name="elevation_large">13dp</dimen>
+</resources>
+

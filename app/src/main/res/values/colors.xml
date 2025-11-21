@@ -1,5 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors -->
+    <color name="primary">#2D5FFF</color>
+    <color name="primary_dark">#1E3FCC</color>
+    <color name="primary_light">#5C7FFF</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#5CF0FF</color>
+    <color name="secondary_dark">#3DB8CC</color>
+    <color name="secondary_light">#7DFFFF</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#2D5FFF</color>
+    <color name="gradient_end">#5CF0FF</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#374151</color>
+    <color name="text_tertiary">#9CA3AF</color>
+    <color name="text_hint">#E5E7EB</color>
+    <color name="text_white">#FFFFFF</color>
+    
+    <!-- Status Colors -->
+    <color name="status_success">#10B981</color>
+    <color name="status_warning">#F59E0B</color>
+    <color name="status_error">#EF4444</color>
+    <color name="status_info">#3B82F6</color>
+    
+    <!-- Surface Colors -->
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F9FAFB</color>
+    <color name="background">#F3F4F6</color>
+    <color name="background_light">#FAFBFC</color>
+    
+    <!-- Border & Divider -->
+    <color name="border">#E5E7EB</color>
+    <color name="divider">#E5E7EB</color>
+    
+    <!-- Standard Colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="facebook_blue">#1877F2</color>
+    <color name="google_border">#E0E0E0</color>
+    <color name="input_icon_tint">#9CA3AF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Nav Colors -->
+    <color name="nav_bg">#F9FAFB</color>
+    <color name="nav_icon_inactive">#9CA3AF</color>
+    <color name="nav_icon_active">#2563EB</color>
+    <color name="nav_text_inactive">#9CA3AF</color>
+    <color name="nav_text_active">#2563EB</color>
+
+    <!-- Parent Home -->
+    <color name="parent_header_text">#FFFFFF</color>
+    <color name="parent_subtitle_text">#E5F0FF</color>
+    <color name="card_shadow">#1A000000</color>
+    <color name="white_80">#CCFFFFFF</color>
+    <color name="white_20">#33FFFFFF</color>
+    <color name="progress_bg">#E5EDFF</color>
+    <color name="progress_primary">#2563EB</color>
+    <color name="xp_green">#10B981</color>
+    <color name="coin_gold">#FBBF24</color>
+    <color name="coin_orange">#F97316</color>
 </resources>

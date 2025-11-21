@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Card Style -->
+    <style name="CardStyle">
+        <item name="android:layout_margin">@dimen/spacing_16</item>
+        <item name="cardCornerRadius">@dimen/radius_card</item>
+        <item name="cardElevation">@dimen/elevation_small</item>
+        <item name="cardBackgroundColor">@color/surface</item>
+    </style>
+    
+    <!-- Text Styles -->
+    <style name="TextHeadline">
+        <item name="android:textSize">@dimen/text_size_headline</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+    </style>
+    
+    <style name="TextTitle">
+        <item name="android:textSize">@dimen/text_size_title</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+    </style>
+    
+    <style name="TextSubtitle">
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
+    </style>
+    
+    <style name="TextBody">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+    
+    <style name="TextCaption">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+
+    <style name="LoginSocialButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@null</item>
+        <item name="android:backgroundTint">@null</item>
+
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+    </style>
+
+    <style name="ThemeOverlay.Kids.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:windowAnimationStyle">@style/AnimationKidsBottomSheet</item>
+    </style>
+
+    <style name="AnimationKidsBottomSheet">
+        <item name="android:windowEnterAnimation">@anim/bottom_sheet_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/bottom_sheet_slide_down</item>
+    </style>
+
+</resources>
