@@ -81,6 +81,18 @@
     <string name="exam_time_up">Hết giờ! Hệ thống đã nộp bài giúp bạn.</string>
     <string name="exam_all_correct">Tuyệt vời! Bạn đã trả lời đúng tất cả.</string>
     <string name="percent_value">%1$d%%</string>
+    <string name="result_congratulations">Chúc mừng bé đã hoàn thành bài tập!</string>
+    <string name="result_well_done">Bé làm rất tốt đấy!</string>
+    <string name="result_rating_title">Điểm đánh giá</string>
+    <string name="result_rating_hint">Bé làm rất tốt! Cố lên để đạt 5 sao nhé!</string>
+    <string name="result_tip_title">Gợi ý cho bé</string>
+    <string name="result_tip_content">Bé làm rất tốt! Hãy tiếp tục luyện tập để giữ phom nhé! 💪</string>
+    <string name="result_review_lesson">Xem lại bài</string>
+    <string name="result_do_again">Làm lại bài</string>
+    <string name="result_go_home">Về trang chính</string>
+    <string name="result_correct_label">Câu đúng</string>
+    <string name="result_wrong_label">Câu sai</string>
+    <string name="result_total_label">Tổng số câu</string>
 
     <!-- Common -->
     <string name="back">Quay lại</string>

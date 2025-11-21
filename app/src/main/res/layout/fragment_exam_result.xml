@@ -1,186 +1,494 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/resultScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_background"
-    android:padding="20dp"
-    tools:context=".ui.child.quizz.ExamResultFragment">
+    android:background="@drawable/bg_app_background">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/btnCloseResult"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_round_20"
-                android:contentDescription="@string/back"
-                android:padding="8dp"
-                android:src="@drawable/ic_back" />
-
-            <TextView
-                android:id="@+id/txtResultTitle"
-                android:layout_width="0dp"
+            <!-- Header với gradient -->
+            <LinearLayout
+                android:id="@+id/layoutHeader"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:text="@string/exam_result_title"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:background="@drawable/bg_result_header_gradient"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:paddingTop="40dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSummary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:padding="20dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="4dp">
+                <ImageButton
+                    android:id="@+id/btnCloseResult"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_level_badge"
+                    android:contentDescription="@string/back"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_back"
+                    app:tint="@color/white" />
 
+                <TextView
+                    android:id="@+id/txtResultTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="@string/exam_result_title"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imgNotification"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/feature_coming_soon"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_notification"
+                    app:tint="@color/white" />
+
+                <ImageButton
+                    android:id="@+id/imgAvatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_level_badge"
+                    android:contentDescription="@string/child_profile"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_user_default"
+                    app:tint="@color/white" />
+            </LinearLayout>
+
+            <!-- Celebration Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-                <TextView
-                    android:id="@+id/txtScoreTitle"
+                <!-- Celebration Circle với icon -->
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/exam_result_score_title"
-                    android:textColor="@color/text_secondary" />
+                    android:layout_gravity="center">
+
+                    <View
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:background="@drawable/bg_celebration_circle" />
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_trophy"
+                        app:tint="@color/white" />
+                </FrameLayout>
+
+                <!-- Text chúc mừng -->
+                <TextView
+                    android:id="@+id/txtCongratulations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/result_congratulations"
+                    android:textColor="@color/primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtScorePercent"
-                    android:layout_width="match_parent"
+                    android:id="@+id/txtWellDone"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="92%"
-                    android:textColor="@color/primary"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
+                    android:text="@string/result_well_done"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Card hiển thị số đúng/sai/tổng -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center"
-                    android:weightSum="3">
+                    android:orientation="vertical"
+                    android:background="@color/white"
+                    android:padding="24dp">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <!-- Phần hiển thị % điểm -->
+                    <TextView
+                        android:id="@+id/txtScorePercent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:text="80%"
+                        android:textColor="@color/primary"
+                        android:textSize="48sp"
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/txtCorrectLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/exam_result_correct"
-                            android:textColor="@color/text_secondary" />
-
-                        <TextView
-                            android:id="@+id/txtCorrectValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="15"
-                            android:textColor="@color/status_success"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
+                    <!-- 3 cột đúng/sai/tổng -->
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginTop="24dp"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
-                        <TextView
-                            android:id="@+id/txtWrongLabel"
-                            android:layout_width="wrap_content"
+                        <!-- Câu đúng -->
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/exam_result_wrong"
-                            android:textColor="@color/text_secondary" />
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/txtWrongValue"
-                            android:layout_width="wrap_content"
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:background="@drawable/bg_stat_circle_correct" />
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_check_circle"
+                                    app:tint="@color/status_success" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/txtCorrectValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="8"
+                                android:textColor="@color/status_success"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/result_correct_label"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <!-- Câu sai -->
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="5"
-                            android:textColor="@color/status_error"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center">
 
-                        <TextView
-                            android:id="@+id/txtTotalLabel"
-                            android:layout_width="wrap_content"
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:background="@drawable/bg_stat_circle_wrong" />
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_close_circle"
+                                    app:tint="@color/status_error" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/txtWrongValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="2"
+                                android:textColor="@color/status_error"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/result_wrong_label"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <!-- Tổng số câu -->
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/exam_result_total"
-                            android:textColor="@color/text_secondary" />
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/txtTotalValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="20"
-                            android:textColor="@color/text_primary"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:background="@drawable/bg_stat_circle_total" />
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_info_circle"
+                                    app:tint="@color/primary" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/txtTotalValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="10"
+                                android:textColor="@color/primary"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/result_total_label"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/txtWrongTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/exam_wrong_review_title"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardWrongList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:padding="16dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:id="@+id/layoutWrongQuestions"
+            <!-- Rating Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:listitem="@layout/item_task_history" />
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/result_rating_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- 5 ngôi sao -->
+                    <LinearLayout
+                        android:id="@+id/layoutStars"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/star1"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_star_filled" />
+
+                        <ImageView
+                            android:id="@+id/star2"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_star_filled" />
+
+                        <ImageView
+                            android:id="@+id/star3"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_star_filled" />
+
+                        <ImageView
+                            android:id="@+id/star4"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_star_filled" />
+
+                        <ImageView
+                            android:id="@+id/star5"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_star_outline" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtRatingHint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/result_rating_hint"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tip Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_tip_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_level_badge" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_lightbulb"
+                            app:tint="@color/white" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/result_tip_title"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtTipContent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/result_tip_content"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="vertical">
+
+                <!-- Nút Xem lại bài -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReviewLesson"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:drawableStart="@drawable/ic_eye"
+                    android:drawablePadding="8dp"
+                    android:text="@string/result_review_lesson"
+                    app:cornerRadius="24dp"
+                    app:rippleColor="@color/secondary"
+                    app:strokeColor="@color/primary"
+                    app:strokeWidth="2dp"
+                    app:backgroundTint="@color/white"
+                    app:iconTint="@color/primary" />
+
+                <!-- Nút Làm lại bài -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDoAgain"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_button_kids_gradient"
+                    android:drawableStart="@drawable/ic_refresh"
+                    android:drawablePadding="8dp"
+                    android:text="@string/result_do_again"
+                    android:textColor="@color/white"
+                    app:cornerRadius="24dp"
+                    app:iconTint="@color/white" />
+
+                <!-- Nút Về trang chính -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGoHome"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_home"
+                    android:drawablePadding="8dp"
+                    android:text="@string/result_go_home"
+                    app:cornerRadius="24dp"
+                    app:rippleColor="@color/secondary"
+                    app:strokeColor="@color/text_secondary"
+                    app:strokeWidth="2dp"
+                    app:backgroundTint="@color/white"
+                    app:iconTint="@color/text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
