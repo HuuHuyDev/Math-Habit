@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.databinding.ViewChildActionListBinding;
+import com.kidsapp.ui.child.equip.equip;
+import com.kidsapp.ui.child.progress.ProgresssFragment;
 
 /**
  * Child Home Fragment
@@ -23,6 +25,7 @@ import com.kidsapp.databinding.ViewChildActionListBinding;
 public class ChildHomeFragment extends Fragment {
     private FragmentChildHomeBinding binding;
     private ViewChildActionListBinding actionListBinding;
+
 
     @Nullable
     @Override
@@ -34,6 +37,8 @@ public class ChildHomeFragment extends Fragment {
         setupHeader();
         bindTrainingStats();
         setupActionCards();
+        binding.layoutLevel.setOnClickListener(v -> navigateToProgress());
+        binding.headerUser.setOnClickListener(v -> navigateToEquip());
         return binding.getRoot();
     }
 
@@ -65,7 +70,6 @@ public class ChildHomeFragment extends Fragment {
                 R.drawable.ic_task,
                 getString(R.string.child_action_mission),
                 () -> navigateToTaskList());
-
         // Mua vật phẩm - chuyển đến ShopFragment
         configureAction(actionListBinding.actionStore.getRoot(),
                 R.drawable.bg_action_purple,
@@ -112,6 +116,25 @@ public class ChildHomeFragment extends Fragment {
                     .commit();
         }
     }
+    private void navigateToProgress() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new ProgresssFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    private void navigateToEquip() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new equip())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
 
     private void navigateToAchievement() {
         if (getActivity() != null) {
@@ -129,5 +152,6 @@ public class ChildHomeFragment extends Fragment {
         binding = null;
         actionListBinding = null;
     }
+
 }
 

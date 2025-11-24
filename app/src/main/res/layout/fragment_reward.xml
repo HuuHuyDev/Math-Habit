@@ -1,22 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
-    android:padding="@dimen/spacing_20"
-    tools:context=".ui.child.reward.RewardFragment">
+    android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Phần thưởng"
-        android:textSize="@dimen/text_size_title"
-        android:textColor="@color/text_primary"
-        android:fontFamily="@font/inter_bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- HEADER -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_light"
+            android:padding="@dimen/spacing_20">
 
+            <com.kidsapp.ui.child.components.HeaderUserView
+                android:id="@+id/headerUser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Nút quay lại -->
+        <LinearLayout
+            android:id="@+id/btnBackAchievement"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="@dimen/spacing_16"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:background="@drawable/bg_button_google"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Quay lại"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- CARD THÀNH TỰU -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_parent_card"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginEnd="@dimen/spacing_16"
+            android:layout_marginTop="@dimen/spacing_16"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thành tựu"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/spacing_12"/>
+
+            <!-- GRID 2x2 -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="true">
+
+                <!-- ITEM 1 -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/spacing_12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/progress_foreground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tiến độ hằng tuần"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:layout_marginTop="@dimen/spacing_6"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hoàn thành 7 ngày liên tiếp"
+                        android:gravity="center"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_xsmall"
+                        android:layout_marginTop="@dimen/spacing_4"/>
+                </LinearLayout>
+
+                <!-- ITEM 2 -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/spacing_12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1">
+
+                    <ImageView
+                        android:layout_width="119dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/level_foreground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Học sinh chăm chỉ"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:layout_marginTop="@dimen/spacing_6"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đạt level 10"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_xsmall"
+                        android:layout_marginTop="@dimen/spacing_4"/>
+                </LinearLayout>
+
+                <!-- ITEM 3 – Chuỗi kỳ cựu -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/spacing_12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/chain_foreground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Chuỗi kỳ cựu"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_4"
+                        android:text="Duy trì chuỗi 30 ngày"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_xsmall"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <!-- ITEM 4 – Thử thách phép cộng -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/spacing_12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1">
+
+                    <ImageView
+                        android:layout_width="119dp"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/challenge_foreground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Thử thách phép cộng"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_4"
+                        android:text="Hoàn thành 20 bài luyện phép cộng"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_xsmall"
+                        android:gravity="center" />
+                </LinearLayout>
+
+            </GridLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

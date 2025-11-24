@@ -1,22 +1,357 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
-    android:padding="@dimen/spacing_20"
-    tools:context=".ui.child.shop.ShopFragment">
+    android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cửa hàng"
-        android:textSize="@dimen/text_size_title"
-        android:textColor="@color/text_primary"
-        android:fontFamily="@font/inter_bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- HEADER USER (giống màn tiến độ) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_light"
+            android:padding="@dimen/spacing_20">
 
+            <com.kidsapp.ui.child.components.HeaderUserView
+                android:id="@+id/headerUser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Nút Back -->
+        <LinearLayout
+            android:id="@+id/btnBackShop"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_button_google"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Quay lại"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- CARD SỐ COIN / XP -->
+        <LinearLayout
+            android:id="@+id/cardBalance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_parent_card"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginEnd="@dimen/spacing_16"
+            android:layout_marginBottom="@dimen/spacing_16"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Coin -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_medium"
+                    android:layout_height="@dimen/icon_size_medium"
+                    android:src="@mipmap/coin_foreground"/>
+
+                <TextView
+                    android:id="@+id/tvCoinAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_8"
+                    android:text="1.250"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_size_large"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- XP -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical|end">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_primary_button"
+                    android:paddingStart="@dimen/spacing_8"
+                    android:paddingEnd="@dimen/spacing_8"
+                    android:paddingTop="@dimen/spacing_4"
+                    android:paddingBottom="@dimen/spacing_4"
+                    android:text="XP"
+                    android:textColor="@color/text_white"
+                    android:textSize="@dimen/text_size_xsmall" />
+
+                <TextView
+                    android:id="@+id/tvXpAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_8"
+                    android:text="2.400"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_size_large"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- GRID SKIN (2 cột) -->
+        <LinearLayout
+            android:id="@+id/cardSkinGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_parent_card"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginEnd="@dimen/spacing_16"
+            android:layout_marginBottom="@dimen/spacing_16"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/spacing_12"
+            android:paddingBottom="@dimen/spacing_12">
+
+            <GridLayout
+                android:id="@+id/gridSkins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alignmentMode="alignMargins"
+                android:columnCount="2"
+                android:rowOrderPreserved="false"
+                android:useDefaultMargins="true">
+
+                <!-- Skin 1 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/spacing_10">
+
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/skin1_foreground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Skin\nnhà thám hiểm"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/spacing_4">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_size_small"
+                            android:layout_height="@dimen/icon_size_small"
+                            android:src="@mipmap/coin_foreground"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_4"
+                            android:text="500"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Skin 2 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/spacing_10">
+
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:src="@mipmap/skin2_foreground"
+                        android:scaleType="centerInside" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Skin\ncướp biển"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/spacing_4">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_size_small"
+                            android:layout_height="@dimen/icon_size_small"
+                            android:src="@mipmap/coin_foreground"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_4"
+                            android:text="600"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Skin 3 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/spacing_10">
+
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:src="@mipmap/skin3_foreground"
+                        android:scaleType="centerInside" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Skin\nbóng chày"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/spacing_4">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_size_small"
+                            android:layout_height="@dimen/icon_size_small"
+                            android:src="@mipmap/coin_foreground"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_4"
+                            android:text="750"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Skin 4 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/spacing_10">
+
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:src="@mipmap/skin4_foreground"
+                        android:scaleType="centerInside" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Skin\nkỳ lân"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_small"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/spacing_4">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_size_small"
+                            android:layout_height="@dimen/icon_size_small"
+                            android:src="@mipmap/coin_foreground"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_4"
+                            android:text="900"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_small" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </GridLayout>
+        </LinearLayout>
+
+        <!-- Nút Mua -->
+        <Button
+            android:id="@+id/btnBuySkin"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginEnd="@dimen/spacing_16"
+            android:layout_marginBottom="@dimen/spacing_24"
+            android:text="Mua"
+            android:textColor="@color/text_white"
+            android:textAllCaps="false"
+            android:background="@drawable/bg_primary_button" />
+    </LinearLayout>
+</ScrollView>
