@@ -14,48 +14,29 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-         >
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.KidsApp">
 
         <!-- Parent Main Activity (Launcher) -->
         <activity
-<<<<<<< HEAD
-            android:name=".ui.child.main.ChildMainActivity"
-=======
             android:name=".ui.parent.main.ParentMainActivity"
->>>>>>> feature/parent-child-detail-ui
-            android:exported="true"
-            android:theme="@style/Theme.KidsApp">
-            <!--  develop -->
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-<<<<<<< HEAD
-=======
-        <!-- Login Activity  -->
+        <!-- Login Activity -->
         <activity
             android:name=".ui.auth.LoginActivity"
-            android:exported="false"
-            android:theme="@style/Theme.KidsApp" />
->>>>>>> feature/parent-child-detail-ui
+            android:exported="false" />
 
         <!-- Child Main Activity -->
         <activity
-            android:name=".ui.parent.main.ParentMainActivity"
-            android:exported="false"
-            android:theme="@style/Theme.KidsApp" />
+            android:name=".ui.child.main.ChildMainActivity"
+            android:exported="true" />
 
-<<<<<<< HEAD
-        <!-- Main Activity - Login -->
-        <activity
-            android:name=".ui.auth.LoginActivity"
-            android:exported="true"
-            android:theme="@style/Theme.KidsApp" />
-
-=======
->>>>>>> feature/parent-child-detail-ui
     </application>
 
 </manifest>

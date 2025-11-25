@@ -65,11 +65,6 @@
     <dimen name="elevation_small">4dp</dimen>
     <dimen name="elevation_medium">8dp</dimen>
     <dimen name="elevation_large">12dp</dimen>
-<<<<<<< HEAD
-    <dimen name="text_margin">16dp</dimen>
-=======
->>>>>>> feature/parent-child-detail-ui
-
     <dimen name="text_margin">16dp</dimen>
 
     <dimen name="progress_stroke_width">8dp</dimen>
