@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -15,9 +16,13 @@
         android:supportsRtl="true"
          >
 
-        <!-- Parent Main Activity -->
+        <!-- Parent Main Activity (Launcher) -->
         <activity
+<<<<<<< HEAD
             android:name=".ui.child.main.ChildMainActivity"
+=======
+            android:name=".ui.parent.main.ParentMainActivity"
+>>>>>>> feature/parent-child-detail-ui
             android:exported="true"
             android:theme="@style/Theme.KidsApp">
             <!--  develop -->
@@ -27,6 +32,14 @@
             </intent-filter>
         </activity>
 
+<<<<<<< HEAD
+=======
+        <!-- Login Activity  -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.KidsApp" />
+>>>>>>> feature/parent-child-detail-ui
 
         <!-- Child Main Activity -->
         <activity
@@ -34,12 +47,15 @@
             android:exported="false"
             android:theme="@style/Theme.KidsApp" />
 
+<<<<<<< HEAD
         <!-- Main Activity - Login -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.KidsApp" />
 
+=======
+>>>>>>> feature/parent-child-detail-ui
     </application>
 
 </manifest>

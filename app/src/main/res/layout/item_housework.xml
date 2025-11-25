@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item layout cho việc nhà - giống hình tham chiếu -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardHousework"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="2dp"
+    app:strokeColor="#E0E0E0">
+
+    <LinearLayout
+        android:id="@+id/item_housework_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:background="@android:color/white">
+
+        <!-- Checkbox tròn bên trái -->
+        <FrameLayout
+            android:id="@+id/containerCheckIcon"
+            android:layout_width="@dimen/spacing_32"
+            android:layout_height="@dimen/spacing_32"
+            android:background="@drawable/bg_checkbox_unchecked">
+
+            <ImageView
+                android:id="@+id/imgCheckIcon"
+                android:layout_width="@dimen/spacing_20"
+                android:layout_height="@dimen/spacing_20"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_checkmark_completed"
+                android:visibility="gone"
+                android:contentDescription="@string/housework" />
+
+        </FrameLayout>
+
+        <!-- Icon task bo góc bên cạnh checkbox -->
+        <FrameLayout
+            android:id="@+id/containerTaskIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:background="@drawable/bg_task_icon_unchecked">
+
+            <ImageView
+                android:id="@+id/imgHouseworkIcon"
+                android:layout_width="@dimen/spacing_28"
+                android:layout_height="@dimen/spacing_28"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_task"
+                android:contentDescription="@string/housework"
+                tools:src="@drawable/ic_task" />
+
+        </FrameLayout>
+
+        <!-- Text tiêu đề và trạng thái -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/spacing_20"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtHouseworkTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dọn đồ chơi"
+                android:textColor="#1A1A1A"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Dọn đồ chơi" />
+
+            <TextView
+                android:id="@+id/txtHouseworkStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Chưa làm"
+                android:textColor="#9E9E9E"
+                android:textSize="@dimen/text_size_small"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="1"
+                tools:text="Chưa làm" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

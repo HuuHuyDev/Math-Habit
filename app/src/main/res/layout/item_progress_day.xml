@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    Item layout cho mỗi cột trong biểu đồ tiến độ
+    Gồm: TextView %, Container bar với gradient và bubble, TextView ngày
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/spacing_8"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:minWidth="40dp">
+
+    <!-- TextView hiển thị phần trăm (75%) -->
+    <TextView
+        android:id="@+id/txtPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="75%"
+        android:textColor="#1A1A1A"
+        android:textSize="@dimen/text_size_small"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/spacing_4"
+        tools:text="75%" />
+
+    <!-- Container chứa thanh bar (nền trắng 100%, chiều cao cố định) -->
+    <FrameLayout
+        android:id="@+id/containerBar"
+        android:layout_width="40dp"
+        android:layout_height="100dp"
+        android:background="@drawable/bg_progress_background"
+        android:clipChildren="true"
+        android:clipToPadding="true"
+       >
+
+        <!-- Thanh bar gradient xanh (phần đã hoàn thành, tăng từ dưới lên) -->
+        <View
+            android:id="@+id/viewProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_progress_bar"
+            android:layout_gravity="bottom" />
+
+    </FrameLayout>
+
+    <!-- TextView hiển thị nhãn ngày (T2, T3, ...) -->
+    <TextView
+        android:id="@+id/txtDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:text="T2"
+        android:textColor="#626262"
+        android:textSize="@dimen/text_size_small"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        tools:text="T2" />
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền xanh nhạt cho việc nhà đã hoàn thành -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#E3F2FD" />
+    <corners android:radius="20dp" />
+</shape>
+

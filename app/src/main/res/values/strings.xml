@@ -108,6 +108,18 @@
     <string name="error">Có lỗi xảy ra</string>
     <string name="retry">Thử lại</string>
     <string name="no_data">Không có dữ liệu</string>
+    <string name="back">Quay lại</string>
+    <string name="notification">Thông báo</string>
+    <string name="child_avatar">Ảnh đại diện của bé</string>
+    <string name="coin">Đồng xu</string>
+    <string name="xp">Điểm kinh nghiệm</string>
+    <string name="tab_icon">Icon tab</string>
+    <string name="housework">Việc nhà</string>
+    <string name="exercise">Bài tập</string>
+    <string name="badge">Huy hiệu</string>
+    <string name="tab_housework">Việc nhà</string>
+    <string name="tab_exercise">Bài tập</string>
+    <string name="tab_badge">Huy hiệu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
