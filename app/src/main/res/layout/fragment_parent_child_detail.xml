@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_app_gradient"
+    tools:context=".ui.parent.child.detail.ParentChildDetailFragment">
+
+    <!-- Custom AppBar -->
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/view_child_detail_appbar" />
+
+    <!-- Content area -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16">
+
+            <!-- Header Bé -->
+            <include
+                android:id="@+id/header"
+                layout="@layout/view_child_header" />
+
+            <!-- Container cho 2 button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16"
+                android:orientation="vertical"
+                android:gravity="center">
+
+            </LinearLayout>
+
+            <!-- Biểu đồ tiến độ 7 ngày gần nhất -->
+            <include
+                android:id="@+id/progressChart"
+                layout="@layout/view_progress_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16" />
+
+            <!-- CardView trắng chứa TabLayout và ViewPager2 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16"
+                app:cardCornerRadius="@dimen/spacing_28"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <!-- Container cho TabLayout với background bo góc -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_tab_container"
+                        android:padding="@dimen/spacing_4">
+
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/tabLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            app:tabIndicatorHeight="0dp"
+                            app:tabPaddingStart="@dimen/spacing_2"
+                            app:tabPaddingEnd="@dimen/spacing_2"
+                            app:tabGravity="fill"
+                            app:tabMode="fixed"
+                            app:tabMinWidth="0dp"
+                            android:background="@android:color/transparent" />
+
+                    </FrameLayout>
+
+                    <!-- ViewPager2 chứa 3 Fragment tabs -->
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:minHeight="500dp"
+                        android:nestedScrollingEnabled="false" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+            <!-- Button Chỉnh mục tiêu tuần -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditWeeklyGoal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:text="Chỉnh mục tiêu tuần"
+                android:textSize="@dimen/text_size_medium"
+                android:textColor="#2563EB"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                android:background="@drawable/bg_button_white"
+                android:elevation="0dp"
+                app:backgroundTint="@null"
+                app:cornerRadius="16dp" />
+
+            <!-- Button Xem báo cáo chi tiết -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewDetailReport"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="Xem báo cáo chi tiết"
+                android:textSize="@dimen/text_size_medium"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                android:background="@drawable/bg_button_gradient_cyan"
+                android:elevation="0dp"
+                app:backgroundTint="@null"
+                app:cornerRadius="16dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

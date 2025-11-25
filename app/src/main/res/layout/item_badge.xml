@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Badge item - dùng chung cho cả BadgeTabFragment và ParentReportFragment -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_badge_item"
+    android:padding="@dimen/spacing_12">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Icon Container with background -->
+        <FrameLayout
+            android:id="@+id/iconBackground"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/bg_badge_unlocked">
+
+            <!-- Hỗ trợ cả ImageView (cho icon drawable) -->
+            <ImageView
+                android:id="@+id/imgBadgeIcon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_trophy"
+                android:contentDescription="Badge icon"
+                android:visibility="gone" />
+
+            <!-- Hỗ trợ TextView (cho emoji) -->
+            <TextView
+                android:id="@+id/txtBadgeEmoji"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="⭐"
+                android:textSize="@dimen/spacing_32"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <!-- Badge name -->
+        <TextView
+            android:id="@+id/txtBadgeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:text="Học giỏi"
+            android:textColor="#2D3748"
+            android:textSize="@dimen/text_size_medium"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Badge count (optional - chỉ hiện trong report) -->
+        <TextView
+            android:id="@+id/txtBadgeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_2"
+            android:text="x 5"
+            android:textColor="#6B7280"
+            android:textSize="@dimen/text_size_xsmall"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -66,16 +66,16 @@
     <dimen name="elevation_medium">8dp</dimen>
     <dimen name="elevation_large">12dp</dimen>
 
+
+ 
     <dimen name="text_margin">16dp</dimen>
 
 
-    <!-- Circular Progress -->
     <dimen name="progress_stroke_width">8dp</dimen>
     <dimen name="progress_text_size">16sp</dimen>
     <dimen name="progress_view_size">120dp</dimen>
     <dimen name="child_progress_size">60dp</dimen>
 
-    <!-- Animations -->
     <dimen name="anim_translate_y">16dp</dimen>
 
 </resources>

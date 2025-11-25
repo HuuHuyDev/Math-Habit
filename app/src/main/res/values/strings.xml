@@ -47,6 +47,15 @@
     <string name="child_action_store">Mua vật phẩm</string>
     <string name="child_action_achievement">Thành tựu</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
+    <string name="choose_mode">Chọn chế độ</string>
+    <string name="choose_mode_desc">Bạn muốn ôn tập trước hay bắt đầu làm bài?</string>
+    <string name="choose_mode_practice">Ôn tập</string>
+    <string name="choose_mode_start">Bắt đầu</string>
+    <string name="practice_hint_start">Hãy chọn đáp án mà bạn nghĩ là đúng nhé!</string>
+    <string name="practice_pet_correct">Giỏi lắm! Bạn làm đúng rồi!</string>
+    <string name="practice_pet_wrong">Đừng lo, mình sẽ giải thích giúp bạn.</string>
+    <string name="practice_complete">Hoàn thành</string>
+    <string name="practice_question_prompt">Hãy chọn đáp án đúng?</string>
 
     <!-- Task -->
     <string name="task_back">Quay lại</string>
@@ -56,16 +65,60 @@
     <string name="task_tab_exercise">Bài tập</string>
     <string name="task_tab_history">Lịch sử</string>
     <string name="task_start">Bắt đầu</string>
+    <string name="task_complete">bạn đã hoàn thành</string>
+
+    <!-- Exam -->
+    <string name="exam_title">Bài kiểm tra</string>
+    <string name="exam_question_progress">Câu hỏi</string>
+    <string name="exam_question_placeholder">Nội dung câu hỏi sẽ hiển thị tại đây</string>
+    <string name="exam_option_placeholder">Nội dung đáp án</string>
+    <string name="submit_exam">Nộp bài</string>
+    <string name="exam_result_title">Kết quả bài kiểm tra</string>
+    <string name="exam_result_score_title">Điểm số</string>
+    <string name="exam_result_correct">Đúng</string>
+    <string name="exam_result_wrong">Sai</string>
+    <string name="exam_result_total">Tổng</string>
+    <string name="exam_wrong_review_title">Những câu cần xem lại</string>
+    <string name="exam_time_up">Hết giờ! Hệ thống đã nộp bài giúp bạn.</string>
+    <string name="exam_all_correct">Tuyệt vời! Bạn đã trả lời đúng tất cả.</string>
+    <string name="percent_value">%1$d%%</string>
+    <string name="result_congratulations">Chúc mừng bé đã hoàn thành bài tập!</string>
+    <string name="result_well_done">Bé làm rất tốt đấy!</string>
+    <string name="result_rating_title">Điểm đánh giá</string>
+    <string name="result_rating_hint">Bé làm rất tốt! Cố lên để đạt 5 sao nhé!</string>
+    <string name="result_tip_title">Gợi ý cho bé</string>
+    <string name="result_tip_content">Bé làm rất tốt! Hãy tiếp tục luyện tập để giữ phom nhé! 💪</string>
+    <string name="result_review_lesson">Xem lại bài</string>
+    <string name="result_do_again">Làm lại bài</string>
+    <string name="result_go_home">Về trang chính</string>
+    <string name="result_correct_label">Câu đúng</string>
+    <string name="result_wrong_label">Câu sai</string>
+    <string name="result_total_label">Tổng số câu</string>
 
     <!-- Common -->
+    <string name="back">Quay lại</string>
     <string name="save">Lưu</string>
     <string name="cancel">Hủy</string>
     <string name="delete">Xóa</string>
     <string name="edit">Chỉnh sửa</string>
+    <string name="task_timer">Đồng hồ đếm ngược</string>
+    <string name="previous">Trước</string>
+    <string name="next">Tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="error">Có lỗi xảy ra</string>
     <string name="retry">Thử lại</string>
     <string name="no_data">Không có dữ liệu</string>
+    <string name="notification">Thông báo</string>
+    <string name="child_avatar">Ảnh đại diện của bé</string>
+    <string name="coin">Đồng xu</string>
+    <string name="xp">Điểm kinh nghiệm</string>
+    <string name="tab_icon">Icon tab</string>
+    <string name="housework">Việc nhà</string>
+    <string name="exercise">Bài tập</string>
+    <string name="badge">Huy hiệu</string>
+    <string name="tab_housework">Việc nhà</string>
+    <string name="tab_exercise">Bài tập</string>
+    <string name="tab_badge">Huy hiệu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

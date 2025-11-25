@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +49,13 @@ public class ParentHomeFragment extends Fragment {
         setupRecentRecycler();
         applyAnimations();
     }
+    private void setupClickListeners() {
+        binding.rvChildren.setOnClickListener(v -> {
+            // Navigate to forgot password fragment
+            Navigation.findNavController(v).navigate(R.id.action_register_to_login);
+        });
 
+    }
     private void setupHeader() {
         String userName = sharedPref.getUserName();
         if (userName == null || userName.isEmpty()) {
@@ -62,7 +70,41 @@ public class ParentHomeFragment extends Fragment {
         children.add(createChild("2", "Linh", 2, 480));
 
         childCardAdapter = new ChildCardAdapter(children, child -> {
-            // TODO: navigate to child detail screen
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putString("childId", child.getId());
+                bundle.putString("childName", child.getName());
+                bundle.putInt("childLevel", child.getLevel());
+                bundle.putInt("childXP", child.getTotalXP());
+
+                // Tìm NavController - thử nhiều cách
+                View view = getView();
+                if (view == null) {
+                    view = binding.getRoot();
+                }
+                
+                androidx.navigation.NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
+                
+            } catch (IllegalArgumentException e) {
+                // Nếu không tìm thấy NavController từ view, thử từ Activity
+                try {
+                    androidx.navigation.NavController navController = 
+                        Navigation.findNavController(requireActivity(), R.id.navHostFragment);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("childId", child.getId());
+                    bundle.putString("childName", child.getName());
+                    bundle.putInt("childLevel", child.getLevel());
+                    bundle.putInt("childXP", child.getTotalXP());
+                    navController.navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Toast.makeText(requireContext(), "Lỗi navigation: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
 
         RecyclerView rvChildren = binding.rvChildren;
@@ -70,6 +112,7 @@ public class ParentHomeFragment extends Fragment {
                 new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
         rvChildren.setAdapter(childCardAdapter);
     }
+
 
     private Child createChild(String id, String name, int level, int xp) {
         Child child = new Child();

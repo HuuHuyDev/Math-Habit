@@ -63,4 +63,16 @@
     <color name="xp_green">#10B981</color>
     <color name="coin_gold">#FBBF24</color>
     <color name="coin_orange">#F97316</color>
+
+    <!-- Result Screen Colors -->
+    <color name="result_gradient_start">#2D5FFF</color>
+    <color name="result_gradient_end">#5CF0FF</color>
+    <color name="celebration_orange">#FF6B35</color>
+    <color name="star_yellow">#FFD700</color>
+    <color name="star_gray">#D1D5DB</color>
+    <color name="stat_correct_bg">#D1FAE5</color>
+    <color name="stat_wrong_bg">#FEE2E2</color>
+    <color name="stat_total_bg">#DBEAFE</color>
+    <color name="rating_gradient_start">#E0F2FE</color>
+    <color name="rating_gradient_end">#F0F9FF</color>
 </resources>

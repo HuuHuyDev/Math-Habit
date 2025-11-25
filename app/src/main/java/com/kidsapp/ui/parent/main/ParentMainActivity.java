@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import com.kidsapp.R;
 import com.kidsapp.databinding.ActivityParentMainBinding;
 
@@ -71,18 +69,9 @@ public class ParentMainActivity extends AppCompatActivity {
             // Get NavController
             navController = Navigation.findNavController(this, R.id.navHostFragment);
             
-            // Configure AppBar
-            if (navController != null) {
-                AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_home,
-                    R.id.nav_tasks,
-                    R.id.nav_report,
-                    R.id.nav_children,
-                    R.id.nav_profile
-                ).build();
-                
-                NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            }
+            // KHÔNG setup ActionBar vì app đang dùng custom navigation
+            // và không có ActionBar/Toolbar
+            
         } catch (Exception e) {
             e.printStackTrace();
             // Nếu có lỗi, thử lại sau khi view đã được attach
@@ -238,5 +227,47 @@ public class ParentMainActivity extends AppCompatActivity {
             return navController.navigateUp() || super.onSupportNavigateUp();
         }
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            if (navController != null && navController.getCurrentDestination() != null) {
+                int currentDestId = navController.getCurrentDestination().getId();
+                
+                // Nếu đang ở detail fragment, pop back về home
+                if (currentDestId == R.id.parentChildDetailFragment) {
+                    if (navController.popBackStack()) {
+                        setActive(0); // Set home tab active
+                        return;
+                    }
+                }
+                // Nếu đang ở detail fragment, pop back về home
+                if (currentDestId == R.id.nav_report) {
+                    if (navController.popBackStack()) {
+                        setActive(5); // Set home tab active
+                        return;
+                    }
+                }
+                // Nếu đang ở home, thoát app
+                if (currentDestId == R.id.nav_home) {
+                    super.onBackPressed();
+                    return;
+                }
+                
+                // Các trường hợp khác, thử pop về home
+                if (!navController.popBackStack(R.id.nav_home, false)) {
+                    // Nếu không pop được, navigate về home
+                    navController.navigate(R.id.nav_home);
+                }
+                setActive(0);
+            } else {
+                super.onBackPressed();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Nếu có lỗi, gọi super để xử lý mặc định
+            super.onBackPressed();
+        }
     }
 }

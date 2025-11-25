@@ -9,11 +9,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentDetailTaskBinding;
+import com.kidsapp.ui.child.practice.PracticeFragment;
+import com.kidsapp.ui.child.quizz.ExamFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,12 @@ public class DetailTaskFragment extends Fragment {
     private DetailTaskAdapter stepAdapter;
 
     public interface OnStartTaskClickListener {
-        void onStartTask(@NonNull String taskId);
+        void onStartTask(@NonNull String taskId, @NonNull TaskMode mode);
+    }
+
+    public enum TaskMode {
+        PRACTICE,
+        START
     }
 
     private OnStartTaskClickListener startTaskClickListener;
@@ -140,17 +146,47 @@ public class DetailTaskFragment extends Fragment {
     }
 
     private void setupStartButton() {
-        binding.btnStartTask.setOnClickListener(v -> {
-            if (startTaskClickListener != null && taskId != null) {
-                startTaskClickListener.onStartTask(taskId);
-            } else {
-                Toast.makeText(requireContext(),
-                        "Bắt đầu làm bài: " + (taskId != null ? taskId : ""),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.btnStartTask.setOnClickListener(v -> showChooseModeDialog());
     }
 
+    private void showChooseModeDialog() {
+        ChooseModeBottomSheet bottomSheet = new ChooseModeBottomSheet();
+        bottomSheet.setModeListener(this::handleStartMode);
+        bottomSheet.show(getChildFragmentManager(), "ChooseModeBottomSheet");
+    }
+
+    private void handleStartMode(@NonNull TaskMode mode) {
+        if (mode == TaskMode.PRACTICE) {
+            openPracticeFragment();
+            return;
+        }
+        if (mode == TaskMode.START) {
+            openExamFragment();
+            return;
+        }
+
+        Toast.makeText(requireContext(), "Không xác định chế độ!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void openPracticeFragment() {
+        if (getActivity() == null) {
+            return;
+        }
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.childHomeHost, new PracticeFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    private void openExamFragment() {
+        if (getActivity() == null) return;
+
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.childHomeHost, new ExamFragment())
+                .addToBackStack(null)
+                .commit();
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

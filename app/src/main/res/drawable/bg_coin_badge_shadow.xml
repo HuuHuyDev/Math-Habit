@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shadow cho Coin Badge -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#40000000" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <!-- Badge layer -->
+    <item
+        android:bottom="2dp"
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="135"
+                android:startColor="#FFB800"
+                android:endColor="#FFA000" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</layer-list>
+

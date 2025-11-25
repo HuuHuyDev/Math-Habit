@@ -7,4 +7,3 @@
         android:endColor="@color/gradient_end" />
     <corners android:radius="@dimen/radius_button" />
 </shape>
-
