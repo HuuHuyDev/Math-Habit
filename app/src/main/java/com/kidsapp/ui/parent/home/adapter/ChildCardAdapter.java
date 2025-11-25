@@ -49,6 +49,8 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
         return children != null ? children.size() : 0;
     }
 
+
+
     static class ChildViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvChildName;
         private final TextView tvChildClass;

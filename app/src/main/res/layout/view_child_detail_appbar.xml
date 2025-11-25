@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/transparent"
+    android:paddingStart="@dimen/spacing_16"
+    android:paddingEnd="@dimen/spacing_16"
+    android:paddingTop="@dimen/spacing_16"
+    android:paddingBottom="@dimen/spacing_16"
+    android:gravity="center_vertical">
+
+    <!-- Icon Back (bên trái) -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_back_white"
+        android:contentDescription="@string/back"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+    <!-- Text Title (ở giữa) -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Chi tiết của Bé"
+        android:textColor="@android:color/white"
+        android:fontFamily="@font/inter_bold"
+        android:textSize="20sp"
+        android:gravity="center" />
+
+</RelativeLayout>
+

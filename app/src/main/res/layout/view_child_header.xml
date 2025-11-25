@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    Header component hiển thị thông tin của Bé
+    Bao gồm: Avatar, Badge Level, Tên bé, Thông tin lớp, Coin badge, XP badge
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white_card"
+    android:padding="16dp">
+
+    <!-- ========== PHẦN AVATAR BÊN TRÁI ========== -->
+    
+    <!-- Vòng ngoài gradient cam (viền avatar) -->
+    <View
+        android:id="@+id/viewAvatarBorder"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_avatar_orange"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Vòng trong màu trắng (nền avatar) -->
+    <View
+        android:id="@+id/viewAvatarWhite"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="@dimen/spacing_4"
+        android:layout_marginTop="@dimen/spacing_4"
+        android:background="@drawable/bg_avatar_white"
+        app:layout_constraintStart_toStartOf="@id/viewAvatarBorder"
+        app:layout_constraintTop_toTopOf="@id/viewAvatarBorder" />
+
+    <!-- ImageView hiển thị avatar/emoji bé -->
+    <ImageView
+        android:id="@+id/imgChildAvatar"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="@dimen/spacing_4"
+        android:layout_marginTop="@dimen/spacing_4"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_child_face"
+        android:contentDescription="@string/child_avatar"
+        app:layout_constraintStart_toStartOf="@id/viewAvatarWhite"
+        app:layout_constraintTop_toTopOf="@id/viewAvatarWhite" />
+
+    <!-- Badge Level "Lv 4" màu xanh, chồng lên dưới bên phải avatar -->
+    <TextView
+        android:id="@+id/txtLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_level_badge_shadow"
+        android:paddingStart="@dimen/spacing_8"
+        android:paddingEnd="@dimen/spacing_8"
+        android:paddingTop="@dimen/spacing_4"
+        android:paddingBottom="@dimen/spacing_4"
+        android:text="Lv 4"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_small"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:elevation="4dp"
+        app:layout_constraintStart_toStartOf="@id/viewAvatarBorder"
+        app:layout_constraintTop_toBottomOf="@id/viewAvatarBorder"
+        app:layout_constraintEnd_toEndOf="@id/viewAvatarBorder"
+        android:layout_marginTop="-8dp" />
+
+    <!-- ========== PHẦN THÔNG TIN BÊN PHẢI ========== -->
+    
+    <!-- Tên bé (Hồ Hữu Huy) -->
+    <TextView
+        android:id="@+id/txtChildName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="Hồ Hữu Huy"
+        android:textColor="#1A1A1A"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/viewAvatarBorder"
+        app:layout_constraintTop_toTopOf="@id/viewAvatarBorder"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Thông tin lớp và level (Lớp 1 • Lv 4) -->
+    <TextView
+        android:id="@+id/txtChildInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Lớp 1 • Lv 4"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="#626262"
+        android:textSize="14sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/viewAvatarBorder"
+        app:layout_constraintTop_toBottomOf="@id/txtChildName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ========== PHẦN BADGE COIN VÀ XP ========== -->
+    
+    <!-- Container cho 2 badge (Coin và XP) -->
+    <LinearLayout
+        android:id="@+id/containerBadges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/viewAvatarBorder"
+        app:layout_constraintTop_toBottomOf="@id/txtChildInfo"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Coin Badge (màu vàng) với shadow -->
+        <LinearLayout
+            android:id="@+id/badgeCoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_coin_badge_shadow"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+            android:elevation="4dp">
+
+            <!-- Icon đồng xu -->
+            <ImageView
+                android:id="@+id/imgCoinIcon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@string/coin"
+                android:src="@drawable/ic_coin"
+                tools:ignore="ContentDescription" />
+
+            <!-- Số coin -->
+            <TextView
+                android:id="@+id/txtCoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="1,234"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Khoảng cách giữa 2 badge -->
+        <View
+            android:layout_width="8dp"
+            android:layout_height="1dp" />
+
+        <!-- XP Badge (màu cam) với shadow -->
+        <LinearLayout
+            android:id="@+id/badgeXP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_xp_badge_shadow"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:elevation="4dp">
+
+            <!-- Icon ngôi sao -->
+            <ImageView
+                android:id="@+id/imgStarIcon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_star_white"
+                android:contentDescription="@string/xp"
+                tools:ignore="ContentDescription" />
+
+            <!-- Số XP -->
+            <TextView
+                android:id="@+id/txtXP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="1,234 XP"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

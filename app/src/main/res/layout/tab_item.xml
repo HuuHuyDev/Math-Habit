@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Custom tab item layout cho TabLayout - giống hình tham chiếu -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tab_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:background="@drawable/tab_unselected_bg">
+
+    <!-- Icon tab -->
+    <ImageView
+        android:id="@+id/imgTabIcon"
+        android:layout_width="@dimen/spacing_20"
+        android:layout_height="@dimen/spacing_20"
+        android:src="@drawable/ic_housework_gray"
+        android:contentDescription="@string/tab_icon" />
+
+    <!-- Text tab -->
+    <TextView
+        android:id="@+id/txtTabText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_4"
+        android:text="Việc nhà"
+        android:textColor="#4A4A4A"
+        android:textSize="@dimen/spacing_16"
+        android:fontFamily="@font/inter_medium" />
+
+</LinearLayout>
+

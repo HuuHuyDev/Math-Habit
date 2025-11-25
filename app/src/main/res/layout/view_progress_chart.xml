@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    Component hiển thị biểu đồ tiến độ 7 ngày gần nhất
+    Gồm: Card trắng, tiêu đề, và RecyclerView chứa 7 cột
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white_card"
+    android:padding="@dimen/spacing_20">
+
+    <!-- Tiêu đề "Tiến độ 7 ngày gần nhất" -->
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tiến độ 7 ngày gần nhất"
+        android:textColor="#1A1A1A"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- RecyclerView chứa 7 cột biểu đồ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_20"
+        android:clipToPadding="false"
+        android:paddingEnd="@dimen/spacing_8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_progress_day" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

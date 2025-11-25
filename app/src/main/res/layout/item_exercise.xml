@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item layout cho bài tập -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="0dp"
+    android:layout_marginBottom="@dimen/spacing_12"
+    app:cardBackgroundColor="#88F7F7F8"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#372196F3"
+    app:strokeWidth="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="80dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_16"
+        android:paddingVertical="@dimen/spacing_12">
+
+        <!-- Icon với background tròn -->
+        <FrameLayout
+            android:id="@+id/iconContainer"
+            android:layout_width="56dp"
+            android:layout_height="56dp">
+
+            <View
+                android:id="@+id/iconBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_exercise_icon" />
+
+            <ImageView
+                android:id="@+id/imgExerciseIcon"
+                android:layout_width="@dimen/spacing_28"
+                android:layout_height="@dimen/spacing_28"
+                android:layout_gravity="center"
+                android:contentDescription="@string/exercise"
+                android:src="@drawable/ic_task"
+                android:tint="@android:color/white"
+                tools:src="@drawable/ic_task" />
+
+        </FrameLayout>
+
+        <!-- Nội dung bài tập -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Tiêu đề bài tập -->
+            <TextView
+                android:id="@+id/txtExerciseTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:text="Cộng level 2"
+                android:textColor="#1F2937"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"
+                tools:text="Cộng level 2" />
+
+            <!-- Dòng hiển thị điểm và XP -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Số câu đúng -->
+                <TextView
+                    android:id="@+id/txtExerciseScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="5/5 đúng"
+                    android:textColor="#3B82F6"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
+                    tools:text="5/5 đúng" />
+
+                <!-- Separator -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" · "
+                    android:textColor="#9CA3AF"
+                    android:textSize="@dimen/text_size_small" />
+
+                <!-- Icon sao -->
+                <ImageView
+                    android:layout_width="@dimen/spacing_16"
+                    android:layout_height="@dimen/spacing_16"
+                    android:contentDescription="@string/exercise"
+                    android:src="@android:drawable/star_on"
+                    android:tint="#FF9933" />
+
+                <!-- XP -->
+                <TextView
+                    android:id="@+id/txtExerciseXP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="+25 XP"
+                    android:textColor="#FF9933"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
+                    tools:text="+25 XP" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

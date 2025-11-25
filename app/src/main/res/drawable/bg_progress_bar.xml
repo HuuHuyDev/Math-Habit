@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thanh bar gradient xanh cho biểu đồ tiến độ -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="90"
+        android:startColor="#6EE0FF"
+        android:endColor="#006CFF" />
+    <corners android:radius="40dp" />
+</shape>
+

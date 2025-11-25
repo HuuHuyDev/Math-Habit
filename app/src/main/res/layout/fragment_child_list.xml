@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_light"
     android:padding="@dimen/spacing_20"
-    tools:context=".ui.parent.child_manage.ChildListFragment">
+    tools:context=".ui.parent.child.manage.ChildListFragment">
 
     <TextView
         android:layout_width="wrap_content"

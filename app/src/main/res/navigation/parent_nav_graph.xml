@@ -9,30 +9,97 @@
         android:id="@+id/nav_home"
         android:name="com.kidsapp.ui.parent.home.ParentHomeFragment"
         android:label="@string/parent_home"
-        tools:layout="@layout/fragment_parent_home" />
+        tools:layout="@layout/fragment_parent_home" >
+        <action
+            android:id="@+id/action_nav_home_to_parentChildDetail"
+            app:destination="@id/parentChildDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_tasks"
         android:name="com.kidsapp.ui.parent.task_plan.WeeklyPlanFragment"
         android:label="@string/parent_tasks"
-        tools:layout="@layout/fragment_weekly_plan" />
+        tools:layout="@layout/fragment_weekly_plan">
+        
+        <argument
+            android:name="childId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="childName"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="childLevel"
+            app:argType="integer"
+            android:defaultValue="1" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_report"
         android:name="com.kidsapp.ui.parent.report.ParentReportFragment"
         android:label="@string/parent_report"
-        tools:layout="@layout/fragment_parent_report" />
+        tools:layout="@layout/fragment_parent_report">
+        
+        <argument
+            android:name="childId"
+            app:argType="string"
+            app:nullable="true" />
+        
+        <argument
+            android:name="childName"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_children"
-        android:name="com.kidsapp.ui.parent.child_manage.ChildListFragment"
+        android:name="com.kidsapp.ui.parent.child.manage.ChildListFragment"
         android:label="@string/parent_children"
-        tools:layout="@layout/fragment_child_list" />
+        tools:layout="@layout/fragment_child_list" >
+        <argument
+            android:name="childId"
+            app:argType="string" />
+        <argument
+            android:name="childName"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.kidsapp.ui.parent.profile.ParentProfileFragment"
         android:label="@string/parent_profile"
         tools:layout="@layout/fragment_profile_parent" />
+    <fragment
+        android:id="@+id/parentChildDetailFragment"
+        android:name="com.kidsapp.ui.parent.child.detail.ParentChildDetailFragment"
+        android:label="fragment_parent_child_detail"
+        tools:layout="@layout/fragment_parent_child_detail" >
+        <!-- Arguments cho fragment này -->
+        <argument
+            android:name="childId"
+            app:argType="string" />
+        <argument
+            android:name="childName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="childLevel"
+            app:argType="integer"
+            android:defaultValue="1" />
+        
+        <!-- Action để navigate đến báo cáo -->
+        <action
+            android:id="@+id/action_parentChildDetailFragment_to_nav_report"
+            app:destination="@id/nav_report"/>
+        
+        <!-- Action để navigate đến chỉnh mục tiêu tuần -->
+        <action
+            android:id="@+id/action_childDetail_to_weeklyGoal"
+            app:destination="@id/nav_tasks" />
+    </fragment>
 </navigation>
 
