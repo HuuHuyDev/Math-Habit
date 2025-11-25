@@ -57,50 +57,43 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@android:color/white">
 
-                <androidx.core.widget.NestedScrollView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fillViewport="false"
-                    android:maxHeight="600dp">
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
 
-                    <LinearLayout
+                    <!-- Container cho TabLayout với background bo góc -->
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="@dimen/spacing_16">
+                        android:background="@drawable/bg_tab_container"
+                        android:padding="@dimen/spacing_4">
 
-                        <!-- Container cho TabLayout với background bo góc -->
-                        <FrameLayout
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/tabLayout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_tab_container"
-                            android:padding="@dimen/spacing_4">
+                            android:layout_height="44dp"
+                            app:tabIndicatorHeight="0dp"
+                            app:tabPaddingStart="@dimen/spacing_2"
+                            app:tabPaddingEnd="@dimen/spacing_2"
+                            app:tabGravity="fill"
+                            app:tabMode="fixed"
+                            app:tabMinWidth="0dp"
+                            android:background="@android:color/transparent" />
 
-                            <com.google.android.material.tabs.TabLayout
-                                android:id="@+id/tabLayout"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                app:tabIndicatorHeight="0dp"
-                                app:tabPaddingStart="@dimen/spacing_2"
-                                app:tabPaddingEnd="@dimen/spacing_2"
-                                app:tabGravity="fill"
-                                app:tabMode="fixed"
-                                app:tabMinWidth="0dp"
-                                android:background="@android:color/transparent" />
+                    </FrameLayout>
 
-                        </FrameLayout>
+                    <!-- ViewPager2 chứa 3 Fragment tabs -->
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:minHeight="500dp"
+                        android:nestedScrollingEnabled="false" />
 
-                        <!-- ViewPager2 chứa 3 Fragment tabs -->
-                        <androidx.viewpager2.widget.ViewPager2
-                            android:id="@+id/viewPager"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_6"
-                            android:minHeight="500dp" />
-
-                    </LinearLayout>
-
-                </androidx.core.widget.NestedScrollView>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
             <!-- Button Chỉnh mục tiêu tuần -->

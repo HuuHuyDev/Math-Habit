@@ -39,6 +39,13 @@ public class BadgeAdapter extends RecyclerView.Adapter<BadgeAdapter.BadgeViewHol
         holder.txtName.setText(badge.getName());
         holder.imgIcon.setImageResource(badge.getIconRes());
         
+        // Hiển thị ImageView, ẩn TextView emoji và badge count
+        holder.imgIcon.setVisibility(View.VISIBLE);
+        holder.txtEmoji.setVisibility(View.GONE);
+        if (holder.txtCount != null) {
+            holder.txtCount.setVisibility(View.GONE);
+        }
+        
         // Đổi background và alpha dựa trên trạng thái unlock
         if (badge.isUnlocked()) {
             holder.iconBackground.setBackgroundResource(R.drawable.bg_badge_unlocked);
@@ -61,12 +68,16 @@ public class BadgeAdapter extends RecyclerView.Adapter<BadgeAdapter.BadgeViewHol
     static class BadgeViewHolder extends RecyclerView.ViewHolder {
         ImageView imgIcon;
         TextView txtName;
+        TextView txtEmoji;
+        TextView txtCount;
         View iconBackground;
 
         BadgeViewHolder(@NonNull View itemView) {
             super(itemView);
             imgIcon = itemView.findViewById(R.id.imgBadgeIcon);
             txtName = itemView.findViewById(R.id.txtBadgeName);
+            txtEmoji = itemView.findViewById(R.id.txtBadgeEmoji);
+            txtCount = itemView.findViewById(R.id.txtBadgeCount);
             iconBackground = itemView.findViewById(R.id.iconBackground);
         }
     }

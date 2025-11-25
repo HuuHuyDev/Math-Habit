@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Filter tabs: Tuần này - Tháng này - Tất cả -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/spacing_20"
+    android:layout_marginTop="@dimen/spacing_16"
+    android:layout_marginEnd="@dimen/spacing_20"
+    android:background="@drawable/bg_tabs_container"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_4">
+
+    <!-- Tab: Tuần này -->
+    <TextView
+        android:id="@+id/tabWeek"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_tab_active"
+        android:gravity="center"
+        android:text="Tuần này"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold" />
+
+    <!-- Tab: Tháng này -->
+    <TextView
+        android:id="@+id/tabMonth"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:text="Tháng này"
+        android:textColor="#6B7280"
+        android:textSize="@dimen/text_size_medium" />
+
+    <!-- Tab: Tất cả -->
+    <TextView
+        android:id="@+id/tabAll"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:text="Tất cả"
+        android:textColor="#6B7280"
+        android:textSize="@dimen/text_size_medium" />
+
+</LinearLayout>

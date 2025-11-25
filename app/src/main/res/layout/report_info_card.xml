@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Info cards container: Thói quen, Bài tập, Thời gian -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/spacing_20"
+    android:layout_marginTop="@dimen/spacing_16"
+    android:layout_marginEnd="@dimen/spacing_20"
+    android:orientation="horizontal">
+
+    <!-- Card: Thói quen -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_8"
+        android:layout_weight="1"
+        android:background="@drawable/bg_info_card"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <TextView
+            android:id="@+id/txtHabit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="24"
+            android:textColor="#1F2937"
+            android:textSize="@dimen/spacing_24"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:text="Thói quen"
+            android:textColor="#6B7280"
+            android:textSize="@dimen/text_size_xsmall" />
+
+    </LinearLayout>
+
+    <!-- Card: Bài tập -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_8"
+        android:layout_weight="1"
+        android:background="@drawable/bg_info_card"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <TextView
+            android:id="@+id/txtQuiz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="18"
+            android:textColor="#1F2937"
+            android:textSize="@dimen/spacing_24"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:text="Bài tập"
+            android:textColor="#6B7280"
+            android:textSize="@dimen/text_size_xsmall" />
+
+    </LinearLayout>
+
+    <!-- Card: Thời gian -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/bg_info_card"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3.2h"
+            android:textColor="#1F2937"
+            android:textSize="@dimen/spacing_24"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:text="Thời gian"
+            android:textColor="#6B7280"
+            android:textSize="@dimen/text_size_xsmall" />
+
+    </LinearLayout>
+
+</LinearLayout>

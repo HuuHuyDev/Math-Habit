@@ -1,22 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
-    android:padding="@dimen/spacing_20"
+    android:orientation="vertical"
+    android:background="@drawable/bg_app_gradient"
     tools:context=".ui.parent.report.ParentReportFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Báo cáo"
-        android:textSize="@dimen/text_size_title"
-        android:textColor="@color/text_primary"
-        android:fontFamily="@font/inter_bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <!-- Custom AppBar -->
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/view_parent_report_child_appbar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/spacing_20">
+
+            <!-- Child Selector -->
+            <include
+                android:id="@+id/childSelector"
+                layout="@layout/layout_report_child_selector" />
+
+            <!-- Filter Tabs -->
+            <include
+                android:id="@+id/filterTabs"
+                layout="@layout/report_tabs" />
+
+            <!-- Info Cards -->
+            <include
+                android:id="@+id/infoCards"
+                layout="@layout/report_info_card" />
+
+            <!-- Chart Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_20"
+                android:layout_marginTop="@dimen/spacing_16"
+                android:layout_marginEnd="@dimen/spacing_20"
+                android:background="@drawable/bg_chart_container"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Biểu đồ hoạt động"
+                    android:textColor="#1F2937"
+                    android:textSize="@dimen/text_size_large"
+                    android:textStyle="bold" />
+
+                <!-- Custom Chart View -->
+                <com.kidsapp.ui.parent.report.components.WeeklyChartView
+                    android:id="@+id/chartView"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="@dimen/spacing_16" />
+
+            </LinearLayout>
+
+            <!-- Achievements Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_20"
+                android:layout_marginTop="@dimen/spacing_20"
+                android:text="Thành tích"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_size_xxlarge"
+                android:textStyle="bold" />
+
+            <!-- Achievements Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerAchievements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_20"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:layout_marginEnd="@dimen/spacing_20"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
+                tools:itemCount="6"
+                tools:listitem="@layout/item_badge" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
 
