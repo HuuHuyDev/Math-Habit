@@ -38,6 +38,8 @@ public class ChildHomeFragment extends Fragment {
         bindTrainingStats();
         setupActionCards();
         binding.layoutLevel.setOnClickListener(v -> navigateToProgress());
+
+        // CLICK VÀO AVATAR / HEADER → ĐI TỚI MÀN TRANG BỊ
         binding.headerUser.setOnClickListener(v -> navigateToEquip());
         return binding.getRoot();
     }
@@ -47,6 +49,27 @@ public class ChildHomeFragment extends Fragment {
         binding.headerUser.setAvatar(R.drawable.ic_user_default);
         binding.headerUser.setNotificationClick(v ->
                 Toast.makeText(requireContext(), R.string.feature_coming_soon, Toast.LENGTH_SHORT).show());
+        // CLICK VÀO CHUÔNG → HIỆN / ẨN CARD THÔNG BÁO NHỎ
+        binding.headerUser.setNotificationClick(v -> {
+            if (binding.cardNotification.getVisibility() == View.VISIBLE) {
+                binding.cardNotification.setVisibility(View.GONE);
+            } else {
+                binding.cardNotification.setAlpha(0f);
+                binding.cardNotification.setScaleX(0.9f);
+                binding.cardNotification.setScaleY(0.9f);
+                binding.cardNotification.setVisibility(View.VISIBLE);
+
+                binding.cardNotification.animate()
+                        .alpha(1f)
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(200)
+                        .start();
+
+                binding.contentScroll.post(() ->
+                        binding.contentScroll.smoothScrollTo(0, 0));
+            }
+        });
     }
 
     private void bindTrainingStats() {

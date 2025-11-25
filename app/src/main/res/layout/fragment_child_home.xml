@@ -38,7 +38,237 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/spacing_32">
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- CARD THÔNG BÁO NHẮC BÀI -->
+            <LinearLayout
+                android:id="@+id/cardNotification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_20"
+                android:layout_marginEnd="@dimen/spacing_20"
+                android:layout_marginTop="@dimen/spacing_20"
+                android:orientation="vertical"
+                android:background="@drawable/bg_parent_card"
+                android:padding="@dimen/spacing_12"
+                android:visibility="gone">
+
+                <!-- HEADER TITLE -->
+                <TextView
+                    android:id="@+id/tvNotiTitle103"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_12"
+                    android:paddingEnd="@dimen/spacing_12"
+                    android:paddingTop="@dimen/spacing_8"
+                    android:paddingBottom="@dimen/spacing_8"
+                    android:text="Thông báo nhắc bài"
+                    android:textColor="@color/text_white"
+                    android:textSize="@dimen/text_size_medium"
+                    android:textStyle="bold" />
+
+                <!-- DANH SÁCH 4 THÔNG BÁO -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/spacing_8">
+
+                    <!-- ITEM 1 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_8"
+                        app:cardCornerRadius="@dimen/radius_card"
+                        app:cardElevation="@dimen/elevation_small"
+                        android:backgroundTint="@color/surface">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/spacing_12">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_notification"
+                                app:tint="@color/primary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="@dimen/spacing_12">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đã đến giờ làm Quiz 5 rồi đó!"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="@dimen/text_size_small"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="16 Tháng Tư • 16:00"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="@dimen/text_size_xsmall" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- ITEM 2 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_8"
+                        app:cardCornerRadius="@dimen/radius_card"
+                        app:cardElevation="@dimen/elevation_small"
+                        android:backgroundTint="@color/surface">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/spacing_12">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_notification"
+                                app:tint="@color/primary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="@dimen/spacing_12">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đã đến giờ làm Quiz 4 rồi đó!"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="@dimen/text_size_small"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hôm qua • 18:00"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="@dimen/text_size_xsmall" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- ITEM 3 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_8"
+                        app:cardCornerRadius="@dimen/radius_card"
+                        app:cardElevation="@dimen/elevation_small"
+                        android:backgroundTint="@color/surface">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/spacing_12">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_notification"
+                                app:tint="@color/primary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="@dimen/spacing_12">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đã đến giờ làm Toán Cộng!"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="@dimen/text_size_small"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hôm qua • 09:00"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="@dimen/text_size_xsmall" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- ITEM 4 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="@dimen/radius_card"
+                        app:cardElevation="@dimen/elevation_small"
+                        android:backgroundTint="@color/surface">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/spacing_12">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_notification"
+                                app:tint="@color/primary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="@dimen/spacing_12">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đã đến giờ quét nhà"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="@dimen/text_size_small"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="17 Tháng Tư • 16:00"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="@dimen/text_size_xsmall" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </LinearLayout>
+                <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardStats"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
