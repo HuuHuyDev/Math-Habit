@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.databinding.ViewChildActionListBinding;
+import com.kidsapp.ui.child.equip.equip;
+import com.kidsapp.ui.child.progress.ProgresssFragment;
 
 /**
  * Child Home Fragment
@@ -23,6 +25,7 @@ import com.kidsapp.databinding.ViewChildActionListBinding;
 public class ChildHomeFragment extends Fragment {
     private FragmentChildHomeBinding binding;
     private ViewChildActionListBinding actionListBinding;
+
 
     @Nullable
     @Override
@@ -34,6 +37,10 @@ public class ChildHomeFragment extends Fragment {
         setupHeader();
         bindTrainingStats();
         setupActionCards();
+        binding.layoutLevel.setOnClickListener(v -> navigateToProgress());
+
+        // CLICK VÀO AVATAR / HEADER → ĐI TỚI MÀN TRANG BỊ
+        binding.headerUser.setOnClickListener(v -> navigateToEquip());
         return binding.getRoot();
     }
 
@@ -42,6 +49,27 @@ public class ChildHomeFragment extends Fragment {
         binding.headerUser.setAvatar(R.drawable.ic_user_default);
         binding.headerUser.setNotificationClick(v ->
                 Toast.makeText(requireContext(), R.string.feature_coming_soon, Toast.LENGTH_SHORT).show());
+        // CLICK VÀO CHUÔNG → HIỆN / ẨN CARD THÔNG BÁO NHỎ
+        binding.headerUser.setNotificationClick(v -> {
+            if (binding.cardNotification.getVisibility() == View.VISIBLE) {
+                binding.cardNotification.setVisibility(View.GONE);
+            } else {
+                binding.cardNotification.setAlpha(0f);
+                binding.cardNotification.setScaleX(0.9f);
+                binding.cardNotification.setScaleY(0.9f);
+                binding.cardNotification.setVisibility(View.VISIBLE);
+
+                binding.cardNotification.animate()
+                        .alpha(1f)
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(200)
+                        .start();
+
+                binding.contentScroll.post(() ->
+                        binding.contentScroll.smoothScrollTo(0, 0));
+            }
+        });
     }
 
     private void bindTrainingStats() {
@@ -65,7 +93,6 @@ public class ChildHomeFragment extends Fragment {
                 R.drawable.ic_task,
                 getString(R.string.child_action_mission),
                 () -> navigateToTaskList());
-
         // Mua vật phẩm - chuyển đến ShopFragment
         configureAction(actionListBinding.actionStore.getRoot(),
                 R.drawable.bg_action_purple,
@@ -112,6 +139,25 @@ public class ChildHomeFragment extends Fragment {
                     .commit();
         }
     }
+    private void navigateToProgress() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new ProgresssFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    private void navigateToEquip() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new equip())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
 
     private void navigateToAchievement() {
         if (getActivity() != null) {
@@ -129,5 +175,6 @@ public class ChildHomeFragment extends Fragment {
         binding = null;
         actionListBinding = null;
     }
+
 }
 

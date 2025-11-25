@@ -17,6 +17,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.KidsApp">
 
+
         <!-- Parent Main Activity (Launcher) -->
         <activity
             android:name=".ui.parent.main.ParentMainActivity"
@@ -34,8 +35,10 @@
 
         <!-- Child Main Activity -->
         <activity
+
             android:name=".ui.child.main.ChildMainActivity"
             android:exported="true" />
+
 
     </application>
 

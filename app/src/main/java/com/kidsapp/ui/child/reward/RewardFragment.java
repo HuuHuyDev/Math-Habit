@@ -23,6 +23,16 @@ public class RewardFragment extends Fragment {
         binding = FragmentRewardBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        binding.btnBackAchievement.setOnClickListener(v -> {
+            requireActivity()
+                    .getSupportFragmentManager()
+                    .popBackStack();
+        });
+    }
 
     @Override
     public void onDestroyView() {

@@ -65,6 +65,9 @@ dependencies {
     // Room Database (optional for local storage)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation(libs.legacy.support.v4)
+    implementation(libs.navigation.runtime)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     
     // Glide for image loading
