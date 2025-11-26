@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BottomSheet Confirm Delete - Xác nhận xóa -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="@dimen/spacing_20">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_16"
+        android:background="@drawable/bg_bottomsheet_handle" />
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/status_error" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:fontFamily="@font/inter_bold"
+        android:text="Xóa nhiệm vụ?"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:text="Bạn có chắc muốn xóa nhiệm vụ này?\nHành động này không thể hoàn tác."
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_24"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Hủy"
+            android:textColor="@color/text_secondary"
+            app:cornerRadius="@dimen/radius_medium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDelete"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:backgroundTint="@color/status_error"
+            android:fontFamily="@font/inter_bold"
+            android:text="Xóa"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/radius_medium" />
+
+    </LinearLayout>
+
+</LinearLayout>
