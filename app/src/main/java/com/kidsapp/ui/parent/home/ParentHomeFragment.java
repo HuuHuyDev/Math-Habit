@@ -12,13 +12,18 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
+import com.kidsapp.data.FakeNotificationRepository;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.ActivityLog;
 import com.kidsapp.data.model.Child;
+import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentParentHomeBinding;
 import com.kidsapp.ui.parent.home.adapter.ChildCardAdapter;
+import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
 import com.kidsapp.ui.parent.home.adapter.RecentActivityAdapter;
+import com.kidsapp.ui.parent.home.model.Notification;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +67,9 @@ public class ParentHomeFragment extends Fragment {
             userName = "Phụ huynh";
         }
         binding.headerParent.tvHelloSubtitle.setText(getString(R.string.hello_parent, userName));
+        
+        // Click vào bell icon để hiện thông báo
+        binding.headerParent.flBell.setOnClickListener(v -> showNotificationsBottomSheet());
     }
 
     private void setupChildrenRecycler() {
@@ -143,6 +151,46 @@ public class ParentHomeFragment extends Fragment {
                 .alpha(1f)
                 .setDuration(getResources().getInteger(com.kidsapp.R.integer.anim_duration_medium))
                 .start();
+    }
+
+    /**
+     * Hiển thị BottomSheet danh sách thông báo
+     */
+    private void showNotificationsBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
+                getLayoutInflater());
+
+        // Load dữ liệu demo
+        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
+
+        // Setup adapter
+        NotificationAdapter adapter = new NotificationAdapter();
+        adapter.setNotifications(notifications);
+        adapter.setOnNotificationClickListener((notification, position) -> {
+            Toast.makeText(requireContext(),
+                    notification.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+
+        bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
+
+        // Hiển thị empty state nếu không có thông báo
+        if (notifications.isEmpty()) {
+            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+            bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+        } else {
+            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
+            bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
+        }
+
+        // Đánh dấu tất cả đã đọc
+        bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
+            adapter.markAllAsRead();
+            Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
+        });
+
+        bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
+        bottomSheetDialog.show();
     }
 
     @Override

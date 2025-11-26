@@ -249,6 +249,14 @@ public class ParentMainActivity extends AppCompatActivity {
                         return;
                     }
                 }
+
+                if (currentDestId == R.id.nav_tasks) {
+                    if (navController.popBackStack()) {
+                        setActive(5); // Set home tab active
+                        return;
+                    }
+                }
+
                 // Nếu đang ở home, thoát app
                 if (currentDestId == R.id.nav_home) {
                     super.onBackPressed();

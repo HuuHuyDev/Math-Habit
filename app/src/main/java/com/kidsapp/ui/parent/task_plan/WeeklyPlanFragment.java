@@ -75,6 +75,7 @@ public class WeeklyPlanFragment extends Fragment {
         setupTasksRecycler();
         setupListeners();
         loadData();
+        setupAppBar();
     }
 
     /**
@@ -106,7 +107,12 @@ public class WeeklyPlanFragment extends Fragment {
             childLevel = selectedChild.getLevel();
         }
     }
-
+    private void setupAppBar() {
+        // Sự kiện click nút Back - gọi onBackPressed của Activity để xử lý logic
+        binding.appbar.btnBack.setOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
+    }
     /**
      * Setup Child Selector - Hiển thị thông tin bé
      */

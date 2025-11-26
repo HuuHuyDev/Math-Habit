@@ -121,4 +121,11 @@
     <string name="tab_badge">Huy hiệu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Language Array -->
+    <string-array name="languages">
+        <item>Tiếng Việt</item>
+        <item>English</item>
+        <item>中文</item>
+    </string-array>
 </resources>

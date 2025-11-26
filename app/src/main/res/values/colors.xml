@@ -75,4 +75,7 @@
     <color name="stat_total_bg">#DBEAFE</color>
     <color name="rating_gradient_start">#E0F2FE</color>
     <color name="rating_gradient_end">#F0F9FF</color>
+
+    <!-- Notification Colors -->
+    <color name="notification_unread_bg">#EFF6FF</color>
 </resources>

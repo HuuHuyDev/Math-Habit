@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item Notification - Thông báo -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutNotification"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_16">
+
+    <!-- Avatar bé -->
+    <TextView
+        android:id="@+id/txtChildAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_avatar_gradient"
+        android:gravity="center"
+        android:text="👦"
+        android:textSize="24sp"
+        tools:text="👦" />
+
+    <!-- Nội dung thông báo -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_12"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtNotificationMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:text="Huy đã hoàn thành &quot;Đánh răng sáng&quot;"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            tools:text="Huy đã hoàn thành &quot;Đánh răng sáng&quot;" />
+
+        <TextView
+            android:id="@+id/txtNotificationTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:fontFamily="@font/inter_regular"
+            android:text="5 phút trước"
+            android:textColor="@color/text_tertiary"
+            android:textSize="12sp"
+            tools:text="5 phút trước" />
+
+    </LinearLayout>
+
+    <!-- Icon task type -->
+    <ImageView
+        android:id="@+id/imgTaskIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/spacing_8"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_book"
+        app:tint="@color/status_success"
+        tools:src="@drawable/ic_book" />
+
+    <!-- Unread indicator -->
+    <View
+        android:id="@+id/viewUnreadIndicator"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/spacing_8"
+        android:background="@drawable/bg_unread_indicator"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+</LinearLayout>

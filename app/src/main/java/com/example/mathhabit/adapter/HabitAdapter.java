@@ -62,8 +62,8 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
 
         public HabitViewHolder(@NonNull View itemView) {
             super(itemView);
-            cbDone = itemView.findViewById(R.id.cbHabit103);
-            tvName = itemView.findViewById(R.id.tvHabitName103);
+//            cbDone = itemView.findViewById(R.id.cb);
+//            tvName = itemView.findViewById(R.id.tvHabitName103);
         }
     }
 }
