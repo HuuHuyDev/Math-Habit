@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Fragment Profile Parent - Hồ sơ phụ huynh -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_gradient">
+    android:background="@drawable/bg_app_gradient"
+    android:orientation="vertical">
 
-    <!-- ScrollView chứa toàn bộ nội dung -->
+    <!-- Header cố định -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_16">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_bold"
+            android:text="Hồ sơ phụ huynh"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_settings"
+            app:tint="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- ScrollView chứa nội dung -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,34 +47,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/spacing_24">
-
-            <!-- Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_16">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/inter_bold"
-                    android:text="Hồ sơ phụ huynh"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp" />
-
-                <ImageButton
-                    android:id="@+id/btnSettings"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_settings"
-                    app:tint="@android:color/white" />
-
-            </LinearLayout>
 
             <!-- Avatar Card -->
             <LinearLayout
@@ -65,14 +66,14 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp">
 
-                    <TextView
+                    <ImageView
                         android:id="@+id/imgAvatar"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:background="@drawable/bg_avatar_gradient"
-                        android:gravity="center"
-                        android:text="👩‍🦳"
-                        android:textSize="50sp" />
+                        android:contentDescription="@string/app_name"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_user_default" />
 
                     <ImageButton
                         android:id="@+id/btnCamera"
@@ -555,4 +556,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

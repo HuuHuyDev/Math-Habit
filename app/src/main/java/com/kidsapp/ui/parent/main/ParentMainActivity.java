@@ -29,12 +29,25 @@ public class ParentMainActivity extends AppCompatActivity {
     private ImageView[] icons;
     private TextView[] labels;
     private int currentSelectedIndex = 0;
+    private static final String KEY_SELECTED_TAB = "selected_tab_index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityParentMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Restore selected tab nếu có
+        if (savedInstanceState != null) {
+            currentSelectedIndex = savedInstanceState.getInt(KEY_SELECTED_TAB, 0);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Lưu tab đang được chọn
+        outState.putInt(KEY_SELECTED_TAB, currentSelectedIndex);
     }
 
     @Override
@@ -137,8 +150,8 @@ public class ParentMainActivity extends AppCompatActivity {
                 });
             }
 
-            // Select home tab by default
-            setActive(0);
+            // Select tab (restore từ saved state hoặc mặc định là home)
+            setActive(currentSelectedIndex);
         } catch (Exception e) {
             e.printStackTrace();
         }

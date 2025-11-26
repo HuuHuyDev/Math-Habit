@@ -128,4 +128,11 @@
         <item>English</item>
         <item>中文</item>
     </string-array>
+
+    <!-- Gender Array -->
+    <string-array name="genders">
+        <item>Nam</item>
+        <item>Nữ</item>
+        <item>Khác</item>
+    </string-array>
 </resources>

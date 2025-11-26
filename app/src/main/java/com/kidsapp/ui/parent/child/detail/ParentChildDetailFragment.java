@@ -36,6 +36,8 @@ public class ParentChildDetailFragment extends Fragment {
     private String childId;
     private String childName;
     private int childLevel;
+    private String actualPassword = ""; // Lưu password thật
+    private boolean isPasswordVisible = false; // Trạng thái hiển thị password
 
     public ParentChildDetailFragment() {
         // Required empty public constructor
@@ -68,6 +70,7 @@ public class ParentChildDetailFragment extends Fragment {
         setupAppBar();
         setupButtons(); // Thêm setup buttons
         setupHeader();
+        setupPasswordToggle(); // Thêm toggle password
         setupProgressChart();
         setupTabLayout();
     }
@@ -143,16 +146,29 @@ public class ParentChildDetailFragment extends Fragment {
         int coin = 1234; // Default
         int xp = 1234; // Default
         String avatarUrl = null; // URL avatar từ server (nếu có)
+        String username = ""; // Username
+        String password = ""; // Password
 
         if (arguments != null) {
             // Lấy dữ liệu từ Bundle
             childName = arguments.getString("childName", childName);
             childLevel = arguments.getInt("childLevel", childLevel);
             xp = arguments.getInt("childXP", xp);
+            username = arguments.getString("username", "");
+            password = arguments.getString("password", "");
             // Tính lớp từ level (hoặc có thể truyền riêng)
             childClass = "Lớp " + childLevel;
             // TODO: Lấy coin từ arguments nếu có
             // coin = arguments.getInt("childCoin", coin);
+        }
+
+        // Hiển thị username và password
+        if (!username.isEmpty()) {
+            binding.txtUsername.setText(username);
+        }
+        if (!password.isEmpty()) {
+            actualPassword = password; // Lưu password thật
+            binding.txtPassword.setText("••••••••"); // Hiển thị dạng ẩn ban đầu
         }
 
         // Bind dữ liệu vào các view trong header
@@ -178,6 +194,25 @@ public class ParentChildDetailFragment extends Fragment {
             // Nếu không có URL, dùng icon mặc định
             binding.header.imgChildAvatar.setImageResource(R.drawable.ic_child_face);
         }
+    }
+
+    /**
+     * Thiết lập toggle hiển thị/ẩn password
+     */
+    private void setupPasswordToggle() {
+        binding.btnTogglePassword.setOnClickListener(v -> {
+            isPasswordVisible = !isPasswordVisible;
+            
+            if (isPasswordVisible) {
+                // Hiển thị password thật
+                binding.txtPassword.setText(actualPassword);
+                binding.btnTogglePassword.setImageResource(R.drawable.ic_eye_off);
+            } else {
+                // Ẩn password
+                binding.txtPassword.setText("••••••••");
+                binding.btnTogglePassword.setImageResource(R.drawable.ic_eye);
+            }
+        });
     }
 
     /**

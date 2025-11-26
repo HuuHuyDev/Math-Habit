@@ -43,11 +43,11 @@ public class LoginFragment extends Fragment {
     private void setupClickListeners() {
         // Login button
         binding.btnLogin.setOnClickListener(v -> {
-            String email = binding.etEmail.getText().toString().trim();
+            String username = binding.etEmail.getText().toString().trim();
             String password = binding.etPassword.getText().toString().trim();
             
-            if (validateInput(email, password)) {
-                authViewModel.login(email, password);
+            if (validateInput(username, password)) {
+                handleDemoLogin(username, password);
             }
         });
         
@@ -114,6 +114,83 @@ public class LoginFragment extends Fragment {
             binding.btnLogin.setEnabled(!isLoading);
             // TODO: Show loading indicator
         });
+    }
+
+    /**
+     * Xử lý đăng nhập demo với tài khoản hardcoded
+     */
+    private void handleDemoLogin(String username, String password) {
+        // Tài khoản Parent demo
+        if (username.equals("parent") && password.equals("123456")) {
+            loginAsParent();
+            return;
+        }
+        
+        // Tài khoản Children demo
+        if (username.equals("minhlinhkid") && password.equals("123456")) {
+            loginAsChild("1", "Nguyễn Minh Linh");
+            return;
+        }
+        
+        if (username.equals("baoankid") && password.equals("123456")) {
+            loginAsChild("2", "Trần Bảo An");
+            return;
+        }
+        
+        if (username.equals("minhchaukid") && password.equals("123456")) {
+            loginAsChild("3", "Lê Minh Châu");
+            return;
+        }
+        
+        // Sai tài khoản
+        Toast.makeText(requireContext(), 
+                "Tài khoản hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Đăng nhập với vai trò Parent
+     */
+    private void loginAsParent() {
+        // Lưu thông tin đăng nhập
+        com.kidsapp.data.local.SharedPref sharedPref = 
+                new com.kidsapp.data.local.SharedPref(requireContext());
+        sharedPref.setLoggedIn(true);
+//        sharedPref.setUserRole("parent");
+//        sharedPref.setUserName("Nguyễn Phương");
+        
+        Toast.makeText(requireContext(), "Đăng nhập thành công - Parent", Toast.LENGTH_SHORT).show();
+        
+        // Navigate to ParentMainActivity
+        android.content.Intent intent = new android.content.Intent(
+                requireContext(), com.kidsapp.ui.parent.main.ParentMainActivity.class);
+        intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | 
+                android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
+    /**
+     * Đăng nhập với vai trò Child
+     */
+    private void loginAsChild(String childId, String childName) {
+        // Lưu thông tin đăng nhập
+        com.kidsapp.data.local.SharedPref sharedPref = 
+                new com.kidsapp.data.local.SharedPref(requireContext());
+        sharedPref.setLoggedIn(true);
+//        sharedPref.setUserRole("child");
+//        sharedPref.setUserName(childName);
+//        sharedPref.setUserId(childId);
+        
+        Toast.makeText(requireContext(), 
+                "Đăng nhập thành công - " + childName, Toast.LENGTH_SHORT).show();
+        
+        // Navigate to ChildMainActivity
+        android.content.Intent intent = new android.content.Intent(
+                requireContext(), com.kidsapp.ui.child.main.ChildMainActivity.class);
+        intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | 
+                android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
     }
 
     @Override

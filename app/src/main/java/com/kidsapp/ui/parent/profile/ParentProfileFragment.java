@@ -74,9 +74,14 @@ public class ParentProfileFragment extends Fragment {
                         if (extras != null) {
                             Bitmap imageBitmap = (Bitmap) extras.get("data");
                             if (imageBitmap != null) {
-                                // TODO: Upload ảnh lên server và cập nhật avatar
+                                // Hiển thị ảnh lên ImageView với bo tròn
+                                com.bumptech.glide.Glide.with(requireContext())
+                                        .load(imageBitmap)
+                                        .circleCrop()
+                                        .into(binding.imgAvatar);
+                                binding.imgAvatar.setBackground(null); // Xóa gradient background
                                 Toast.makeText(requireContext(), "Đã chụp ảnh thành công", Toast.LENGTH_SHORT).show();
-                                // Tạm thời giữ emoji, trong thực tế sẽ set imageBitmap
+                                // TODO: Upload ảnh lên server
                             }
                         }
                     }
@@ -92,16 +97,14 @@ public class ParentProfileFragment extends Fragment {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
                         Uri imageUri = result.getData().getData();
                         if (imageUri != null) {
-                            try {
-                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                                        requireContext().getContentResolver(), imageUri);
-                                // TODO: Upload ảnh lên server và cập nhật avatar
-                                Toast.makeText(requireContext(), "Đã chọn ảnh thành công", Toast.LENGTH_SHORT).show();
-                                // Tạm thời giữ emoji, trong thực tế sẽ set bitmap
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Toast.makeText(requireContext(), "Lỗi khi đọc ảnh", Toast.LENGTH_SHORT).show();
-                            }
+                            // Hiển thị ảnh lên ImageView với bo tròn
+                            com.bumptech.glide.Glide.with(requireContext())
+                                    .load(imageUri)
+                                    .circleCrop()
+                                    .into(binding.imgAvatar);
+                            binding.imgAvatar.setBackground(null); // Xóa gradient background
+                            Toast.makeText(requireContext(), "Đã chọn ảnh thành công", Toast.LENGTH_SHORT).show();
+                            // TODO: Upload ảnh lên server
                         }
                     }
                     if (photoBottomSheet != null) {

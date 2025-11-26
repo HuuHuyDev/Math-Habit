@@ -78,4 +78,12 @@
 
     <!-- Notification Colors -->
     <color name="notification_unread_bg">#EFF6FF</color>
+
+    <!-- Child Manage Colors -->
+    <color name="blue_start">#2D8CFF</color>
+    <color name="blue_end">#6BCBFF</color>
+    <color name="pink_start">#FF4BB5</color>
+    <color name="pink_end">#FF7AD7</color>
+    <color name="delete_red">#FF4E4E</color>
+    <color name="delete_red_light">#FFE5E5</color>
 </resources>

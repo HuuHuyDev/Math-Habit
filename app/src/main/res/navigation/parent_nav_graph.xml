@@ -56,16 +56,12 @@
 
     <fragment
         android:id="@+id/nav_children"
-        android:name="com.kidsapp.ui.parent.child.manage.ChildListFragment"
+        android:name="com.kidsapp.ui.parent.child_manage.ChildManageFragment"
         android:label="@string/parent_children"
-        tools:layout="@layout/fragment_child_list" >
-        <argument
-            android:name="childId"
-            app:argType="string" />
-        <argument
-            android:name="childName"
-            app:argType="string"
-            app:nullable="true" />
+        tools:layout="@layout/fragment_child_manage" >
+        <action
+            android:id="@+id/action_nav_children_to_childDetail"
+            app:destination="@id/parentChildDetailFragment" />
     </fragment>
 
     <fragment
