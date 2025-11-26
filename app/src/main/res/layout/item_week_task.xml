@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item Week Task - Nhiệm vụ trong tuần -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardTask"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_12"
+    android:background="@drawable/bg_task_habit"
+    android:elevation="2dp"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_16">
+
+    <!-- Task Icon -->
+    <FrameLayout
+        android:id="@+id/frameTaskIcon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_task_icon_habit">
+
+        <ImageView
+            android:id="@+id/imgTaskIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_book"
+            app:tint="@android:color/white"
+            tools:src="@drawable/ic_book" />
+
+    </FrameLayout>
+
+    <!-- Task Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_12"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtTaskTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:text="Đọc sách 15 phút"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            tools:text="Đọc sách 15 phút" />
+
+        <TextView
+            android:id="@+id/txtTaskLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:fontFamily="@font/inter_medium"
+            android:text="Độ khó: Level 2"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:text="Độ khó: Level 2"
+            tools:visibility="visible" />
+
+        <!-- Rewards -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_coin"
+                app:tint="#FFA726" />
+
+            <TextView
+                android:id="@+id/txtTaskCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="+10"
+                android:textColor="#FFA726"
+                android:textSize="14sp"
+                tools:text="+10" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="@dimen/spacing_12"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_xp"
+                app:tint="#FF6F00" />
+
+            <TextView
+                android:id="@+id/txtTaskXp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="+15 XP"
+                android:textColor="#FF6F00"
+                android:textSize="14sp"
+                tools:text="+15 XP" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_8"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/btnEditTask"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_action_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/primary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/btnDeleteTask"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:background="@drawable/bg_action_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/status_error" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

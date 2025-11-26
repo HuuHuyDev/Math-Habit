@@ -3,26 +3,13 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-
-    <!-- Vòng tròn lớn -->
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#000"
-        android:strokeWidth="2"
-        android:pathData="M12,3 A9,9 0 1,1 3,12 9,9 0 0,1 12,3z"/>
-
-    <!-- Vòng tròn nhỏ -->
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10s10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.42,0 -8,-3.58 -8,-8s3.58,-8 8,-8s8,3.58 8,8S16.42,20 12,20z"/>
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#000"
-        android:strokeWidth="2"
-        android:pathData="M12,7 A5,5 0 1,1 7,12 5,5 0 0,1 12,7z"/>
-
-    <!-- Vòng tròn tâm -->
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,6c-3.31,0 -6,2.69 -6,6s2.69,6 6,6s6,-2.69 6,-6S15.31,6 12,6zM12,16c-2.21,0 -4,-1.79 -4,-4s1.79,-4 4,-4s4,1.79 4,4S14.21,16 12,16z"/>
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#000"
-        android:strokeWidth="2"
-        android:pathData="M12,10 A2,2 0 1,1 11.99,10z"/>
-
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,10m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
 </vector>

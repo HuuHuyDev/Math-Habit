@@ -61,4 +61,10 @@
         <item name="android:windowExitAnimation">@anim/bottom_sheet_slide_down</item>
     </style>
 
+    <!-- Circle Image View Style -->
+    <style name="CircleImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
+

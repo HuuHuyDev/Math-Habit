@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item Week Day - Ngày trong tuần -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardWeekDay"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/spacing_12"
+    android:background="@drawable/bg_card_white_pure"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="4dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_12">
+
+        <TextView
+            android:id="@+id/txtDayLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:text="T2"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_large"
+            tools:text="T2" />
+
+        <TextView
+            android:id="@+id/txtProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:fontFamily="@font/inter_regular"
+            android:text="67%"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/spacing_16"
+            tools:text="67%" />
+
+        <TextView
+            android:id="@+id/txtTaskCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:fontFamily="@font/inter_medium"
+            android:text="3 task"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_size_medium"
+            tools:text="3 task" />
+
+    </LinearLayout>
+
+</LinearLayout>

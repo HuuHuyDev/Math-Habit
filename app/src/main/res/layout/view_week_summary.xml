@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Week Summary - Tổng quan tuần -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card_white_pure"
+    android:elevation="4dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_20">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:text="Tổng quan tuần"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_large" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Progress Circle -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressWeek"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:indicatorColor="#1976D2"
+                    app:indicatorSize="100dp"
+                    app:trackColor="@color/progress_bg"
+                    app:trackThickness="8dp"
+                    tools:progress="67" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtWeekProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:text="67%"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_title"
+                        tools:text="67%" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="Hoàn thành"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="@dimen/text_size_xsmall" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <!-- Stats -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_20"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size_medium"
+                        android:layout_height="@dimen/icon_size_medium"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_task"
+                        app:tint="@color/primary" />
+
+                    <TextView
+                        android:id="@+id/txtTotalTasks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_8"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="15 nhiệm vụ"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_medium"
+                        tools:text="15 nhiệm vụ" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size_medium"
+                        android:layout_height="@dimen/icon_size_medium"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_habit"
+                        app:tint="@color/status_success" />
+
+                    <TextView
+                        android:id="@+id/txtHabitCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_8"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="8 thói quen"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_small"
+                        tools:text="8 thói quen" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size_medium"
+                        android:layout_height="@dimen/icon_size_medium"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_quiz"
+                        app:tint="@color/status_warning" />
+
+                    <TextView
+                        android:id="@+id/txtQuizCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_8"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="7 bài tập"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_small"
+                        tools:text="7 bài tập" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Suggestion -->
+        <TextView
+            android:id="@+id/txtSuggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16"
+            android:background="@drawable/bg_suggestion"
+            android:fontFamily="@font/inter_medium"
+            android:padding="@dimen/spacing_12"
+            android:text="💪 Bạn đang duy trì rất tốt!"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/text_size_small"
+            tools:text="💪 Bạn đang duy trì rất tốt!" />
+
+    </LinearLayout>
+
+</LinearLayout>

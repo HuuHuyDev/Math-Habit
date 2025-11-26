@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BottomSheet Confirm Save - Xác nhận lưu kế hoạch tuần -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="@dimen/spacing_20">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_16"
+        android:background="@drawable/bg_bottomsheet_handle" />
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_save"
+        app:tint="@color/primary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:fontFamily="@font/inter_bold"
+        android:text="Lưu kế hoạch tuần?"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:text="Kế hoạch tuần sẽ được lưu và áp dụng\ncho bé trong tuần này."
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_24"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Hủy"
+            android:textColor="@color/text_secondary"
+            app:cornerRadius="@dimen/radius_medium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:backgroundTint="#2D5FFF"
+            android:fontFamily="@font/inter_bold"
+            android:text="Lưu"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/radius_medium" />
+
+    </LinearLayout>
+
+</LinearLayout>

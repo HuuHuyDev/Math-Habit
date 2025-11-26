@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BottomSheet Add Task - Thêm nhiệm vụ mới -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="@dimen/spacing_20">
+
+    <!-- Handle Bar -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_16"
+        android:background="@drawable/bg_bottomsheet_handle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:text="Thêm nhiệm vụ mới"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_title" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:layout_marginBottom="@dimen/spacing_16" />
+
+    <!-- Task Type -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_semibold"
+        android:text="Loại nhiệm vụ"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_medium" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupTaskType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_8"
+        app:checkedChip="@id/chipHabit"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipHabit"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thói quen"
+            app:chipIcon="@drawable/ic_habit" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipQuiz"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bài tập"
+            app:chipIcon="@drawable/ic_quiz" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Task Name -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTaskName"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:hint="Tên nhiệm vụ"
+        app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+        app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+        app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+        app:boxCornerRadiusTopStart="@dimen/radius_medium">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtTaskName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Task Description -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTaskDescription"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:hint="Mô tả"
+        app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+        app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+        app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+        app:boxCornerRadiusTopStart="@dimen/radius_medium">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtTaskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:inputType="textMultiLine"
+            android:maxLines="3" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Rewards Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCoins"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:hint="Coins"
+            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+            app:boxCornerRadiusTopStart="@dimen/radius_medium"
+            app:prefixText="🪙 ">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtCoins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:inputType="number"
+                android:maxLines="1"
+                android:text="10" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilXp"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:hint="XP"
+            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+            app:boxCornerRadiusTopStart="@dimen/radius_medium"
+            app:prefixText="⭐ ">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtXp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:inputType="number"
+                android:maxLines="1"
+                android:text="5" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <!-- Level (only for Quiz) -->
+    <LinearLayout
+        android:id="@+id/layoutLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Độ khó"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_medium" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sliderLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stepSize="1"
+            android:valueFrom="1"
+            android:valueTo="5"
+            app:labelBehavior="withinBounds" />
+
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_20"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Hủy"
+            android:textColor="@color/text_secondary"
+            app:cornerRadius="@dimen/radius_medium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:layout_weight="1"
+            android:backgroundTint="#2D5FFF"
+            android:fontFamily="@font/inter_bold"
+            android:text="Lưu"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/radius_medium" />
+
+    </LinearLayout>
+
+</LinearLayout>
