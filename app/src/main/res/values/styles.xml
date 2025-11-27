@@ -60,5 +60,9 @@
         <item name="android:windowEnterAnimation">@anim/bottom_sheet_slide_up</item>
         <item name="android:windowExitAnimation">@anim/bottom_sheet_slide_down</item>
     </style>
+    <style name="ShapeCardRounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
 
 </resources>

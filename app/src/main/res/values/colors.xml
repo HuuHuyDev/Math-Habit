@@ -75,4 +75,10 @@
     <color name="stat_total_bg">#DBEAFE</color>
     <color name="rating_gradient_start">#E0F2FE</color>
     <color name="rating_gradient_end">#F0F9FF</color>
+    
+    <!-- History Screen Colors -->
+    <color name="history_primary">#009FFD</color>
+    <color name="history_text_primary">#111A2C</color>
+    <color name="history_text_secondary">#7F8895</color>
+    <color name="history_xp_blue">#5CF0FF</color>
 </resources>
