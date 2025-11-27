@@ -27,7 +27,7 @@
 
         <!-- Parent Main Activity (Launcher) -->
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.child.main.ChildMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,7 +43,7 @@
         <!-- Child Main Activity -->
         <activity
 
-            android:name=".ui.child.main.ChildMainActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="true" />
 
 

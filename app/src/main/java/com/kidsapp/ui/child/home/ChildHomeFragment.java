@@ -18,6 +18,8 @@ import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.databinding.ViewChildActionListBinding;
 import com.kidsapp.ui.child.equip.equip;
 import com.kidsapp.ui.child.progress.ProgresssFragment;
+import com.kidsapp.ui.child.shop.ShopFragment;
+import com.kidsapp.ui.child.task.ChildTaskListFragment;
 
 /**
  * Child Home Fragment
@@ -124,7 +126,7 @@ public class ChildHomeFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.task.ChildTaskListFragment())
+                    .replace(R.id.childHomeHost, new ChildTaskListFragment())
                     .addToBackStack(null)
                     .commit();
         }
@@ -134,7 +136,7 @@ public class ChildHomeFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.shop.ShopFragment())
+                    .replace(R.id.childHomeHost, new ShopFragment())
                     .addToBackStack(null)
                     .commit();
         }
