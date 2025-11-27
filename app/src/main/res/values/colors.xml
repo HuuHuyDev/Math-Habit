@@ -86,4 +86,10 @@
     <color name="pink_end">#FF7AD7</color>
     <color name="delete_red">#FF4E4E</color>
     <color name="delete_red_light">#FFE5E5</color>
+    
+    <!-- History Screen Colors -->
+    <color name="history_primary">#009FFD</color>
+    <color name="history_text_primary">#111A2C</color>
+    <color name="history_text_secondary">#7F8895</color>
+    <color name="history_xp_blue">#5CF0FF</color>
 </resources>
