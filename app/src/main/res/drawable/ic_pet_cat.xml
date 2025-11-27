@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Mèo - Màu cam -->
+    <path
+        android:fillColor="#FF8C00"
+        android:pathData="M60,35 Q40,35 32,50 Q28,60 32,70 Q38,78 48,82 Q55,85 60,85 Q65,85 72,82 Q82,78 88,70 Q92,60 88,50 Q80,35 60,35 Z"/>
+    
+    <!-- Tai trái (nhọn) -->
+    <path
+        android:fillColor="#FF8C00"
+        android:pathData="M38,35 L30,20 L42,30 Z"/>
+    
+    <!-- Tai phải (nhọn) -->
+    <path
+        android:fillColor="#FF8C00"
+        android:pathData="M82,35 L90,20 L78,30 Z"/>
+    
+    <!-- Mắt trái -->
+    <path
+        android:fillColor="#228B22"
+        android:pathData="M47,55 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    
+    <!-- Mắt phải -->
+    <path
+        android:fillColor="#228B22"
+        android:pathData="M73,55 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    
+    <!-- Mũi -->
+    <path
+        android:fillColor="#FFB6C1"
+        android:pathData="M60,63 L57,67 L63,67 Z"/>
+    
+    <!-- Râu -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:pathData="M35,60 L25,58 M35,63 L25,63 M35,66 L25,68 M85,60 L95,58 M85,63 L95,63 M85,66 L95,68"/>
+</vector>

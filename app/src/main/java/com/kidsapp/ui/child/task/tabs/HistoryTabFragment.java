@@ -18,6 +18,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.kidsapp.R;
 import com.kidsapp.data.model.HistoryTask;
 import com.kidsapp.databinding.FragmentHistoryTabBinding;
+import com.kidsapp.ui.child.task.HistoryDetailFragment;
 import com.kidsapp.ui.child.task.TaskHistoryAdapter;
 
 import java.util.ArrayList;
@@ -132,8 +133,37 @@ public class HistoryTabFragment extends Fragment {
 
     private void setupRecyclerView() {
         adapter = new TaskHistoryAdapter(new ArrayList<>());
+        
+        // Xử lý click vào nút "Xem chi tiết"
+        adapter.setOnHistoryClickListener(history -> {
+            // Chuyển sang trang chi tiết
+            navigateToHistoryDetail(history);
+        });
+        
         binding.recyclerViewHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerViewHistory.setAdapter(adapter);
+    }
+    
+    /**
+     * Chuyển sang trang chi tiết lịch sử
+     */
+    private void navigateToHistoryDetail(com.kidsapp.data.model.HistoryTask history) {
+        if (getActivity() != null) {
+            HistoryDetailFragment detailFragment = HistoryDetailFragment.newInstance(
+                    history.getTitle(),
+                    history.getCompletionTime(),
+                    history.getCoins(),
+                    history.getXp(),
+                    history.getRating(),
+                    history.getIconRes()
+            );
+            
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     private void loadSampleData() {

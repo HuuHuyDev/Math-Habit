@@ -137,11 +137,6 @@ public class DetailTaskFragment extends Fragment {
         steps.add(new Step(3, "Bài toán minh hoạ"));
         steps.add(new Step(4, "Kiểm tra tốc độ"));
         steps.add(new Step(5, "Phép cộng có nhớ"));
-        steps.add(new Step(6, "Bài tập thực hành"));
-        steps.add(new Step(7, "Đố vui toán học"));
-        steps.add(new Step(8, "Tính nhanh"));
-        steps.add(new Step(9, "Bài toán ứng dụng"));
-        steps.add(new Step(10, "Tổng kết kiến thức"));
         return steps;
     }
 

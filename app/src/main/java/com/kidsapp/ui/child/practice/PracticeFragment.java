@@ -121,7 +121,6 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             }
         });
 
-        binding.btnComplete.setOnClickListener(v -> finishPractice());
     }
 
     private void startTimer() {
@@ -188,11 +187,18 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         if (isAnswerLocked) return;
 
         Question current = questions.get(currentIndex);
+        
+        // Lưu đáp án người dùng chọn vào Question
+        current.setSelectedIndex(position);
+        
+        // Kiểm tra xem đã làm hết câu chưa để enable/disable nút Hoàn Thành
+        checkAllAnswered();
+        
         isAnswerLocked = true;
         if (position == current.getCorrectIndex()) {
             correctCount++;
             showPetCorrect();
-        binding.layoutExplanation.getRoot().setVisibility(View.GONE);
+            binding.layoutExplanation.getRoot().setVisibility(View.GONE);
             answerAdapter.markCorrect(position);
             binding.recyclerAnswers.postDelayed(() -> {
                 if (currentIndex < questions.size() - 1) {
@@ -204,11 +210,29 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             }, 1500);
         } else {
             showPetWrong();
-        binding.layoutExplanation.getRoot().setVisibility(View.VISIBLE);
-        binding.layoutExplanation.txtExplanationContent.setText(current.getExplanation());
+            binding.layoutExplanation.getRoot().setVisibility(View.VISIBLE);
+            binding.layoutExplanation.txtExplanationContent.setText(current.getExplanation());
             answerAdapter.markWrong(position);
             isAnswerLocked = false;
         }
+    }
+    
+    /**
+     * Kiểm tra xem tất cả câu hỏi đã được trả lời chưa
+     * Nếu đã làm hết → enable nút Hoàn Thành + đổi màu xanh
+     * Nếu chưa → disable nút + màu xám
+     */
+    private void checkAllAnswered() {
+        boolean allAnswered = true;
+        
+        // Duyệt qua tất cả câu hỏi
+        for (Question question : questions) {
+            if (!question.isAnswered()) {
+                allAnswered = false;
+                break;
+            }
+        }
+
     }
 
     private void finishPractice() {

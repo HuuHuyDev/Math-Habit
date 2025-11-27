@@ -18,14 +18,36 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinAdapter.SkinViewHolder
 
     private List<Skin> skinList;
     private OnSkinSelectedListener listener;
+    private int selectedPosition = -1; // Vị trí item đang được chọn
 
     public interface OnSkinSelectedListener {
-        void onSkinSelected(Skin skin);
+        void onSkinSelected(Skin skin, int position);
     }
 
     public SkinAdapter(List<Skin> list, OnSkinSelectedListener listener) {
         this.skinList = list;
         this.listener = listener;
+    }
+    
+    /**
+     * Đặt item được chọn
+     */
+    public void setSelectedPosition(int position) {
+        int previousPosition = selectedPosition;
+        selectedPosition = position;
+        
+        // Refresh item cũ và mới
+        if (previousPosition != -1) {
+            notifyItemChanged(previousPosition);
+        }
+        notifyItemChanged(selectedPosition);
+    }
+    
+    /**
+     * Lấy vị trí đang chọn
+     */
+    public int getSelectedPosition() {
+        return selectedPosition;
     }
 
     @NonNull
@@ -42,8 +64,21 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinAdapter.SkinViewHolder
         holder.imgSkin.setImageResource(skin.getIconRes());
         holder.txtSkinName.setText(skin.getName());
 
+        // Hiển thị viền khi được chọn
+        if (position == selectedPosition) {
+            holder.itemView.setBackgroundResource(R.drawable.bg_round_20);
+            holder.itemView.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(0xFF2D8CFF) // Màu xanh
+            );
+            holder.itemView.setElevation(8f);
+        } else {
+            holder.itemView.setBackground(null);
+            holder.itemView.setElevation(0f);
+        }
+
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onSkinSelected(skin);
+            setSelectedPosition(position);
+            if (listener != null) listener.onSkinSelected(skin, position);
         });
     }
 

@@ -114,14 +114,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:nestedScrollingEnabled="false" />
-
-                    <include
-                        android:id="@+id/layoutExplanation"
-                        layout="@layout/explanation_box"
-                        android:visibility="gone"
-                        android:layout_marginTop="12dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <include
+                android:id="@+id/layoutExplanation"
+                layout="@layout/explanation_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/layoutPet"
@@ -162,20 +164,10 @@
                     android:layout_height="56dp"
                     android:background="@drawable/bg_round_20"
                     android:src="@drawable/ic_back"
+                    android:layout_marginRight="200dp"
                     app:tint="@color/primary" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnComplete"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_button_kids_gradient"
-                    android:text="@string/practice_complete"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+
 
                 <ImageButton
                     android:id="@+id/btnNext"

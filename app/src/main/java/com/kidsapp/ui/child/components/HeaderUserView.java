@@ -40,4 +40,12 @@ public class HeaderUserView extends ConstraintLayout {
     public void setNotificationClick(OnClickListener listener) {
         btnNotification.setOnClickListener(listener);
     }
+
+    /**
+     * Xử lý sự kiện click vào avatar
+     * @param listener Listener để xử lý khi click vào avatar
+     */
+    public void setAvatarClick(OnClickListener listener) {
+        imgAvatar.setOnClickListener(listener);
+    }
 }

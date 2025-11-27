@@ -1,0 +1,52 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Gấu trúc - Đầu trắng -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,35 Q42,35 34,48 Q30,58 34,68 Q40,76 50,80 Q55,82 60,82 Q65,82 70,80 Q80,76 86,68 Q90,58 86,48 Q78,35 60,35 Z"/>
+    
+    <!-- Tai trái (đen) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M38,38 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0"/>
+    
+    <!-- Tai phải (đen) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M82,38 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0"/>
+    
+    <!-- Vòng mắt trái (đen) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M45,54 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0"/>
+    
+    <!-- Mắt trái (trắng) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,54 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    
+    <!-- Vòng mắt phải (đen) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M75,54 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0"/>
+    
+    <!-- Mắt phải (trắng) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75,54 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    
+    <!-- Mũi -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M60,65 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    
+    <!-- Miệng -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:pathData="M60,68 Q55,72 50,70 M60,68 Q65,72 70,70"/>
+</vector>

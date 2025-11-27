@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Chó - Màu nâu -->
+    <path
+        android:fillColor="#8B4513"
+        android:pathData="M60,30 Q40,30 30,45 Q25,55 30,65 Q35,75 45,80 Q55,85 60,85 Q65,85 75,80 Q85,75 90,65 Q95,55 90,45 Q80,30 60,30 Z"/>
+    
+    <!-- Tai trái -->
+    <path
+        android:fillColor="#654321"
+        android:pathData="M35,35 Q30,30 25,35 Q20,40 25,50 Q30,55 35,50 Z"/>
+    
+    <!-- Tai phải -->
+    <path
+        android:fillColor="#654321"
+        android:pathData="M85,35 Q90,30 95,35 Q100,40 95,50 Q90,55 85,50 Z"/>
+    
+    <!-- Mắt trái -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M45,55 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    
+    <!-- Mắt phải -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M75,55 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    
+    <!-- Mũi -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M60,65 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    
+    <!-- Miệng -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:pathData="M60,68 Q55,72 50,70 M60,68 Q65,72 70,70"/>
+</vector>

@@ -20,10 +20,23 @@ import java.util.List;
  * Adapter cho danh sách lịch sử nhiệm vụ đã hoàn thành
  */
 public class TaskHistoryAdapter extends RecyclerView.Adapter<TaskHistoryAdapter.HistoryViewHolder> {
+    
+    /**
+     * Interface để xử lý sự kiện click vào nút "Xem chi tiết"
+     */
+    public interface OnHistoryClickListener {
+        void onViewDetailsClick(HistoryTask history);
+    }
+    
     private List<HistoryTask> historyList;
+    private OnHistoryClickListener listener;
 
     public TaskHistoryAdapter(List<HistoryTask> historyList) {
         this.historyList = historyList != null ? historyList : new ArrayList<>();
+    }
+    
+    public void setOnHistoryClickListener(OnHistoryClickListener listener) {
+        this.listener = listener;
     }
 
     public void updateList(List<HistoryTask> newList) {
@@ -76,11 +89,9 @@ public class TaskHistoryAdapter extends RecyclerView.Adapter<TaskHistoryAdapter.
 
             // Xử lý click nút "Xem chi tiết"
             binding.btnViewDetails.setOnClickListener(v -> {
-                Toast.makeText(
-                        binding.getRoot().getContext(),
-                        "Xem chi tiết: " + history.getTitle(),
-                        Toast.LENGTH_SHORT
-                ).show();
+                if (listener != null) {
+                    listener.onViewDetailsClick(history);
+                }
             });
         }
     }

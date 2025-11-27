@@ -45,11 +45,11 @@
             tools:text="Phép cộng 1 chữ số" />
 
         <!-- Arrow -->
-        <ImageView
-            android:layout_width="@dimen/icon_size_medium"
-            android:layout_height="@dimen/icon_size_medium"
-            android:src="@drawable/ic_chevron_right"
-            app:tint="@android:color/black" />
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_chevron_right"-->
+<!--            app:tint="@android:color/black" />-->
 
     </LinearLayout>
 

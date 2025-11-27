@@ -22,6 +22,8 @@ public class equip extends Fragment {
     private FragmentEquipBinding binding;
     private SkinAdapter adapter;
     private final List<Skin> skinList = new ArrayList<>();
+    private Skin selectedSkin = null; // Pet đang được chọn
+    private int selectedPosition = -1;
 
     public equip() {
         // Required empty public constructor
@@ -51,26 +53,73 @@ public class equip extends Fragment {
 
         setupSkinData();
         setupRecyclerView();
+        setupEquipButton();
     }
 
     private void setupSkinData() {
         skinList.clear();
-        skinList.add(new Skin(R.mipmap.avatar_foreground, "Mặc định"));
-        skinList.add(new Skin(R.mipmap.skin1_foreground, "Nhà thám hiểm"));
-        skinList.add(new Skin(R.mipmap.skin2_foreground, "Cướp biển"));
-        skinList.add(new Skin(R.mipmap.skin3_foreground, "Bóng chày"));
+        skinList.add(new Skin(R.mipmap.skin4_foreground, "Mặc định"));
+        skinList.add(new Skin(R.mipmap.skingau, "Gấu dễ thương"));
+        skinList.add(new Skin(R.mipmap.skintho, "Thỏ ngọc"));
+        skinList.add(new Skin(R.drawable.ic_pet_dog, "Chó tinh nghịch"));
         // thêm tiếp nếu muốn
     }
 
     private void setupRecyclerView() {
-        adapter = new SkinAdapter(skinList, skin -> {
-            // khi chọn skin → cập nhật preview
+        adapter = new SkinAdapter(skinList, (skin, position) -> {
+            // Khi chọn pet → lưu lại và cập nhật preview
+            selectedSkin = skin;
+            selectedPosition = position;
+            
+            // Cập nhật preview
             binding.imgCurrentAvatar.setImageResource(skin.getIconRes());
             binding.tvCurrentSkinName.setText(skin.getName());
+            
+            // Enable nút Trang bị
+            binding.btnEquip.setEnabled(true);
+            binding.btnEquip.setText("Trang bị " + skin.getName());
         });
 
         binding.rvSkins.setLayoutManager(new GridLayoutManager(getContext(), 2));
         binding.rvSkins.setAdapter(adapter);
+    }
+    
+    /**
+     * Xử lý nút Trang bị
+     */
+    private void setupEquipButton() {
+        // Ban đầu disable nút
+        binding.btnEquip.setEnabled(false);
+
+        binding.btnEquip.setText("Chọn pet để trang bị");
+        
+        binding.btnEquip.setOnClickListener(v -> {
+            if (selectedSkin != null) {
+                equipPet(selectedSkin);
+            }
+        });
+    }
+    
+    /**
+     * Trang bị pet
+     */
+    private void equipPet(Skin skin) {
+        // Lưu pet đã trang bị vào SharedPreferences
+        android.content.SharedPreferences prefs = 
+            requireContext().getSharedPreferences("KidsAppPrefs", 0);
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("equipped_pet_icon", skin.getIconRes());
+        editor.putString("equipped_pet_name", skin.getName());
+        editor.apply();
+        
+        // Hiển thị thông báo
+        android.widget.Toast.makeText(requireContext(),
+                "✅ Đã trang bị " + skin.getName() + "!",
+                android.widget.Toast.LENGTH_SHORT).show();
+        
+        // Disable nút sau khi trang bị
+        binding.btnEquip.setEnabled(false);
+        binding.btnEquip.setText("Đã trang bị");
     }
 
     @Override

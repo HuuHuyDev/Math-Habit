@@ -40,17 +40,18 @@ public class ChildHomeFragment extends Fragment {
         bindTrainingStats();
         setupActionCards();
         binding.layoutLevel.setOnClickListener(v -> navigateToProgress());
-
-        // CLICK VÀO AVATAR / HEADER → ĐI TỚI MÀN TRANG BỊ
-        binding.headerUser.setOnClickListener(v -> navigateToEquip());
+        
         return binding.getRoot();
     }
 
     private void setupHeader() {
         binding.headerUser.setUserName("Hồ Hữu Huy");
         binding.headerUser.setAvatar(R.drawable.ic_user_default);
-        binding.headerUser.setNotificationClick(v ->
-                Toast.makeText(requireContext(), R.string.feature_coming_soon, Toast.LENGTH_SHORT).show());
+        
+        // CLICK VÀO AVATAR → ĐI TỚI TRANG PROFILE
+        binding.headerUser.setAvatarClick(v -> navigateToProfile());
+
+        binding.headerUser.setOnClickListener(v -> navigateToEquip());
         // CLICK VÀO CHUÔNG → HIỆN / ẨN CARD THÔNG BÁO NHỎ
         binding.headerUser.setNotificationClick(v -> {
             if (binding.cardNotification.getVisibility() == View.VISIBLE) {
@@ -166,6 +167,19 @@ public class ChildHomeFragment extends Fragment {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.childHomeHost, new com.kidsapp.ui.child.reward.RewardFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    /**
+     * Chuyển đến trang Profile của Bé
+     */
+    private void navigateToProfile() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new com.kidsapp.ui.child.profile.ChildProfileFragment())
                     .addToBackStack(null)
                     .commit();
         }

@@ -41,7 +41,6 @@ public class ExerciseTabFragment extends Fragment {
         recyclerViewTasks = view.findViewById(R.id.recyclerExercise);
         setupRecyclerView();
     }
-
     private void setupRecyclerView() {
         List<Task> tasks = createSampleTasks();
         adapter = new TaskListAdapter(tasks);
