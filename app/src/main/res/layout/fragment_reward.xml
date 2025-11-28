@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- HEADER -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Nút quay lại -->
+        <!-- Nút back -->
         <LinearLayout
             android:id="@+id/btnBackAchievement"
             android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- CARD THÀNH TỰU -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="@dimen/spacing_12"/>
 
-            <!-- GRID 2x2 -->
+
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:alignmentMode="alignMargins"
                 android:useDefaultMargins="true">
 
-                <!-- ITEM 1 -->
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:gravity="center"
@@ -122,7 +122,6 @@
                         android:layout_marginTop="@dimen/spacing_4"/>
                 </LinearLayout>
 
-                <!-- ITEM 2 -->
                 <LinearLayout
                     android:orientation="vertical"
                     android:gravity="center"
@@ -154,7 +153,7 @@
                         android:layout_marginTop="@dimen/spacing_4"/>
                 </LinearLayout>
 
-                <!-- ITEM 3 – Chuỗi kỳ cựu -->
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:gravity="center"
@@ -188,7 +187,7 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-                <!-- ITEM 4 – Thử thách phép cộng -->
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:gravity="center"

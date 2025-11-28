@@ -133,14 +133,14 @@ public class ProgresssFragment extends Fragment {
             if (h.isDone()) done++;
         }
 
-        // 3/4
+        // 2/3
         tvHabitCount.setText(done + "/" + total);
 
         // Progress bar
         pbHabit.setMax(total);
         pbHabit.setProgress(done);
 
-        // Phần trăm
+        // %
         int percent = (int) (done * 100f / total);
         tvPercent.setText(percent + "%");
 

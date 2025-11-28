@@ -5,13 +5,6 @@
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    
-    <!-- Camera feature (optional) -->
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +20,7 @@
 
         <!-- Parent Main Activity (Launcher) -->
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.parent.main.ParentMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,13 +30,15 @@
 
         <!-- Login Activity -->
         <activity
-            android:name=".ui.parent.main.ParentMainActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="false" />
 
         <!-- Child Main Activity -->
         <activity
+       
             android:name=".ui.child.main.ChildMainActivity"
             android:exported="true" />
+
 
     </application>
 

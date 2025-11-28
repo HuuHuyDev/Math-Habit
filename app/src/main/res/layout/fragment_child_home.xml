@@ -61,7 +61,7 @@
                     android:paddingTop="@dimen/spacing_8"
                     android:paddingBottom="@dimen/spacing_8"
                     android:text="Thông báo nhắc bài"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/nav_text_active"
                     android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold" />
 

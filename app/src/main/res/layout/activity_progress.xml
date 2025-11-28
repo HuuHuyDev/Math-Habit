@@ -114,7 +114,7 @@
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Hàng Thói quen 3/4 -->
+            <!-- Hàng Thói quen -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -163,7 +163,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="8dp" />
 
-            <!-- Khu vực phần trăm + mô tả -->
+            <!-- % -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -171,7 +171,6 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <!-- Tạm thời dùng số thay cho vòng tròn custom -->
                 <TextView
                     android:id="@+id/tvPercent103"
                     android:layout_width="wrap_content"
@@ -206,7 +205,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- RecyclerView danh sách thói quen -->
+            <!-- danh sách thói quen -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHabits103"
                 android:layout_width="match_parent"

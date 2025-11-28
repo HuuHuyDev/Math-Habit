@@ -58,7 +58,7 @@
             android:background="@drawable/bg_parent_card"
             android:padding="@dimen/spacing_16">
 
-            <!-- Avatar đang sử dụng -->
+            <!-- Avatar  -->
             <ImageView
                 android:id="@+id/imgCurrentAvatar"
                 android:layout_width="80dp"
