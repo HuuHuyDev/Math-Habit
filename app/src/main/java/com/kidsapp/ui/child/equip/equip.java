@@ -67,8 +67,8 @@ public class equip extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new SkinAdapter(skinList, skin -> {
-            // Chọn skin → cập nhật preview
+        adapter = new SkinAdapter(skinList, (skin, position) -> {
+            // Cập nhật preview avatar
             binding.imgCurrentAvatar.setImageResource(skin.getIconRes());
             binding.tvCurrentSkinName.setText(skin.getName());
         });
@@ -76,6 +76,7 @@ public class equip extends Fragment {
         binding.rvSkins.setLayoutManager(new GridLayoutManager(getContext(), 2));
         binding.rvSkins.setAdapter(adapter);
     }
+
 
     @Override
     public void onDestroyView() {
