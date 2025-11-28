@@ -57,7 +57,8 @@ public class ShopFragment extends Fragment {
     }
 
     private void loadCoins() {
-        currentCoins = sharedPreferences.getInt("child_coins", 1250);
+        currentCoins = 1250;
+        saveCoins();
     }
 
     private void saveCoins() {
