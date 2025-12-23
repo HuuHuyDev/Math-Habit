@@ -64,9 +64,9 @@
         android:textSize="@dimen/text_size_large"
         android:textStyle="bold"
         android:fontFamily="@font/inter_bold"
-        android:background="@drawable/bg_button_primary"
-        app:cornerRadius="20dp"
-        android:layout_marginBottom="@dimen/spacing_12" />
+        android:layout_marginBottom="@dimen/spacing_12"
+        app:backgroundTint="@color/primary"
+        app:cornerRadius="20dp"/>
 
     <!-- Nút Kiểm tra -->
     <com.google.android.material.button.MaterialButton
