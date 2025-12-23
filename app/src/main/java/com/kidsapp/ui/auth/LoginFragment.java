@@ -121,13 +121,13 @@ public class LoginFragment extends Fragment {
      */
     private void handleDemoLogin(String username, String password) {
         // Tài khoản Parent demo
-        if (username.equals("parent") && password.equals("123456")) {
+        if (username.equals(" ") && password.equals("123456")) {
             loginAsParent();
             return;
         }
         
         // Tài khoản Children demo
-        if (username.equals("minhlinhkid") && password.equals("123456")) {
+        if (username.equals("huy") && password.equals("123456")) {
             loginAsChild("1", "Nguyễn Minh Linh");
             return;
         }

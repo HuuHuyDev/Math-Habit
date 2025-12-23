@@ -13,13 +13,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
+import com.kidsapp.data.FakeNotificationRepository;
+import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.databinding.ViewChildActionListBinding;
 import com.kidsapp.ui.child.equip.equip;
 import com.kidsapp.ui.child.progress.ProgresssFragment;
 import com.kidsapp.ui.child.shop.ShopFragment;
 import com.kidsapp.ui.child.task.ChildTaskListFragment;
+import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
+import com.kidsapp.ui.parent.home.model.Notification;
+
+import java.util.List;
 
 /**
  * Child Home Fragment
@@ -52,27 +59,9 @@ public class ChildHomeFragment extends Fragment {
         binding.headerUser.setAvatarClick(v -> navigateToProfile());
 
         binding.headerUser.setOnClickListener(v -> navigateToEquip());
-        // CLICK VÀO CHUÔNG → HIỆN / ẨN CARD THÔNG BÁO NHỎ
-        binding.headerUser.setNotificationClick(v -> {
-            if (binding.cardNotification.getVisibility() == View.VISIBLE) {
-                binding.cardNotification.setVisibility(View.GONE);
-            } else {
-                binding.cardNotification.setAlpha(0f);
-                binding.cardNotification.setScaleX(0.9f);
-                binding.cardNotification.setScaleY(0.9f);
-                binding.cardNotification.setVisibility(View.VISIBLE);
-
-                binding.cardNotification.animate()
-                        .alpha(1f)
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(200)
-                        .start();
-
-                binding.contentScroll.post(() ->
-                        binding.contentScroll.smoothScrollTo(0, 0));
-            }
-        });
+        
+        // CLICK VÀO CHUÔNG → HIỆN BOTTOMSHEET THÔNG BÁO TỪ PARENT
+        binding.headerUser.setNotificationClick(v -> showNotificationsBottomSheet());
     }
 
     private void bindTrainingStats() {
@@ -183,6 +172,47 @@ public class ChildHomeFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    /**
+     * Hiển thị BottomSheet danh sách thông báo từ parent
+     */
+    private void showNotificationsBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
+                getLayoutInflater());
+
+        // Load dữ liệu thông báo từ parent
+        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
+
+        // Setup adapter
+        NotificationAdapter adapter = new NotificationAdapter();
+        adapter.setNotifications(notifications);
+        adapter.setOnNotificationClickListener((notification, position) -> {
+            // Đánh dấu đã đọc khi click
+            Toast.makeText(requireContext(),
+                    notification.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+
+        bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
+
+        // Hiển thị empty state nếu không có thông báo
+        if (notifications.isEmpty()) {
+            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+            bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+        } else {
+            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
+            bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
+        }
+
+        // Xử lý nút "Đánh dấu đã đọc"
+        bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
+            adapter.markAllAsRead();
+            Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
+        });
+
+        bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
+        bottomSheetDialog.show();
     }
 
     @Override

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="@dimen/spacing_12"
+    android:layout_marginBottom="@dimen/spacing_8"
+    android:background="@drawable/bg_answer_default">
+
+    <!-- Label (A, B, C, D) -->
+    <TextView
+        android:id="@+id/txtAnswerLabel"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:text="A"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        android:background="@drawable/bg_round_20"
+        android:backgroundTint="@color/surface_variant"
+        tools:text="A" />
+
+    <!-- Nội dung đáp án -->
+    <TextView
+        android:id="@+id/txtAnswerContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/spacing_12"
+        android:layout_marginEnd="@dimen/spacing_8"
+        android:text="2 + 2 = 10"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_small"
+        android:fontFamily="@font/inter_regular"
+        tools:text="2 + 2 = 10" />
+
+    <!-- Icon trạng thái (checkmark hoặc close) -->
+    <ImageView
+        android:id="@+id/imgAnswerIndicator"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_checkmark_completed"
+        app:tint="@color/status_success"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:src="@drawable/ic_checkmark_completed" />
+
+</LinearLayout>
