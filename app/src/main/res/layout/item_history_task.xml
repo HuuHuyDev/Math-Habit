@@ -4,42 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_16"
+    android:layout_marginBottom="@dimen/spacing_12"
     android:layout_marginHorizontal="0dp"
-    app:cardCornerRadius="@dimen/radius_card"
-    app:cardElevation="@dimen/elevation_small"
-    app:cardUseCompatPadding="true">
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/surface"
         android:padding="@dimen/spacing_16">
 
-        <!-- Icon minh họa nhiệm vụ -->
-        <ImageView
-            android:id="@+id/imgTaskIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/bg_task_image"
+        <!-- Icon minh họa nhiệm vụ trong hình tròn -->
+        <FrameLayout
+            android:id="@+id/containerTaskIcon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_task_icon_unchecked"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_launcher_foreground" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgTaskIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:scaleType="centerInside"
+                app:tint="@color/primary"
+                tools:src="@drawable/ic_task" />
+
+        </FrameLayout>
 
         <!-- Tiêu đề nhiệm vụ -->
         <TextView
             android:id="@+id/txtTaskTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_12"
-            android:layout_marginEnd="@dimen/spacing_12"
-            android:textColor="@color/history_text_primary"
-            android:textSize="@dimen/text_size_large"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_medium"
             android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            android:maxLines="2"
+            android:ellipsize="end"
             app:layout_constraintEnd_toStartOf="@id/layoutRating"
-            app:layout_constraintStart_toEndOf="@id/imgTaskIcon"
-            app:layout_constraintTop_toTopOf="@id/imgTaskIcon"
+            app:layout_constraintStart_toEndOf="@id/containerTaskIcon"
+            app:layout_constraintTop_toTopOf="@id/containerTaskIcon"
             tools:text="Bài 1: Luyện phép cộng" />
 
         <!-- Thời gian hoàn thành -->
@@ -47,12 +59,13 @@
             android:id="@+id/txtCompletionTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_12"
-            android:layout_marginTop="@dimen/spacing_8"
-            android:textColor="@color/history_text_secondary"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginTop="@dimen/spacing_6"
+            android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_size_small"
+            android:fontFamily="@font/inter_regular"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imgTaskIcon"
+            app:layout_constraintStart_toEndOf="@id/containerTaskIcon"
             app:layout_constraintTop_toBottomOf="@id/txtTaskTitle"
             tools:text="Hoàn thành: 12/11/2025 - 15:30" />
 
@@ -65,11 +78,12 @@
             android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/imgTaskIcon">
+            app:layout_constraintTop_toTopOf="@id/containerTaskIcon"
+            tools:visibility="visible">
 
             <ImageView
-                android:layout_width="@dimen/icon_size_medium"
-                android:layout_height="@dimen/icon_size_medium"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_star"
                 app:tint="@color/status_warning" />
 
@@ -77,10 +91,11 @@
                 android:id="@+id/txtRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_4"
+                android:layout_marginTop="@dimen/spacing_2"
                 android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_size_medium"
+                android:textSize="@dimen/text_size_small"
                 android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
                 tools:text="5.0" />
         </LinearLayout>
 
@@ -89,10 +104,10 @@
             android:id="@+id/layoutRewards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_12"
+            android:layout_marginTop="@dimen/spacing_16"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@id/imgTaskIcon"
+            app:layout_constraintStart_toEndOf="@id/containerTaskIcon"
             app:layout_constraintTop_toBottomOf="@id/txtCompletionTime">
 
             <!-- Badge Coin -->
@@ -100,30 +115,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_round_20"
+                android:backgroundTint="@color/surface_variant"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/spacing_8"
-                android:paddingTop="@dimen/spacing_4"
-                android:paddingEnd="@dimen/spacing_8"
-                android:paddingBottom="@dimen/spacing_4"
-                android:backgroundTint="@color/surface_variant">
+                android:paddingStart="@dimen/spacing_10"
+                android:paddingTop="@dimen/spacing_6"
+                android:paddingEnd="@dimen/spacing_10"
+                android:paddingBottom="@dimen/spacing_6">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_star"
+                    app:tint="@color/coin_gold" />
 
                 <TextView
                     android:id="@+id/txtCoins"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_4"
                     android:text="50"
                     android:textColor="@color/text_primary"
                     android:textSize="@dimen/text_size_small"
                     android:textStyle="bold"
+                    android:fontFamily="@font/inter_bold"
                     tools:text="50" />
-
-                <ImageView
-                    android:layout_width="@dimen/icon_size_small"
-                    android:layout_height="@dimen/icon_size_small"
-                    android:layout_marginStart="@dimen/spacing_4"
-                    android:src="@drawable/ic_star"
-                    app:tint="@color/coin_gold" />
             </LinearLayout>
 
             <!-- Badge XP -->
@@ -132,13 +148,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_8"
                 android:background="@drawable/bg_round_20"
+                android:backgroundTint="@color/primary"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/spacing_8"
-                android:paddingTop="@dimen/spacing_4"
-                android:paddingEnd="@dimen/spacing_8"
-                android:paddingBottom="@dimen/spacing_4"
-                android:backgroundTint="@color/history_xp_blue">
+                android:paddingStart="@dimen/spacing_10"
+                android:paddingTop="@dimen/spacing_6"
+                android:paddingEnd="@dimen/spacing_10"
+                android:paddingBottom="@dimen/spacing_6">
 
                 <TextView
                     android:text="+"
@@ -146,7 +162,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_small"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:fontFamily="@font/inter_bold" />
 
                 <TextView
                     android:id="@+id/txtXp"
@@ -156,6 +173,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_small"
                     android:textStyle="bold"
+                    android:fontFamily="@font/inter_bold"
                     tools:text="100 XP" />
             </LinearLayout>
         </LinearLayout>
@@ -165,25 +183,27 @@
             android:id="@+id/btnViewDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_12"
+            android:layout_marginTop="@dimen/spacing_16"
             android:minHeight="0dp"
-            android:paddingStart="@dimen/spacing_12"
-            android:paddingTop="@dimen/spacing_6"
-            android:paddingEnd="@dimen/spacing_12"
-            android:paddingBottom="@dimen/spacing_6"
+            android:paddingStart="@dimen/spacing_16"
+            android:paddingTop="@dimen/spacing_8"
+            android:paddingEnd="@dimen/spacing_16"
+            android:paddingBottom="@dimen/spacing_8"
             android:text="@string/view_details"
-            android:textColor="@color/history_primary"
+            android:textColor="@color/primary"
             android:textSize="@dimen/text_size_small"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_semibold"
             app:icon="@drawable/ic_eye"
             app:iconGravity="textStart"
-            app:iconPadding="@dimen/spacing_4"
-            app:iconTint="@color/history_primary"
-            app:iconSize="@dimen/icon_size_small"
-            app:strokeColor="@color/history_primary"
-            app:strokeWidth="1dp"
-            app:cornerRadius="@dimen/radius_input"
+            app:iconPadding="@dimen/spacing_6"
+            app:iconTint="@color/primary"
+            app:iconSize="16dp"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="1.5dp"
+            app:cornerRadius="16dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            app:layout_constraintStart_toEndOf="@id/imgTaskIcon"
+            app:layout_constraintStart_toEndOf="@id/containerTaskIcon"
             app:layout_constraintTop_toBottomOf="@id/layoutRewards" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

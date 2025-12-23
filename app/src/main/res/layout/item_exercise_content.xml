@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardContent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_16"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/surface">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_16">
+
+        <!-- Icon -->
+        <FrameLayout
+            android:id="@+id/containerIcon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_task_icon_unchecked"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_task"
+                app:tint="@color/primary"
+                tools:src="@drawable/ic_task" />
+
+        </FrameLayout>
+
+        <!-- Icon khóa (nếu chưa mở) -->
+        <ImageView
+            android:id="@+id/imgLock"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_lock"
+            app:tint="@color/text_tertiary"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/containerIcon"
+            app:layout_constraintBottom_toBottomOf="@id/containerIcon"
+            tools:visibility="visible" />
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:text="Phép cộng 1 chữ số"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/containerIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/containerIcon"
+            tools:text="Phép cộng 1 chữ số" />
+
+        <!-- Mô tả -->
+        <TextView
+            android:id="@+id/txtDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:text="Cộng các số từ 0 đến 9"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_size_small"
+            android:fontFamily="@font/inter_regular"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/containerIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtTitle"
+            tools:text="Cộng các số từ 0 đến 9" />
+
+        <!-- Thông tin -->
+        <LinearLayout
+            android:id="@+id/layoutInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/spacing_12"
+            app:layout_constraintStart_toEndOf="@id/containerIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtDescription">
+
+            <!-- Số câu hỏi -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/spacing_16"
+                android:layout_marginEnd="@dimen/spacing_16">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_quiz"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    android:id="@+id/txtQuestions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_4"
+                    android:text="10 câu hỏi"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_xsmall"
+                    android:fontFamily="@font/inter_regular"
+                    tools:text="10 câu hỏi" />
+
+            </LinearLayout>
+
+            <!-- Thời gian -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_clock"
+                    app:tint="@color/status_warning" />
+
+                <TextView
+                    android:id="@+id/txtDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_4"
+                    android:text="5 phút"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_xsmall"
+                    android:fontFamily="@font/inter_regular"
+                    tools:text="5 phút" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Progress bar (nếu đã làm) -->
+        <LinearLayout
+            android:id="@+id/layoutProgress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutInfo"
+            tools:visibility="visible">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:max="10"
+                android:progress="8"
+                android:progressDrawable="@drawable/bg_progress_bar"
+                tools:progress="8" />
+
+            <TextView
+                android:id="@+id/txtProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:text="8/10 hoàn thành"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_size_xsmall"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                tools:text="8/10 hoàn thành" />
+
+        </LinearLayout>
+
+        <!-- Trạng thái -->
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:text="✅ Đã hoàn thành"
+            android:textColor="@color/status_success"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutProgress"
+            tools:visibility="visible"
+            tools:text="✅ Đã hoàn thành" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

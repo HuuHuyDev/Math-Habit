@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_white_card"
+    android:padding="@dimen/spacing_24">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_20"
+        android:background="@drawable/bg_bottomsheet_handle" />
+
+    <!-- Icon -->
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_quiz"
+        app:tint="@color/primary"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_16" />
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Phép cộng 1 chữ số"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_title"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/spacing_8"
+        tools:text="Phép cộng 1 chữ số" />
+
+    <!-- Mô tả -->
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Bạn đã hoàn thành 8/10 câu hỏi"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/spacing_24"
+        tools:text="Bạn đã hoàn thành 8/10 câu hỏi" />
+
+    <!-- Nút Luyện tập -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPractice"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="📝 Luyện tập"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_large"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        android:background="@drawable/bg_button_primary"
+        app:cornerRadius="20dp"
+        android:layout_marginBottom="@dimen/spacing_12" />
+
+    <!-- Nút Kiểm tra -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTest"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="✅ Kiểm tra"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/text_size_large"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp"
+        app:cornerRadius="20dp"
+        android:backgroundTint="@color/surface"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_marginBottom="@dimen/spacing_12" />
+
+    <!-- Nút Hủy -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Hủy"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium"
+        android:fontFamily="@font/inter_regular"
+        android:backgroundTint="@android:color/transparent"
+        app:cornerRadius="20dp"
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+</LinearLayout>

@@ -6,11 +6,10 @@
     android:id="@+id/cardHousework"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="0dp"
-    app:strokeWidth="2dp"
-    app:strokeColor="#E0E0E0">
+    android:layout_marginBottom="@dimen/spacing_12"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:id="@+id/item_housework_root"
@@ -18,36 +17,17 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:background="@android:color/white">
+        android:paddingStart="@dimen/spacing_16"
+        android:paddingEnd="@dimen/spacing_16"
+        android:paddingTop="@dimen/spacing_16"
+        android:paddingBottom="@dimen/spacing_16"
+        android:background="@color/surface">
 
-        <!-- Checkbox tròn bên trái -->
-        <FrameLayout
-            android:id="@+id/containerCheckIcon"
-            android:layout_width="@dimen/spacing_32"
-            android:layout_height="@dimen/spacing_32"
-            android:background="@drawable/bg_checkbox_unchecked">
-
-            <ImageView
-                android:id="@+id/imgCheckIcon"
-                android:layout_width="@dimen/spacing_20"
-                android:layout_height="@dimen/spacing_20"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_checkmark_completed"
-                android:visibility="gone"
-                android:contentDescription="@string/housework" />
-
-        </FrameLayout>
-
-        <!-- Icon task bo góc bên cạnh checkbox -->
+        <!-- Icon task bo góc bên trái -->
         <FrameLayout
             android:id="@+id/containerTaskIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="@dimen/spacing_12"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_task_icon_unchecked">
 
             <ImageView
@@ -66,7 +46,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="@dimen/spacing_20"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginEnd="@dimen/spacing_12"
             android:orientation="vertical">
 
             <TextView
@@ -74,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dọn đồ chơi"
-                android:textColor="#1A1A1A"
+                android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"
                 android:fontFamily="@font/inter_bold"
@@ -86,15 +67,33 @@
                 android:id="@+id/txtHouseworkStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_4"
                 android:text="Chưa làm"
-                android:textColor="#9E9E9E"
+                android:textColor="@color/text_secondary"
                 android:textSize="@dimen/text_size_small"
                 android:fontFamily="@font/inter_regular"
                 android:maxLines="1"
                 tools:text="Chưa làm" />
 
         </LinearLayout>
+
+        <!-- Checkbox tròn bên phải -->
+        <FrameLayout
+            android:id="@+id/containerCheckIcon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_checkbox_unchecked">
+
+            <ImageView
+                android:id="@+id/imgCheckIcon"
+                android:layout_width="@dimen/spacing_20"
+                android:layout_height="@dimen/spacing_20"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_checkmark_completed"
+                android:visibility="gone"
+                android:contentDescription="@string/housework" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

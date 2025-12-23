@@ -23,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
 import com.kidsapp.databinding.BottomsheetChoosePhotoBinding;
 import com.kidsapp.databinding.FragmentProfileParentBinding;
+import com.kidsapp.ui.auth.LoginActivity;
 
 import java.io.IOException;
 
@@ -331,6 +332,16 @@ public class ParentProfileFragment extends Fragment {
                 .setMessage("Bạn có chắc chắn muốn đăng xuất?")
                 .setPositiveButton("Đăng xuất", (dialog, which) -> {
                     // TODO: Clear session and navigate to login
+                    requireContext().getSharedPreferences("kidsapp_prefs", 0)
+                            .edit()
+                            .clear()
+                            .apply();
+
+                    // 2. Chuyển về màn Login và xoá toàn bộ backstack
+                    Intent intent = new Intent(requireContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+
                     Toast.makeText(requireContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Hủy", null)

@@ -39,51 +39,82 @@
                     android:padding="@dimen/spacing_16">
 
                     <!-- Bộ lọc thời gian -->
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroupFilter"
+                    <HorizontalScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_16"
-                        app:chipSpacing="@dimen/spacing_8"
-                        app:singleSelection="true">
+                        android:scrollbars="none">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipAll"
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupFilter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tất cả"
-                            android:textColor="@color/text_white"
-                            android:background="@color/black"
-                            android:checked="true"
-                            style="@style/Widget.MaterialComponents.Chip.Choice" />
+                            app:chipSpacing="@dimen/spacing_12"
+                            app:singleSelection="true">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipToday"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hôm nay"
-                            android:textColor="@color/history_primary"
-                            android:background="@drawable/bg_filter_chip_unselected"
-                            style="@style/Widget.MaterialComponents.Chip.Choice" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipAll"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tất cả"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_size_small"
+                                android:textStyle="bold"
+                                android:paddingStart="@dimen/spacing_16"
+                                android:paddingEnd="@dimen/spacing_16"
+                                android:paddingTop="@dimen/spacing_10"
+                                android:paddingBottom="@dimen/spacing_10"
+                                android:background="@drawable/bg_filter_chip_selected"
+                                android:checked="true"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipThisWeek"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tuần này"
-                            android:textColor="@color/history_primary"
-                            android:background="@drawable/bg_filter_chip_unselected"
-                            style="@style/Widget.MaterialComponents.Chip.Choice" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipToday"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hôm nay"
+                                android:textColor="@color/history_primary"
+                                android:textSize="@dimen/text_size_small"
+                                android:textStyle="bold"
+                                android:paddingStart="@dimen/spacing_16"
+                                android:paddingEnd="@dimen/spacing_16"
+                                android:paddingTop="@dimen/spacing_10"
+                                android:paddingBottom="@dimen/spacing_10"
+                                android:background="@drawable/bg_filter_chip_unselected"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipThisMonth"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tháng này"
-                            android:textColor="@color/history_primary"
-                            android:background="@drawable/bg_filter_chip_unselected"
-                            style="@style/Widget.MaterialComponents.Chip.Choice" />
-                    </com.google.android.material.chip.ChipGroup>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipThisWeek"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tuần này"
+                                android:textColor="@color/history_primary"
+                                android:textSize="@dimen/text_size_small"
+                                android:textStyle="bold"
+                                android:paddingStart="@dimen/spacing_16"
+                                android:paddingEnd="@dimen/spacing_16"
+                                android:paddingTop="@dimen/spacing_10"
+                                android:paddingBottom="@dimen/spacing_10"
+                                android:background="@drawable/bg_filter_chip_unselected"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipThisMonth"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tháng này"
+                                android:textColor="@color/history_primary"
+                                android:textSize="@dimen/text_size_small"
+                                android:textStyle="bold"
+                                android:paddingStart="@dimen/spacing_16"
+                                android:paddingEnd="@dimen/spacing_16"
+                                android:paddingTop="@dimen/spacing_10"
+                                android:paddingBottom="@dimen/spacing_10"
+                                android:background="@drawable/bg_filter_chip_unselected"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
 
                     <!-- RecyclerView danh sách nhiệm vụ -->
                     <androidx.recyclerview.widget.RecyclerView
