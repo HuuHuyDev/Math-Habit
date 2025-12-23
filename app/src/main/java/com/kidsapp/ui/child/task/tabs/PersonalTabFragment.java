@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.kidsapp.R;
-import com.kidsapp.ui.child.task.PersonalTaskDetailFragment;
+import com.kidsapp.ui.child.task.personal.PersonalTaskDetailFragment;
 import com.kidsapp.ui.child.task.Task;
 import com.kidsapp.ui.child.task.TaskListAdapter;
 import java.util.ArrayList;

@@ -27,15 +27,28 @@ public class ExamResultFragment extends Fragment {
     private static final String ARG_TIMEOUT = "arg_timeout";
     private static final String ARG_WRONG_TITLES = "arg_wrong_titles";
     private static final String ARG_WRONG_QUESTIONS = "arg_wrong_questions";
+    private static final String ARG_CONTENT_ID = "arg_content_id";
+    private static final String ARG_CONTENT_TITLE = "arg_content_title";
 
     private FragmentExamResultBinding binding;
     private int ratingStars = 4; // Mặc định 4 sao
     private ArrayList<com.kidsapp.data.model.Question> wrongQuestions;
+    private String contentId;
+    private String contentTitle;
 
     public static ExamResultFragment newInstance(int correct, int wrong, int total, int percent,
                                                  @NonNull ArrayList<String> wrongTitles,
                                                  boolean isTimeout,
                                                  @NonNull ArrayList<com.kidsapp.data.model.Question> wrongQuestions) {
+        return newInstance(correct, wrong, total, percent, wrongTitles, isTimeout, wrongQuestions, "", "");
+    }
+
+    public static ExamResultFragment newInstance(int correct, int wrong, int total, int percent,
+                                                 @NonNull ArrayList<String> wrongTitles,
+                                                 boolean isTimeout,
+                                                 @NonNull ArrayList<com.kidsapp.data.model.Question> wrongQuestions,
+                                                 String contentId,
+                                                 String contentTitle) {
         Bundle args = new Bundle();
         args.putInt(ARG_CORRECT, correct);
         args.putInt(ARG_WRONG, wrong);
@@ -44,6 +57,8 @@ public class ExamResultFragment extends Fragment {
         args.putBoolean(ARG_TIMEOUT, isTimeout);
         args.putStringArrayList(ARG_WRONG_TITLES, wrongTitles);
         args.putSerializable(ARG_WRONG_QUESTIONS, wrongQuestions);
+        args.putString(ARG_CONTENT_ID, contentId);
+        args.putString(ARG_CONTENT_TITLE, contentTitle);
         ExamResultFragment fragment = new ExamResultFragment();
         fragment.setArguments(args);
         return fragment;
@@ -84,9 +99,18 @@ public class ExamResultFragment extends Fragment {
         // Nút Làm lại bài
         binding.btnDoAgain.setOnClickListener(v -> {
             if (getActivity() != null) {
+                ExamFragment examFragment;
+                if (contentId != null && !contentId.isEmpty()) {
+                    // Làm lại bài với cùng nội dung
+                    examFragment = ExamFragment.newInstance(contentId, contentTitle);
+                } else {
+                    // Làm lại bài mặc định
+                    examFragment = new ExamFragment();
+                }
+                
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.childHomeHost, new ExamFragment())
+                        .replace(R.id.childHomeHost, examFragment)
                         .addToBackStack(null)
                         .commit();
             }
@@ -112,6 +136,8 @@ public class ExamResultFragment extends Fragment {
         int percent = args.getInt(ARG_PERCENT);
         boolean isTimeout = args.getBoolean(ARG_TIMEOUT);
         wrongQuestions = (ArrayList<com.kidsapp.data.model.Question>) args.getSerializable(ARG_WRONG_QUESTIONS);
+        contentId = args.getString(ARG_CONTENT_ID, "");
+        contentTitle = args.getString(ARG_CONTENT_TITLE, "");
 
         // Hiển thị % điểm
         binding.txtScorePercent.setText(getString(R.string.percent_value, percent));

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.kidsapp.R;
 import com.kidsapp.ui.child.detailTask.DetailTaskFragment;
+import com.kidsapp.ui.child.task.exercise.ExerciseContentFragment;
 import com.kidsapp.ui.child.task.Task;
 import com.kidsapp.ui.child.task.TaskListAdapter;
 import java.util.ArrayList;
@@ -49,8 +50,8 @@ public class ExerciseTabFragment extends Fragment {
         recyclerViewTasks.setAdapter(adapter);
     }
     private void openDetail(Task task) {
-        // TODO: thay task.getTitle() bằng taskId thực tế
-        DetailTaskFragment fragment = DetailTaskFragment.newInstance(task.getTitle());
+        // Chuyển sang màn hình chọn nội dung bài tập
+        ExerciseContentFragment fragment = ExerciseContentFragment.newInstance(task.getTitle());
     
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()

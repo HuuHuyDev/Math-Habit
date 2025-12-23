@@ -1,4 +1,4 @@
-package com.kidsapp.ui.child.task;
+package com.kidsapp.ui.child.task.history;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

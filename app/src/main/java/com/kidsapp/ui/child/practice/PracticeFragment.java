@@ -31,12 +31,25 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
     private int correctCount = 0;
     private boolean isAnswerLocked = false;
     private CountDownTimer countDownTimer;
+    private String contentId;
+    private String contentTitle;
+
+    public static PracticeFragment newInstance(String contentId, String contentTitle) {
+        PracticeFragment fragment = new PracticeFragment();
+        Bundle args = new Bundle();
+        args.putString("content_id", contentId);
+        args.putString("content_title", contentTitle);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentPracticeBinding.inflate(inflater, container, false);
+        
+        loadArguments();
         setupHeader();
         setupQuestions();
         setupAnswerList();
@@ -47,47 +60,72 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         return binding.getRoot();
     }
 
+    private void loadArguments() {
+        if (getArguments() != null) {
+            contentId = getArguments().getString("content_id", "");
+            contentTitle = getArguments().getString("content_title", "Luyện tập");
+        }
+    }
+
     private void setupHeader() {
         binding.btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
     }
 
     private void setupQuestions() {
         questions = new ArrayList<>();
-        questions.add(new Question(
-                "q1",
-                "Hãy chọn đáp án đúng cho phép tính 2 + 2 = ?",
-                createOptions("A", "2 + 2 = 10", "B", "12 - 4 = 9", "C", "1 + 1 = 3", "D", "2 + 2 = 4"),
-                3,
-                "Sai vì 2 + 2 = 4, không phải 10."
-        ));
-        questions.add(new Question(
-                "q2",
-                "Kết quả của 5 - 3 là?",
-                createOptions("A", "1", "B", "2", "C", "3", "D", "4"),
-                1,
-                "5 - 3 = 2, bé nhé."
-        ));
-        questions.add(new Question(
-                "q3",
-                "9 - 6 = ?",
-                createOptions("A", "1", "B", "2", "C", "3", "D", "4"),
-                2,
-                "9 - 6 = 3."
-        ));
-        questions.add(new Question(
-                "q4",
-                "3 + 4 = ?",
-                createOptions("A", "5", "B", "6", "C", "7", "D", "8"),
-                2,
-                "3 cộng 4 bằng 7."
-        ));
-        questions.add(new Question(
-                "q5",
-                "12 - 8 = ?",
-                createOptions("A", "3", "B", "4", "C", "5", "D", "6"),
-                1,
-                "12 trừ 8 bằng 4."
-        ));
+        
+        // Load questions based on contentId
+        // TODO: In production, load from database or API
+        switch (contentId) {
+            case "1": // Phép cộng 1 chữ số
+                questions.add(new Question("q1", "2 + 3 = ?",
+                    createOptions("A", "4", "B", "5", "C", "6", "D", "7"), 1, "2 + 3 = 5"));
+                questions.add(new Question("q2", "1 + 4 = ?",
+                    createOptions("A", "3", "B", "4", "C", "5", "D", "6"), 2, "1 + 4 = 5"));
+                questions.add(new Question("q3", "6 + 2 = ?",
+                    createOptions("A", "7", "B", "8", "C", "9", "D", "10"), 1, "6 + 2 = 8"));
+                questions.add(new Question("q4", "3 + 5 = ?",
+                    createOptions("A", "6", "B", "7", "C", "8", "D", "9"), 2, "3 + 5 = 8"));
+                questions.add(new Question("q5", "4 + 4 = ?",
+                    createOptions("A", "6", "B", "7", "C", "8", "D", "9"), 2, "4 + 4 = 8"));
+                break;
+                
+            case "2": // Phép cộng 2 chữ số
+                questions.add(new Question("q1", "12 + 15 = ?",
+                    createOptions("A", "25", "B", "26", "C", "27", "D", "28"), 2, "12 + 15 = 27"));
+                questions.add(new Question("q2", "23 + 14 = ?",
+                    createOptions("A", "35", "B", "36", "C", "37", "D", "38"), 2, "23 + 14 = 37"));
+                questions.add(new Question("q3", "31 + 22 = ?",
+                    createOptions("A", "51", "B", "52", "C", "53", "D", "54"), 2, "31 + 22 = 53"));
+                questions.add(new Question("q4", "45 + 13 = ?",
+                    createOptions("A", "56", "B", "57", "C", "58", "D", "59"), 2, "45 + 13 = 58"));
+                questions.add(new Question("q5", "26 + 32 = ?",
+                    createOptions("A", "56", "B", "57", "C", "58", "D", "59"), 2, "26 + 32 = 58"));
+                break;
+                
+            case "3": // Bài toán minh họa
+                questions.add(new Question("q1", "Bạn có 5 quả táo, mẹ cho thêm 3 quả. Hỏi bạn có bao nhiêu quả táo?",
+                    createOptions("A", "6", "B", "7", "C", "8", "D", "9"), 2, "5 + 3 = 8 quả táo"));
+                questions.add(new Question("q2", "Trong lớp có 12 bạn nam và 15 bạn nữ. Hỏi lớp có bao nhiêu học sinh?",
+                    createOptions("A", "25", "B", "26", "C", "27", "D", "28"), 2, "12 + 15 = 27 học sinh"));
+                questions.add(new Question("q3", "Bé có 8 viên bi xanh và 6 viên bi đỏ. Hỏi bé có tất cả bao nhiêu viên bi?",
+                    createOptions("A", "12", "B", "13", "C", "14", "D", "15"), 2, "8 + 6 = 14 viên bi"));
+                break;
+                
+            default: // Default questions
+                questions.add(new Question("q1", "Hãy chọn đáp án đúng cho phép tính 2 + 2 = ?",
+                    createOptions("A", "2 + 2 = 10", "B", "12 - 4 = 9", "C", "1 + 1 = 3", "D", "2 + 2 = 4"),
+                    3, "Sai vì 2 + 2 = 4, không phải 10."));
+                questions.add(new Question("q2", "Kết quả của 5 - 3 là?",
+                    createOptions("A", "1", "B", "2", "C", "3", "D", "4"), 1, "5 - 3 = 2, bé nhé."));
+                questions.add(new Question("q3", "9 - 6 = ?",
+                    createOptions("A", "1", "B", "2", "C", "3", "D", "4"), 2, "9 - 6 = 3."));
+                questions.add(new Question("q4", "3 + 4 = ?",
+                    createOptions("A", "5", "B", "6", "C", "7", "D", "8"), 2, "3 cộng 4 bằng 7."));
+                questions.add(new Question("q5", "12 - 8 = ?",
+                    createOptions("A", "3", "B", "4", "C", "5", "D", "6"), 1, "12 trừ 8 bằng 4."));
+                break;
+        }
     }
 
     private List<AnswerOption> createOptions(String... data) {
