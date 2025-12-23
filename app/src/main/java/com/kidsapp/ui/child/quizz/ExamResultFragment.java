@@ -26,13 +26,16 @@ public class ExamResultFragment extends Fragment {
     private static final String ARG_PERCENT = "arg_percent";
     private static final String ARG_TIMEOUT = "arg_timeout";
     private static final String ARG_WRONG_TITLES = "arg_wrong_titles";
+    private static final String ARG_WRONG_QUESTIONS = "arg_wrong_questions";
 
     private FragmentExamResultBinding binding;
     private int ratingStars = 4; // Mặc định 4 sao
+    private ArrayList<com.kidsapp.data.model.Question> wrongQuestions;
 
     public static ExamResultFragment newInstance(int correct, int wrong, int total, int percent,
                                                  @NonNull ArrayList<String> wrongTitles,
-                                                 boolean isTimeout) {
+                                                 boolean isTimeout,
+                                                 @NonNull ArrayList<com.kidsapp.data.model.Question> wrongQuestions) {
         Bundle args = new Bundle();
         args.putInt(ARG_CORRECT, correct);
         args.putInt(ARG_WRONG, wrong);
@@ -40,6 +43,7 @@ public class ExamResultFragment extends Fragment {
         args.putInt(ARG_PERCENT, percent);
         args.putBoolean(ARG_TIMEOUT, isTimeout);
         args.putStringArrayList(ARG_WRONG_TITLES, wrongTitles);
+        args.putSerializable(ARG_WRONG_QUESTIONS, wrongQuestions);
         ExamResultFragment fragment = new ExamResultFragment();
         fragment.setArguments(args);
         return fragment;
@@ -62,8 +66,19 @@ public class ExamResultFragment extends Fragment {
 
         // Nút Xem lại bài
         binding.btnReviewLesson.setOnClickListener(v -> {
-            // TODO: Navigate to review screen hoặc hiển thị danh sách câu sai
-            Toast.makeText(requireContext(), R.string.result_review_lesson, Toast.LENGTH_SHORT).show();
+            if (wrongQuestions != null && !wrongQuestions.isEmpty()) {
+                // Chuyển sang trang xem lại câu sai
+                ExamReviewFragment reviewFragment = ExamReviewFragment.newInstance(wrongQuestions);
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.childHomeHost, reviewFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            } else {
+                Toast.makeText(requireContext(), "Bạn đã làm đúng tất cả! Không có câu nào để xem lại.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Nút Làm lại bài
@@ -96,6 +111,7 @@ public class ExamResultFragment extends Fragment {
         int total = args.getInt(ARG_TOTAL);
         int percent = args.getInt(ARG_PERCENT);
         boolean isTimeout = args.getBoolean(ARG_TIMEOUT);
+        wrongQuestions = (ArrayList<com.kidsapp.data.model.Question>) args.getSerializable(ARG_WRONG_QUESTIONS);
 
         // Hiển thị % điểm
         binding.txtScorePercent.setText(getString(R.string.percent_value, percent));

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_app_gradient"
-        android:padding="20dp">
+        android:padding="@dimen/spacing_20">
 
         <!-- Nút Back -->
         <ImageButton
@@ -23,7 +23,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/bg_round_20"
             android:src="@drawable/ic_back"
-            android:padding="8dp"
+            android:padding="@dimen/spacing_8"
             app:tint="@color/primary"
             android:contentDescription="Quay lại" />
 
@@ -33,9 +33,10 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Chi Tiết Lịch Sử"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold" />
     </RelativeLayout>
 
     <!-- ScrollView chứa nội dung -->
@@ -45,28 +46,30 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:clipToPadding="false"
-        android:padding="20dp">
+        android:paddingStart="@dimen/spacing_16"
+        android:paddingEnd="@dimen/spacing_16"
+        android:paddingTop="@dimen/spacing_20"
+        android:paddingBottom="@dimen/spacing_20">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Card Thông Tin Nhiệm Vụ -->
+            <!-- Card 1: Tổng quan nhiệm vụ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="@color/white"
-                android:layout_marginBottom="16dp">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="@dimen/spacing_16">
 
                 <LinearLayout
-                    android:background="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="@dimen/spacing_16">
 
                     <!-- Icon và Tiêu đề -->
                     <LinearLayout
@@ -74,34 +77,45 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginBottom="@dimen/spacing_16">
 
-                        <ImageView
-                            android:id="@+id/imgTaskIcon"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:scaleType="centerCrop"
-                            android:background="@drawable/bg_task_image"
-                            android:src="@drawable/ic_launcher_foreground" />
+                        <FrameLayout
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_task_icon_unchecked">
+
+                            <ImageView
+                                android:id="@+id/imgTaskIcon"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                app:tint="@color/primary"
+                                tools:src="@drawable/ic_task" />
+                        </FrameLayout>
 
                         <TextView
                             android:id="@+id/txtTaskTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_marginStart="16dp"
+                            android:layout_marginStart="@dimen/spacing_16"
                             android:text="Bài 1: Luyện phép cộng"
                             android:textColor="@color/text_primary"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="@dimen/text_size_large"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            tools:text="Bài 1: Luyện phép cộng" />
                     </LinearLayout>
 
-                    <!-- Đường kẻ -->
+                    <!-- Divider -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#E0E0E0"
-                        android:layout_marginBottom="16dp" />
+                        android:background="@color/border"
+                        android:layout_marginBottom="@dimen/spacing_16" />
 
                     <!-- Thời gian hoàn thành -->
                     <LinearLayout
@@ -109,21 +123,23 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="@dimen/spacing_12">
 
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/ic_clock"
-                            app:tint="#2196F3" />
+                            app:tint="@color/primary" />
 
                         <TextView
-                            android:layout_width="100dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="@dimen/spacing_12"
                             android:text="Hoàn thành:"
                             android:textColor="@color/text_secondary"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular"
+                            android:minWidth="100dp" />
 
                         <TextView
                             android:id="@+id/txtCompletionTime"
@@ -132,8 +148,10 @@
                             android:layout_weight="1"
                             android:text="12/11/2025 - 15:30"
                             android:textColor="@color/text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:textSize="@dimen/text_size_small"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            tools:text="12/11/2025 - 15:30" />
                     </LinearLayout>
 
                     <!-- Đánh giá (nếu có) -->
@@ -143,21 +161,24 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/ic_star"
-                            app:tint="#FFC107" />
+                            app:tint="@color/status_warning" />
 
                         <TextView
-                            android:layout_width="100dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="@dimen/spacing_12"
                             android:text="Đánh giá:"
                             android:textColor="@color/text_secondary"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular"
+                            android:minWidth="100dp" />
 
                         <TextView
                             android:id="@+id/txtRating"
@@ -166,148 +187,515 @@
                             android:layout_weight="1"
                             android:text="5.0 ⭐"
                             android:textColor="@color/text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:textSize="@dimen/text_size_small"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            tools:text="5.0 ⭐" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card Phần Thưởng -->
+
+            <!-- Card 2: Chi tiết kết quả -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="@color/white"
-                android:layout_marginBottom="16dp">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="@dimen/spacing_16">
 
                 <LinearLayout
-                    android:background="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="@dimen/spacing_16">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🎁 Phần Thưởng"
+                        android:text="📊 Chi tiết kết quả"
                         android:textColor="@color/primary"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_size_large"
                         android:textStyle="bold"
-                        android:layout_marginBottom="16dp" />
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_16" />
+
+                    <!-- Số câu đã làm -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/spacing_12"
+                        android:background="@drawable/bg_round_20"
+                        android:backgroundTint="@color/surface_variant"
+                        android:layout_marginBottom="@dimen/spacing_12">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_task"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/spacing_12"
+                            android:text="Tổng số câu"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular" />
+
+                        <TextView
+                            android:id="@+id/txtTotalQuestions"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10 câu"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            tools:text="10 câu" />
+                    </LinearLayout>
+
+                    <!-- Số câu đúng -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/spacing_12"
+                        android:background="@drawable/bg_round_20"
+                        android:backgroundTint="#E8F5E9"
+                        android:layout_marginBottom="@dimen/spacing_12">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_checkmark_completed"
+                            app:tint="@color/status_success" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/spacing_12"
+                            android:text="Câu đúng"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular" />
+
+                        <TextView
+                            android:id="@+id/txtCorrectAnswers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="9 câu"
+                            android:textColor="@color/status_success"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            tools:text="9 câu" />
+                    </LinearLayout>
+
+                    <!-- Số câu sai -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/spacing_12"
+                        android:background="@drawable/bg_round_20"
+                        android:backgroundTint="#FFEBEE"
+                        android:layout_marginBottom="@dimen/spacing_12">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_close"
+                            app:tint="@color/status_error" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/spacing_12"
+                            android:text="Câu sai"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular" />
+
+                        <TextView
+                            android:id="@+id/txtWrongAnswers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 câu"
+                            android:textColor="@color/status_error"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            tools:text="1 câu" />
+                    </LinearLayout>
+
+                    <!-- Thời gian làm bài -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/spacing_12"
+                        android:background="@drawable/bg_round_20"
+                        android:backgroundTint="@color/surface_variant">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_clock"
+                            app:tint="@color/status_info" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/spacing_12"
+                            android:text="Thời gian làm bài"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular" />
+
+                        <TextView
+                            android:id="@+id/txtDuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5 phút 30 giây"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            tools:text="5 phút 30 giây" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Tiến trình / Hiệu suất -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="@dimen/spacing_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📈 Hiệu suất"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_16" />
+
+                    <!-- Progress bar -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_16"
+                        android:background="@drawable/bg_round_20"
+                        android:backgroundTint="@color/surface_variant">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="@dimen/spacing_12">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Tỷ lệ hoàn thành"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_size_small"
+                                android:fontFamily="@font/inter_regular" />
+
+                            <TextView
+                                android:id="@+id/txtProgressPercent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="90%"
+                                android:textColor="@color/primary"
+                                android:textSize="@dimen/text_size_large"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold"
+                                tools:text="90%" />
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/progressBar"
+                            style="@style/Widget.MaterialComponents.LinearProgressIndicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="12dp"
+                            android:progress="90"
+                            app:indicatorColor="@color/status_success"
+                            app:trackColor="@color/border"
+                            app:trackCornerRadius="16dp"
+                            tools:progress="90" />
+
+                        <TextView
+                            android:id="@+id/txtProgressDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_12"
+                            android:text="Xuất sắc! Bạn đã làm rất tốt!"
+                            android:textColor="@color/status_success"
+                            android:textSize="@dimen/text_size_small"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_semibold"
+                            tools:text="Xuất sắc! Bạn đã làm rất tốt!" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- Card 4: Phần thưởng -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="@dimen/spacing_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎁 Phần thưởng"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_16" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
                         <!-- Coins -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/spacing_8"
                             android:orientation="vertical"
                             android:gravity="center"
-                            android:background="@drawable/bg_coin_badge_shadow"
-                            android:padding="16dp">
+                            android:background="@drawable/bg_round_20"
+                            android:backgroundTint="#FFF8E1"
+                            android:padding="@dimen/spacing_20">
 
                             <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:src="@drawable/ic_coin"
-                                android:layout_marginBottom="8dp" />
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_star"
+                                app:tint="@color/coin_gold"
+                                android:layout_marginBottom="@dimen/spacing_12" />
 
                             <TextView
                                 android:id="@+id/txtCoins"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="50"
-                                android:textColor="@color/white"
-                                android:textSize="22sp"
-                                android:textStyle="bold" />
+                                android:textColor="@color/coin_gold"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold"
+                                tools:text="50" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_4"
                                 android:text="Coins"
                                 android:textColor="@color/text_secondary"
-                                android:textSize="13sp" />
+                                android:textSize="@dimen/text_size_small"
+                                android:fontFamily="@font/inter_regular" />
                         </LinearLayout>
-
-                        <Space
-                            android:layout_width="16dp"
-                            android:layout_height="1dp" />
 
                         <!-- XP -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_marginStart="@dimen/spacing_8"
                             android:orientation="vertical"
                             android:gravity="center"
-                            android:background="@drawable/bg_xp_badge_shadow"
-                            android:padding="16dp">
+                            android:background="@drawable/bg_round_20"
+                            android:backgroundTint="#E3F2FD"
+                            android:padding="@dimen/spacing_20">
 
                             <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:src="@drawable/ic_xp"
-                                android:layout_marginBottom="8dp" />
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_fire"
+                                app:tint="@color/primary"
+                                android:layout_marginBottom="@dimen/spacing_12" />
 
                             <TextView
                                 android:id="@+id/txtXP"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="+100"
-                                android:textColor="@color/white"
-                                android:textSize="22sp"
-                                android:textStyle="bold" />
+                                android:textColor="@color/primary"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold"
+                                tools:text="+100" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_4"
                                 android:text="XP"
                                 android:textColor="@color/text_secondary"
-                                android:textSize="13sp" />
+                                android:textSize="@dimen/text_size_small"
+                                android:fontFamily="@font/inter_regular" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card Mô Tả (nếu có) -->
+            <!-- Card 5: Nhận xét / Phản hồi -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardDescription"
+                android:id="@+id/cardFeedback"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="@color/white"
-                android:visibility="gone">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="@dimen/spacing_16">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="@dimen/spacing_16">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📝 Mô Tả"
+                        android:text="💬 Nhận xét"
                         android:textColor="@color/primary"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_size_large"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_16" />
 
-                    <TextView
-                        android:id="@+id/txtDescription"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Hoàn thành bài tập luyện phép cộng với 10 câu hỏi. Kết quả: 9/10 câu đúng."
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:lineSpacingExtra="4dp" />
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_16"
+                        android:background="@drawable/bg_round_20"
+                        android:backgroundTint="#F0F9FF">
+
+                        <TextView
+                            android:id="@+id/txtFeedback"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tuyệt vời! Bạn đã hoàn thành bài tập với kết quả xuất sắc. Hãy tiếp tục cố gắng và rèn luyện thêm nhé! 🌟"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_size_medium"
+                            android:fontFamily="@font/inter_regular"
+                            android:lineSpacingExtra="4dp"
+                            tools:text="Tuyệt vời! Bạn đã hoàn thành bài tập với kết quả xuất sắc. Hãy tiếp tục cố gắng và rèn luyện thêm nhé! 🌟" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 6: Hành động -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="@dimen/spacing_20">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚡ Hành động"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_16" />
+
+                    <!-- Nút Làm lại bài -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRetry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Làm lại bài"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_medium"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:paddingTop="@dimen/spacing_16"
+                        android:paddingBottom="@dimen/spacing_16"
+                        android:background="@drawable/bg_button_primary"
+                        app:icon="@drawable/ic_refresh"
+                        app:iconGravity="textStart"
+                        app:iconPadding="@dimen/spacing_8"
+                        app:iconTint="@color/white"
+                        app:cornerRadius="16dp"
+                        android:layout_marginBottom="@dimen/spacing_12" />
+
+                    <!-- Nút Xem chi tiết đáp án -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewAnswers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Xem chi tiết đáp án"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_medium"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:paddingTop="@dimen/spacing_16"
+                        android:paddingBottom="@dimen/spacing_16"
+                        app:icon="@drawable/ic_eye"
+                        app:iconGravity="textStart"
+                        app:iconPadding="@dimen/spacing_8"
+                        app:iconTint="@color/primary"
+                        app:strokeColor="@color/primary"
+                        app:strokeWidth="2dp"
+                        app:cornerRadius="16dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

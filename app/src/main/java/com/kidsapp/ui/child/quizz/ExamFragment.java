@@ -203,13 +203,23 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
         int wrongCount = total - correctCount;
         int percent = Math.round((correctCount * 100f) / total);
 
+        // Tạo danh sách câu sai với đầy đủ thông tin
+        ArrayList<Question> wrongQuestions = new ArrayList<>();
+        for (Question question : questions) {
+            Integer answerIndex = selectedAnswers.get(question.getId());
+            if (answerIndex == null || answerIndex != question.getCorrectIndex()) {
+                wrongQuestions.add(question);
+            }
+        }
+        
         ExamResultFragment fragment = ExamResultFragment.newInstance(
                 correctCount,
                 wrongCount,
                 total,
                 percent,
                 new ArrayList<>(wrongTitles),
-                isTimeout
+                isTimeout,
+                wrongQuestions
         );
 
         requireActivity().getSupportFragmentManager()
