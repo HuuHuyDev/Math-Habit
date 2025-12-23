@@ -51,13 +51,13 @@
                 app:tint="@color/text_primary" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="77dp"
+                android:layout_height="37dp"
                 android:layout_marginStart="6dp"
                 android:text="Quay lại"
                 android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_size_medium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
 
