@@ -121,7 +121,7 @@ public class LoginFragment extends Fragment {
      */
     private void handleDemoLogin(String username, String password) {
         // Tài khoản Parent demo
-        if (username.equals(" ") && password.equals("123456")) {
+        if (username.equals("parent") && password.equals("123456")) {
             loginAsParent();
             return;
         }
