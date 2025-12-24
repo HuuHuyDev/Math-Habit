@@ -147,8 +147,6 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             if (currentIndex < questions.size() - 1) {
                 currentIndex++;
                 updateUI();
-            } else {
-                finishPractice();
             }
         });
 
@@ -159,6 +157,8 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             }
         });
 
+        // Nút Hoàn thành
+        binding.btnComplete.setOnClickListener(v -> finishPractice());
     }
 
     private void startTimer() {
@@ -181,13 +181,25 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         Question current = questions.get(currentIndex);
 
         binding.txtQuestionTitle.setText(current.getTitle());
-        binding.layoutExplanation.getRoot().setVisibility(View.GONE);
+        binding.layoutExplanation.setVisibility(View.GONE);
         showPetHint();
 
         answerAdapter = new AnswerAdapter(current.getOptions(), this);
         binding.recyclerAnswers.setAdapter(answerAdapter);
 
         updateIndicators();
+        updateNavigationButtons();
+    }
+
+    /**
+     * Cập nhật hiển thị nút Next/Hoàn thành dựa trên vị trí câu hỏi
+     */
+    private void updateNavigationButtons() {
+        boolean isLastQuestion = currentIndex == questions.size() - 1;
+        
+        // Ẩn nút Next, hiện nút Hoàn thành khi ở câu cuối
+        binding.btnNext.setVisibility(isLastQuestion ? View.GONE : View.VISIBLE);
+        binding.btnComplete.setVisibility(isLastQuestion ? View.VISIBLE : View.GONE);
     }
 
     private void updateIndicators() {
@@ -236,20 +248,21 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         if (position == current.getCorrectIndex()) {
             correctCount++;
             showPetCorrect();
-            binding.layoutExplanation.getRoot().setVisibility(View.GONE);
+            binding.layoutExplanation.setVisibility(View.GONE);
             answerAdapter.markCorrect(position);
-            binding.recyclerAnswers.postDelayed(() -> {
-                if (currentIndex < questions.size() - 1) {
+            
+            // Nếu không phải câu cuối thì tự động chuyển câu
+            if (currentIndex < questions.size() - 1) {
+                binding.recyclerAnswers.postDelayed(() -> {
                     currentIndex++;
                     updateUI();
-                } else {
-                    finishPractice();
-                }
-            }, 1500);
+                }, 1500);
+            }
+            // Nếu là câu cuối, người dùng sẽ bấm nút "Hoàn thành"
         } else {
             showPetWrong();
-            binding.layoutExplanation.getRoot().setVisibility(View.VISIBLE);
-            binding.layoutExplanation.txtExplanationContent.setText(current.getExplanation());
+            binding.layoutExplanation.setVisibility(View.VISIBLE);
+            binding.txtExplanationContent.setText(current.getExplanation());
             answerAdapter.markWrong(position);
             isAnswerLocked = false;
         }
