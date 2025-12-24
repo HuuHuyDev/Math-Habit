@@ -19,4 +19,9 @@
         layout="@layout/item_child_action"
          />
 
+    <include
+        android:id="@+id/actionChallenge"
+        layout="@layout/item_child_action"
+         />
+
 </LinearLayout>

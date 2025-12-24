@@ -19,6 +19,7 @@ import com.kidsapp.data.FakeNotificationRepository;
 import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.databinding.ViewChildActionListBinding;
+import com.kidsapp.ui.child.challenge.ChallengeHomeFragment;
 import com.kidsapp.ui.child.equip.equip;
 import com.kidsapp.ui.child.progress.ProgresssFragment;
 import com.kidsapp.ui.child.shop.ShopFragment;
@@ -98,6 +99,13 @@ public class ChildHomeFragment extends Fragment {
                 R.drawable.ic_trophy,
                 getString(R.string.child_action_achievement),
                 () -> navigateToAchievement());
+
+        // Thách đấu - chuyển đến ChallengeHomeFragment
+        configureAction(actionListBinding.actionChallenge.getRoot(),
+                R.drawable.bg_action_yellow,
+                R.drawable.ic_challenge,
+                getString(R.string.child_action_challenge),
+                () -> navigateToChallenge());
     }
 
     private void configureAction(View actionView, int backgroundRes, int iconRes, String title, Runnable onClick) {
@@ -156,6 +164,19 @@ public class ChildHomeFragment extends Fragment {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.childHomeHost, new com.kidsapp.ui.child.reward.RewardFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    /**
+     * Chuyển đến trang Thách đấu
+     */
+    private void navigateToChallenge() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new ChallengeHomeFragment())
                     .addToBackStack(null)
                     .commit();
         }

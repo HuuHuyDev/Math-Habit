@@ -46,6 +46,7 @@
     <string name="child_action_mission">Xem nhiệm vụ</string>
     <string name="child_action_store">Mua vật phẩm</string>
     <string name="child_action_achievement">Thành tựu</string>
+    <string name="child_action_challenge">Thách đấu</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
     <string name="choose_mode">Chọn chế độ</string>
     <string name="choose_mode_desc">Bạn muốn ôn tập trước hay bắt đầu làm bài?</string>
