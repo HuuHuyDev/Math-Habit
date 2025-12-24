@@ -1,27 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Khám phá thêm - Grid 3 circular icons -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginHorizontal="@dimen/spacing_20"
+    android:layout_marginTop="@dimen/spacing_16">
 
-    <include
-        android:id="@+id/actionMission"
-        layout="@layout/item_child_action"
-       />
+    <!-- Section Title -->
+    <TextView
+        android:id="@+id/txtExploreTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/child_explore_more"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_large"
+        android:textStyle="bold"
+        android:layout_marginBottom="@dimen/spacing_16" />
 
-    <include
-        android:id="@+id/actionStore"
-        layout="@layout/item_child_action"
-          />
+    <!-- Grid 3 circular action buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
 
-    <include
-        android:id="@+id/actionAchievement"
-        layout="@layout/item_child_action"
-         />
+        <!-- Mua vật phẩm -->
+        <LinearLayout
+            android:id="@+id/actionStore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="@dimen/spacing_8">
 
-    <include
-        android:id="@+id/actionChallenge"
-        layout="@layout/item_child_action"
-         />
+            <FrameLayout
+                android:id="@+id/iconContainerStore"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_action_circle_purple">
+
+                <ImageView
+                    android:id="@+id/imgIconStore"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_store"
+                    app:tint="@android:color/white" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtActionStore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:text="@string/child_action_store"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Thành tựu -->
+        <LinearLayout
+            android:id="@+id/actionAchievement"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="@dimen/spacing_8">
+
+            <FrameLayout
+                android:id="@+id/iconContainerAchievement"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_action_circle_orange">
+
+                <ImageView
+                    android:id="@+id/imgIconAchievement"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_trophy"
+                    app:tint="@android:color/white" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtActionAchievement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:text="@string/child_action_achievement"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Thách đấu -->
+        <LinearLayout
+            android:id="@+id/actionChallenge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="@dimen/spacing_8">
+
+            <FrameLayout
+                android:id="@+id/iconContainerChallenge"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_action_circle_yellow">
+
+                <ImageView
+                    android:id="@+id/imgIconChallenge"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_challenge"
+                    app:tint="@android:color/white" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtActionChallenge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:text="@string/child_action_challenge"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
