@@ -143,4 +143,43 @@
         <item>Nữ</item>
         <item>Khác</item>
     </string-array>
+
+    <!-- Challenge & Invite Friends -->
+    <string name="invite_friends">Mời bạn bè</string>
+    <string name="challenge_friends">Thách đấu bạn bè</string>
+    <string name="invite_by_phone">Mời qua số điện thoại</string>
+    <string name="invite_by_link">Chia sẻ link mời</string>
+    <string name="search_friends">Tìm kiếm bạn bè...</string>
+    <string name="friends_list">Danh sách bạn bè</string>
+    <string name="invite_button">Mời</string>
+    <string name="online_status">Đang online</string>
+    <string name="offline_status">Offline</string>
+    
+    <!-- Challenge Modes -->
+    <string name="choose_challenge_mode">Chọn chế độ thách đấu</string>
+    <string name="quick_challenge">Thách đấu nhanh</string>
+    <string name="quick_challenge_desc">10 câu hỏi • 5 phút</string>
+    <string name="standard_challenge">Thách đấu tiêu chuẩn</string>
+    <string name="standard_challenge_desc">20 câu hỏi • 10 phút</string>
+    <string name="marathon_challenge">Thách đấu marathon</string>
+    <string name="marathon_challenge_desc">50 câu hỏi • 20 phút</string>
+    <string name="send_challenge">Gửi thách đấu</string>
+    
+    <!-- Share Invite -->
+    <string name="share_invite_link">Chia sẻ link mời</string>
+    <string name="share_invite_desc">Gửi link này cho bạn bè để mời họ tham gia thách đấu cùng bạn!</string>
+    <string name="copy_link">Sao chép link</string>
+    <string name="share_via">Chia sẻ qua</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="messenger">Messenger</string>
+    <string name="zalo">Zalo</string>
+    <string name="more_apps">Khác</string>
+    <string name="close">Đóng</string>
+    <string name="generate_new_link">Tạo link mới</string>
+    <string name="link_copied">Đã sao chép link!</string>
+    <string name="new_link_generated">Đã tạo link mới!</string>
+    <string name="app_not_installed">Ứng dụng chưa được cài đặt</string>
+    <string name="challenge_sent">Đã gửi thách đấu đến %s</string>
+    <string name="phone_invite_coming_soon">Tính năng mời qua số điện thoại đang phát triển</string>
+
 </resources>
