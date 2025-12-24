@@ -44,7 +44,7 @@
     <string name="child_exp_value">%1$d / %2$d exp</string>
     <string name="child_exp_hint">Chỉ còn %1$d exp nữa để lên cấp!</string>
     <string name="child_action_mission">Xem nhiệm vụ</string>
-    <string name="child_action_store">Mua vật phẩm</string>
+    <string name="child_action_store">vật phẩm</string>
     <string name="child_action_achievement">Thành tựu</string>
     <string name="child_action_challenge">Thách đấu</string>
     <string name="child_hello">Xin chào!</string>
