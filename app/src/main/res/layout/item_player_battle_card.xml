@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Người chơi"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:textSize="11sp"
             android:maxLines="1"
             android:ellipsize="end" />
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 điểm"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold" />
 

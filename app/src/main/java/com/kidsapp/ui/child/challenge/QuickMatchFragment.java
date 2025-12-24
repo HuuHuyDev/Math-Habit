@@ -44,6 +44,17 @@ public class QuickMatchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
+        // Get data from arguments
+        Bundle args = getArguments();
+        if (args != null) {
+            String challengeCode = args.getString("challenge_code");
+            String challengeMode = args.getString("challenge_mode");
+            
+            // Log for debugging
+            android.util.Log.d("QuickMatchFragment", "Challenge Code: " + challengeCode);
+            android.util.Log.d("QuickMatchFragment", "Challenge Mode: " + challengeMode);
+        }
+        
         showRandomTip();
         startMatchmaking();
         
@@ -88,9 +99,10 @@ public class QuickMatchFragment extends Fragment {
         // Navigate to QuizBattleFragment after short delay
         handler.postDelayed(() -> {
             if (getActivity() != null) {
+                // Use the correct container ID for QuickMatchActivity
                 getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.childHomeHost, new QuizBattleFragment())
+                    .replace(R.id.fragmentContainer, new QuizBattleFragment())
                     .addToBackStack(null)
                     .commit();
             }

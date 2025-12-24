@@ -1,6 +1,9 @@
 package com.kidsapp.ui.child.challenge;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentChallengeHomeBinding;
+import com.kidsapp.ui.challenge.JoinByChallengeCodeActivity;
 
 /**
  * Fragment trang chủ Thách đấu
@@ -50,9 +54,8 @@ public class ChallengeHomeFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        // Back button
-        binding.btnBack.setOnClickListener(v -> 
-            requireActivity().onBackPressed());
+        // Back button - Cải thiện chức năng quay lại
+        binding.btnBack.setOnClickListener(v -> handleBackPressed());
 
         // Quick Match - Thách đấu nhanh
         binding.cardQuickMatch.setOnClickListener(v -> {
@@ -79,14 +82,65 @@ public class ChallengeHomeFragment extends Fragment {
             navigateToFragment(new ChallengeHistoryFragment());
         });
     }
+    
+    /**
+     * Xử lý nút quay lại với animation và feedback
+     */
+    private void handleBackPressed() {
+        // Thêm haptic feedback
+        try {
+            Vibrator vibrator = (Vibrator) requireContext().getSystemService(android.content.Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(50);
+                }
+            }
+        } catch (Exception e) {
+            // Ignore vibration errors
+        }
+        
+        // Thêm animation cho nút
+        binding.btnBack.animate()
+                .scaleX(0.9f)
+                .scaleY(0.9f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    binding.btnBack.animate()
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+        
+        // Delay một chút để animation hoàn thành
+        new android.os.Handler().postDelayed(() -> {
+            // Kiểm tra xem có fragment nào trong back stack không
+            if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                // Nếu có fragment trong back stack, pop nó
+                getParentFragmentManager().popBackStack();
+            } else {
+                // Nếu không có, quay về màn hình chính
+                requireActivity().onBackPressed();
+            }
+        }, 150);
+    }
 
     /**
-     * Navigate to a fragment
+     * Navigate to a fragment với animation
      */
     private void navigateToFragment(Fragment fragment) {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,  // enter animation
+                            R.anim.slide_out_left,  // exit animation
+                            R.anim.slide_in_left,   // pop enter animation
+                            R.anim.slide_out_right  // pop exit animation
+                    )
                     .replace(R.id.childHomeHost, fragment)
                     .addToBackStack(null)
                     .commit();
@@ -97,7 +151,8 @@ public class ChallengeHomeFragment extends Fragment {
      * Hiển thị dialog nhập mã thách đấu
      */
     private void showJoinByCodeDialog() {
-        Toast.makeText(requireContext(), "Nhập mã thách đấu - Đang phát triển", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(requireContext(), JoinByChallengeCodeActivity.class);
+        startActivity(intent);
     }
 
     @Override

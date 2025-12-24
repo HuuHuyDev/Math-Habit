@@ -5,6 +5,7 @@
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -35,9 +36,27 @@
 
         <!-- Child Main Activity -->
         <activity
-       
             android:name=".ui.child.main.ChildMainActivity"
             android:exported="true" />
+
+        <!-- Challenge Activities -->
+        <activity
+            android:name=".ui.challenge.JoinByChallengeCodeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.KidsApp.Dialog" />
+
+        <activity
+            android:name=".ui.challenge.ChallengeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.challenge.QuickMatchActivity"
+            android:exported="false" />
+
+        <!-- Invite Friends Activity -->
+        <activity
+            android:name=".ui.challenge.InviteFriendsActivity"
+            android:exported="false" />
 
 
     </application>

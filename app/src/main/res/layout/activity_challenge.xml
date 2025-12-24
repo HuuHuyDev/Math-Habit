@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_gradient_primary">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/spacing_16">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="62dp"
+            android:layout_height="57dp"
+            android:background="@drawable/bg_circle_white"
+            android:contentDescription="Quay lại"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/primary" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="49dp"
+            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_bold"
+            android:text="Thách đấu"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16">
+
+            <!-- Challenge Info Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_20"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_small">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_20">
+
+                    <!-- Challenge Icon -->
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/spacing_16"
+                        android:src="@drawable/ic_battle"
+                        app:tint="@color/primary" />
+
+                    <!-- Challenge Title -->
+                    <TextView
+                        android:id="@+id/txtChallengeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Thách đấu: ABC123XYZ"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_title"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/spacing_8"
+                        tools:text="Thách đấu: ABC123XYZ" />
+
+                    <!-- Challenge Description -->
+                    <TextView
+                        android:id="@+id/txtChallengeDesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Bạn đã tham gia thách đấu thành công!"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_medium"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/spacing_16"
+                        tools:text="Bạn đã tham gia thách đấu thành công!" />
+
+                    <!-- Challenge Info -->
+                    <TextView
+                        android:id="@+id/txtChallengeInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• 20 câu hỏi toán học\n• Thời gian: 10 phút\n• Chế độ: Thách đấu tiêu chuẩn"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_medium"
+                        android:fontFamily="@font/inter_regular"
+                        android:lineSpacingExtra="4dp"
+                        tools:text="• 20 câu hỏi toán học\n• Thời gian: 10 phút\n• Chế độ: Thách đấu tiêu chuẩn" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Players Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_20"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_small">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_20">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Người chơi"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_16" />
+
+                    <!-- Player 1 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/spacing_12">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_child_avatar"
+                            app:shapeAppearanceOverlay="@style/CircleImageView"
+                            android:layout_marginEnd="@dimen/spacing_12" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bạn"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/text_size_medium"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Level 5"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_size_small"
+                                android:fontFamily="@font/inter_regular" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sẵn sàng"
+                            android:textColor="@color/status_success"
+                            android:textSize="@dimen/text_size_small"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold" />
+
+                    </LinearLayout>
+
+                    <!-- VS Divider -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="VS"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginVertical="@dimen/spacing_8" />
+
+                    <!-- Player 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/spacing_12">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_child_avatar"
+                            app:shapeAppearanceOverlay="@style/CircleImageView"
+                            android:layout_marginEnd="@dimen/spacing_12" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Đối thủ"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/text_size_medium"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Level 4"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_size_small"
+                                android:fontFamily="@font/inter_regular" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sẵn sàng"
+                            android:textColor="@color/status_success"
+                            android:textSize="@dimen/text_size_small"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Start Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_16">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStartChallenge"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Bắt đầu thách đấu"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            android:backgroundTint="@color/primary"
+            app:cornerRadius="@dimen/radius_button"
+            style="@style/Widget.MaterialComponents.Button" />
+
+    </LinearLayout>
+
+</LinearLayout>

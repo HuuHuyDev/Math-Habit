@@ -258,7 +258,17 @@ public class QuizBattleFragment extends Fragment implements BattleAnswerAdapter.
         questionTimer = new CountDownTimer(QUESTION_TIME_MS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                binding.txtTimer.setText(String.valueOf(millisUntilFinished / 1000));
+                // Use txtQuestionProgress to show timer (or create a new timer TextView)
+                long seconds = millisUntilFinished / 1000;
+                if (binding.txtQuestionProgress != null) {
+                    String currentText = binding.txtQuestionProgress.getText().toString();
+                    // Keep the question progress and add timer
+                    if (currentText.contains("•")) {
+                        binding.txtQuestionProgress.setText(currentText.split("•")[0] + "• " + seconds + "s");
+                    } else {
+                        binding.txtQuestionProgress.setText(currentText + " • " + seconds + "s");
+                    }
+                }
             }
 
             @Override

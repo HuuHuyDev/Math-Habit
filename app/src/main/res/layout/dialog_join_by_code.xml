@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_white_card"
+    android:padding="@dimen/spacing_24">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/spacing_20">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_code"
+            app:tint="@color/primary"
+            android:layout_marginEnd="@dimen/spacing_12" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tham gia bằng mã"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold" />
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_light"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Đóng"
+            app:tint="@color/text_tertiary" />
+
+    </LinearLayout>
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nhập mã thách đấu mà bạn bè đã gửi cho bạn để tham gia"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium"
+        android:fontFamily="@font/inter_regular"
+        android:layout_marginBottom="@dimen/spacing_20" />
+
+    <!-- Code Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutCodeInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_16"
+        app:boxBackgroundMode="filled"
+        app:boxBackgroundColor="@color/surface_variant"
+        app:boxCornerRadiusTopStart="@dimen/card_radius"
+        app:boxCornerRadiusTopEnd="@dimen/card_radius"
+        app:boxCornerRadiusBottomStart="@dimen/card_radius"
+        app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+        app:startIconDrawable="@drawable/ic_code"
+        app:startIconTint="@color/text_tertiary"
+        app:hintTextColor="@color/text_tertiary"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtChallengeCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập mã thách đấu (VD: ABC123XYZ)"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_medium"
+            android:fontFamily="@font/inter_regular"
+            android:inputType="textCapCharacters"
+            android:maxLength="12"
+            android:letterSpacing="0.1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Code Format Hint -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/spacing_20">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_info"
+            app:tint="@color/status_info"
+            android:layout_marginEnd="@dimen/spacing_8" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mã thách đấu gồm 8-12 ký tự (chữ và số)"
+            android:textColor="@color/text_tertiary"
+            android:textSize="@dimen/text_size_small"
+            android:fontFamily="@font/inter_regular" />
+
+    </LinearLayout>
+
+    <!-- Recent Codes -->
+    <TextView
+        android:id="@+id/txtRecentCodesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mã gần đây"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        android:layout_marginBottom="@dimen/spacing_12"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerRecentCodes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_20"
+        android:nestedScrollingEnabled="false"
+        android:visibility="gone"
+        tools:listitem="@layout/item_recent_code" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:text="Hủy"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_size_medium"
+            android:fontFamily="@font/inter_medium"
+            android:backgroundTint="@color/surface_variant"
+            app:cornerRadius="@dimen/radius_button"
+            style="@style/Widget.MaterialComponents.Button" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnJoinChallenge"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:text="Tham gia"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_medium"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            android:backgroundTint="@color/primary"
+            app:cornerRadius="@dimen/radius_button"
+            android:enabled="false"
+            style="@style/Widget.MaterialComponents.Button" />
+
+    </LinearLayout>
+
+</LinearLayout>
