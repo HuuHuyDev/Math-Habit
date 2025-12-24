@@ -304,7 +304,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="1250"
-                                android:textColor="#FF9800"
+                                android:textColor="@color/white"
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
 
@@ -341,7 +341,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="850"
-                                android:textColor="#FFC107"
+                                android:textColor="@color/white"
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
 
