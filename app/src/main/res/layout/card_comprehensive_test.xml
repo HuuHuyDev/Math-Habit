@@ -25,15 +25,11 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- Icon -->
+            <!-- Icon với background trong suốt -->
             <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/bg_level_badge" />
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_test_icon_circle">
 
                 <ImageView
                     android:layout_width="28dp"
@@ -65,13 +61,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Kiểm tra tổng hợp kiến thức"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:alpha="0.9" />
+                    android:text="Kiểm tra tổng hợp kiến thức từ tất cả các bài đã học"
+                    android:textColor="#E6FFFFFF"
+                    android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Badge "HOT" hoặc "NEW" -->
+            <!-- Badge "HOT" -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,7 +75,7 @@
                 android:paddingVertical="4dp"
                 android:text="HOT"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -88,7 +83,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="3">
@@ -101,19 +96,26 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_task"
-                    app:tint="@color/white" />
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_test_info_circle">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_task"
+                        app:tint="@color/white" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/txtQuestionCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="20 câu"
-                    android:textColor="@color/white"
+                    android:textColor="#F2FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -126,19 +128,26 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_clock"
-                    app:tint="@color/white" />
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_test_info_circle">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_clock"
+                        app:tint="@color/white" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/txtDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="15 phút"
-                    android:textColor="@color/white"
+                    android:textColor="#F2FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -151,41 +160,46 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_star_filled"
-                    app:tint="@color/white" />
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_test_info_circle">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_star_filled"
+                        app:tint="@color/white" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/txtPassingScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="Đạt 70%"
-                    android:textColor="@color/white"
+                    android:textColor="#F2FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Nút bắt đầu -->
+        <!-- Nút bắt đầu - Gradient xanh đậm -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStartTest"
-            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_button_white_round"
-            android:text="Bắt đầu làm bài"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_test_start_button"
+            android:backgroundTint="@null"
+            android:text="BẮT ĐẦU LÀM BÀI"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:letterSpacing="0.02"
             app:cornerRadius="16dp"
-            app:icon="@drawable/ic_play"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconTint="@color/primary" />
+            app:elevation="4dp" />
 
         <!-- Thông báo nếu chưa mở khóa -->
         <LinearLayout
