@@ -85,16 +85,14 @@ public class QuickMatchFragment extends Fragment {
             "Đã tìm thấy đối thủ! Chuẩn bị nào 🎉", 
             Toast.LENGTH_SHORT).show();
         
-        // TODO: Navigate to QuizBattleFragment
-        // Bundle args = new Bundle();
-        // args.putString("opponentName", "Người chơi khác");
-        // Navigation.findNavController(binding.getRoot())
-        //     .navigate(R.id.action_quickMatch_to_battle, args);
-        
-        // Tạm thời quay lại
+        // Navigate to QuizBattleFragment after short delay
         handler.postDelayed(() -> {
             if (getActivity() != null) {
-                requireActivity().onBackPressed();
+                getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.childHomeHost, new QuizBattleFragment())
+                    .addToBackStack(null)
+                    .commit();
             }
         }, 1500);
     }

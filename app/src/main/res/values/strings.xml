@@ -47,6 +47,13 @@
     <string name="child_action_store">Mua vật phẩm</string>
     <string name="child_action_achievement">Thành tựu</string>
     <string name="child_action_challenge">Thách đấu</string>
+    <string name="child_hello">Xin chào!</string>
+    <string name="child_current_level">Cấp độ hiện tại</string>
+    <string name="child_today_goal">Mục tiêu hôm nay</string>
+    <string name="child_tasks_done">Nhiệm vụ hoàn thành</string>
+    <string name="child_xp_earned">XP kiếm được</string>
+    <string name="child_mission_desc">Hoàn thành nhiệm vụ để nhận thưởng</string>
+    <string name="child_explore_more">Khám phá thêm</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển!</string>
     <string name="choose_mode">Chọn chế độ</string>
     <string name="choose_mode_desc">Bạn muốn ôn tập trước hay bắt đầu làm bài?</string>
