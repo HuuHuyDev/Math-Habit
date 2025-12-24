@@ -47,7 +47,8 @@ public class ChildHomeFragment extends Fragment {
         binding.headerUser.setAvatar(R.drawable.ic_child_face);
         binding.headerUser.setNotificationCount(3);
         
-        binding.headerUser.setAvatarClick(v -> navigateToProfile());
+        // Click avatar để chuyển đến trang trang bị
+        binding.headerUser.setAvatarClick(v -> navigateToEquip());
         binding.headerUser.setNotificationClick(v -> showNotificationsBottomSheet());
     }
 
@@ -109,6 +110,10 @@ public class ChildHomeFragment extends Fragment {
 
     private void navigateToProfile() {
         navigateTo(new com.kidsapp.ui.child.profile.ChildProfileFragment());
+    }
+
+    private void navigateToEquip() {
+        navigateTo(new com.kidsapp.ui.child.equip.equip());
     }
 
     private void navigateTo(Fragment fragment) {
