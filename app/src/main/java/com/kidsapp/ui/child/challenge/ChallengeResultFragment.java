@@ -79,18 +79,6 @@ public class ChallengeResultFragment extends Fragment {
     }
 
     private void displayResult() {
-        // Result icon and title
-        if (isWin) {
-            binding.imgResult.setImageResource(R.drawable.ic_trophy);
-            binding.txtResultTitle.setText("Chiến thắng!");
-            binding.txtResultTitle.setTextColor(getResources().getColor(R.color.primary, null));
-            binding.txtResultMessage.setText("Bạn đã chiến thắng đối thủ!");
-        } else {
-            binding.imgResult.setImageResource(R.drawable.ic_close_circle);
-            binding.txtResultTitle.setText("Thua cuộc");
-            binding.txtResultTitle.setTextColor(getResources().getColor(R.color.error, null));
-            binding.txtResultMessage.setText("Cố gắng hơn lần sau nhé!");
-        }
 
         // Scores
         binding.txtPlayer1Score.setText(String.valueOf(player1Score));
