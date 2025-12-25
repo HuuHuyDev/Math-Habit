@@ -288,7 +288,6 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
                     }
                 });
     }
-    }
 
     private List<ChatMessage> convertToMessages(List<ChatMessageDto> dtos) {
         List<ChatMessage> messages = new ArrayList<>();
