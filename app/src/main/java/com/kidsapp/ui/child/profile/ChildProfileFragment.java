@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentProfileChildBinding;
 import com.kidsapp.ui.auth.LoginActivity;
+import com.kidsapp.ui.child.equip.equip;
 
 /**
  * Fragment hiển thị thông tin hồ sơ của Bé
@@ -52,6 +53,9 @@ public class ChildProfileFragment extends Fragment {
         
         // Xử lý sự kiện nút Back
         setupBackButton();
+        
+        // Xử lý sự kiện nút Trang bị
+        setupEquipButton();
         
         // Xử lý sự kiện nút Đăng Xuất
         setupLogoutButton();
@@ -106,6 +110,44 @@ public class ChildProfileFragment extends Fragment {
             // Quay lại Fragment trước đó (Home)
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+    }
+
+    /**
+     * Xử lý sự kiện nút Trang bị - Chuyển đến equip fragment
+     */
+    private void setupEquipButton() {
+        binding.btnEquip.setOnClickListener(v -> {
+            // Thêm haptic feedback
+            try {
+                android.os.Vibrator vibrator = (android.os.Vibrator) requireContext().getSystemService(android.content.Context.VIBRATOR_SERVICE);
+                if (vibrator != null && vibrator.hasVibrator()) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        vibrator.vibrate(android.os.VibrationEffect.createOneShot(30, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        vibrator.vibrate(30);
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore vibration errors
+            }
+            
+            // Navigate to equip fragment
+            if (getActivity() != null) {
+                equip equipFragment = new equip();
+                
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in_right,  // enter animation
+                                R.anim.slide_out_left,  // exit animation
+                                R.anim.slide_in_left,   // pop enter animation
+                                R.anim.slide_out_right  // pop exit animation
+                        )
+                        .replace(R.id.childHomeHost, equipFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
