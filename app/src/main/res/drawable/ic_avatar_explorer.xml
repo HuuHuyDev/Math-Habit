@@ -1,0 +1,38 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Nhà thám hiểm - Mũ nâu -->
+    <!-- Đầu -->
+    <path
+        android:fillColor="#FFCC80"
+        android:pathData="M60,45 Q42,45 35,58 Q30,68 35,78 Q42,88 60,88 Q78,88 85,78 Q90,68 85,58 Q78,45 60,45 Z"/>
+    
+    <!-- Mũ thám hiểm -->
+    <path
+        android:fillColor="#8D6E63"
+        android:pathData="M30,50 Q30,35 60,30 Q90,35 90,50 L85,50 Q85,40 60,36 Q35,40 35,50 Z"/>
+    
+    <!-- Vành mũ -->
+    <path
+        android:fillColor="#6D4C41"
+        android:pathData="M25,50 L95,50 L90,55 L30,55 Z"/>
+    
+    <!-- Mắt trái -->
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M48,62 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    
+    <!-- Mắt phải -->
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M72,62 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    
+    <!-- Nụ cười -->
+    <path
+        android:strokeColor="#5D4037"
+        android:strokeWidth="2"
+        android:pathData="M52,72 Q60,78 68,72"/>
+</vector>

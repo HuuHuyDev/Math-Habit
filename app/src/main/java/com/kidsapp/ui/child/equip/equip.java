@@ -59,11 +59,11 @@ public class equip extends Fragment {
 
     private void setupSkinData() {
         skinList.clear();
-        skinList.add(new Skin(R.mipmap.avatar_foreground, "Mặc định"));
-        skinList.add(new Skin(R.mipmap.skin1_foreground, "Nhà thám hiểm"));
-        skinList.add(new Skin(R.mipmap.skin2_foreground, "Cướp biển"));
-        skinList.add(new Skin(R.mipmap.skin3_foreground, "Bóng chày"));
-
+        skinList.add(new Skin(R.drawable.ic_child_avatar, "Mặc định"));
+        skinList.add(new Skin(R.drawable.ic_avatar_explorer, "Nhà thám hiểm"));
+        skinList.add(new Skin(R.drawable.ic_avatar_pirate, "Cướp biển"));
+        skinList.add(new Skin(R.drawable.ic_avatar_sport, "Bóng chày"));
+        skinList.add(new Skin(R.drawable.ic_avatar_ninja, "Ninja"));
     }
 
     private void setupRecyclerView() {

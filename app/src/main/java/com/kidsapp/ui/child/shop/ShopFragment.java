@@ -68,9 +68,9 @@ public class ShopFragment extends Fragment {
 
     private void initShopItems() {
         shopItems.clear();
-        shopItems.add(new ShopItem(1, "Kỳ nhung\n", 500, R.mipmap.skin4));
-        shopItems.add(new ShopItem(2, "Thỏ\nNhanh nhẹn", 600, R.mipmap.skintho));
-        shopItems.add(new ShopItem(3, "Gấu trúc\nĐáng yêu", 750, R.mipmap.skingau));
+        shopItems.add(new ShopItem(1, "Mèo\nTinh nghịch", 500, R.drawable.ic_pet_cat));
+        shopItems.add(new ShopItem(2, "Thỏ\nNhanh nhẹn", 600, R.drawable.ic_pet_rabbit));
+        shopItems.add(new ShopItem(3, "Gấu trúc\nĐáng yêu", 750, R.drawable.ic_pet_panda));
         shopItems.add(new ShopItem(4, "Chó\nTrung thành", 900, R.drawable.ic_pet_dog));
     }
 

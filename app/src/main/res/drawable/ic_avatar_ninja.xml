@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Ninja -->
+    <!-- Đầu -->
+    <path
+        android:fillColor="#FFCC80"
+        android:pathData="M60,45 Q42,45 35,58 Q30,68 35,78 Q42,88 60,88 Q78,88 85,78 Q90,68 85,58 Q78,45 60,45 Z"/>
+    
+    <!-- Khăn ninja -->
+    <path
+        android:fillColor="#212121"
+        android:pathData="M30,50 Q30,35 60,30 Q90,35 90,50 L85,55 Q85,42 60,36 Q35,42 35,55 Z"/>
+    
+    <!-- Mặt nạ ninja -->
+    <path
+        android:fillColor="#212121"
+        android:pathData="M35,68 L85,68 L85,85 Q60,90 35,85 Z"/>
+    
+    <!-- Mắt trái -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,60 L55,60 L55,65 L45,65 Z"/>
+    
+    <!-- Con ngươi trái -->
+    <path
+        android:fillColor="#212121"
+        android:pathData="M50,62 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"/>
+    
+    <!-- Mắt phải -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M65,60 L75,60 L75,65 L65,65 Z"/>
+    
+    <!-- Con ngươi phải -->
+    <path
+        android:fillColor="#212121"
+        android:pathData="M70,62 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"/>
+</vector>
