@@ -12,6 +12,7 @@ public class Constants {
     
     // WebSocket URL
     public static final String WS_URL = "ws://192.168.53.4:8080/api/ws";
+ 
     
     // SharedPreferences Keys
     public static final String PREF_NAME = "KidsAppPrefs";

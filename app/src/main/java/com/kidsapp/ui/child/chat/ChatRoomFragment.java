@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
 import com.kidsapp.R;
-import com.kidsapp.data.api.ApiConfig;
 import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.websocket.ChatMessageDto;
 import com.kidsapp.data.websocket.WebSocketManager;
@@ -35,8 +35,6 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Fragment phòng chat realtime với WebSocket
@@ -80,19 +78,13 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
         sharedPref = new SharedPref(requireContext());
         currentUserId = getCurrentUserId();
         
-        setupRetrofit();
+        // Sử dụng RetrofitClient với AuthInterceptor
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        
         loadArguments();
         setupViews();
         setupWebSocket();
         loadMessages();
-    }
-
-    private void setupRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiConfig.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        apiService = retrofit.create(ApiService.class);
     }
 
     private void loadArguments() {
@@ -194,8 +186,10 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
 
     private void loadMessages() {
         // Load tin nhắn cũ từ API
+        // Nếu chưa có chatId, cần tạo room trước khi load messages
         if (chatId == null || chatId.isEmpty()) {
-            loadMockMessages();
+            // Tạo hoặc lấy chat room
+            createOrGetChatRoom();
             return;
         }
 
@@ -214,9 +208,11 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
                             scrollToBottom();
                             
                             // Đánh dấu đã đọc
-                            webSocketManager.markAsRead(chatId);
+                            if (webSocketManager.isConnected()) {
+                                webSocketManager.markAsRead(chatId);
+                            }
                         } else {
-                            loadMockMessages();
+                            Log.e(TAG, "Load messages failed: " + response.code());
                         }
                     }
 
@@ -225,7 +221,70 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
                                           @NonNull Throwable t) {
                         binding.progressBar.setVisibility(View.GONE);
                         Log.e(TAG, "Load messages error: " + t.getMessage());
-                        loadMockMessages();
+                    }
+                });
+    }
+
+    /**
+     * Tạo hoặc lấy chat room với người nhận
+     */
+    private void createOrGetChatRoom() {
+        String roomType = (chatType == Conversation.TYPE_PARENT) ? "PARENT_CHILD" : "CHILD_CHILD";
+        
+        apiService.createOrGetChatRoom(currentUserId, receiverId, roomType)
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.websocket.ChatRoomDto>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<com.kidsapp.data.websocket.ChatRoomDto>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<com.kidsapp.data.websocket.ChatRoomDto>> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            chatId = response.body().data.getId();
+                            Log.d(TAG, "Chat room created/found: " + chatId);
+                            // Load messages sau khi có room
+                            loadMessagesFromRoom();
+                        } else {
+                            Log.e(TAG, "Failed to create/get chat room: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<com.kidsapp.data.websocket.ChatRoomDto>> call,
+                                          @NonNull Throwable t) {
+                        Log.e(TAG, "Error creating chat room: " + t.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * Load messages sau khi đã có room ID
+     */
+    private void loadMessagesFromRoom() {
+        if (chatId == null || chatId.isEmpty()) return;
+        
+        binding.progressBar.setVisibility(View.VISIBLE);
+        
+        apiService.getChatMessages(chatId, currentUserId, 0, 50)
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ChatMessageDto>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ChatMessageDto>>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<List<ChatMessageDto>>> response) {
+                        binding.progressBar.setVisibility(View.GONE);
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<ChatMessage> messages = convertToMessages(response.body().data);
+                            adapter.setMessages(messages);
+                            scrollToBottom();
+                            
+                            if (webSocketManager.isConnected()) {
+                                webSocketManager.markAsRead(chatId);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<ChatMessageDto>>> call,
+                                          @NonNull Throwable t) {
+                        binding.progressBar.setVisibility(View.GONE);
+                        Log.e(TAG, "Load messages error: " + t.getMessage());
                     }
                 });
     }
@@ -245,23 +304,6 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
             messages.add(message);
         }
         return messages;
-    }
-
-    private void loadMockMessages() {
-        List<ChatMessage> messages = new ArrayList<>();
-
-        if (chatType == Conversation.TYPE_PARENT) {
-            messages.add(new ChatMessage("1", "Con ơi, hôm nay học bài chưa?", "09:00", false));
-            messages.add(new ChatMessage("2", "Dạ con học rồi ạ! 📚", "09:05", true));
-            messages.add(new ChatMessage("3", "Giỏi lắm con!", "09:06", false));
-        } else {
-            messages.add(new ChatMessage("1", "Chào bạn! 👋", "10:00", false));
-            messages.add(new ChatMessage("2", "Chào bạn! Bạn khỏe không?", "10:02", true));
-            messages.add(new ChatMessage("3", "Mình khỏe! Đấu một trận không? 🎮", "10:03", false));
-        }
-
-        adapter.setMessages(messages);
-        scrollToBottom();
     }
 
     private void scrollToBottom() {
@@ -305,7 +347,8 @@ public class ChatRoomFragment extends Fragment implements WebSocketManager.WebSo
             userId = sharedPref.getChildId();
         }
         if (userId == null || userId.isEmpty()) {
-            userId = "test-user-id"; // Fallback for testing
+            Log.w(TAG, "User ID not found in SharedPref");
+            return "";
         }
         return userId;
     }

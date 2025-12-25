@@ -17,10 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.kidsapp.R;
-import com.kidsapp.data.api.ApiConfig;
 import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.response.ChildSearchResponse;
+import com.kidsapp.data.websocket.ChatRoomDto;
 import com.kidsapp.databinding.FragmentChatListBinding;
 
 import java.util.ArrayList;
@@ -29,8 +30,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Fragment hiển thị danh sách chat (dùng cho cả tab Phụ huynh và Bạn bè)
@@ -79,18 +78,12 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
         type = getArguments() != null ? getArguments().getInt(ARG_TYPE, TYPE_PARENT) : TYPE_PARENT;
         sharedPref = new SharedPref(requireContext());
         
-        setupRetrofit();
+        // Sử dụng RetrofitClient với AuthInterceptor
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        
         setupRecyclerView();
         setupSearch();
         loadConversations();
-    }
-
-    private void setupRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiConfig.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        apiService = retrofit.create(ApiService.class);
     }
 
     private void setupRecyclerView() {
@@ -189,7 +182,8 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
             childId = sharedPref.getUserId();
         }
         if (childId == null || childId.isEmpty()) {
-            childId = "00000000-0000-0000-0000-000000000000";
+            Log.w(TAG, "Child ID not found in SharedPref");
+            return "";
         }
         return childId;
     }
@@ -202,23 +196,93 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     private void loadConversations() {
         showLoading(true);
         
-        String currentUserId = getCurrentChildId();
-        
-        // Load từ API
-        String roomType = (type == TYPE_PARENT) ? "PARENT_CHILD" : "CHILD_CHILD";
-        
-        apiService.getChatRoomsByType(currentUserId, roomType)
-                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>>() {
+        if (type == TYPE_PARENT) {
+            // Load danh sách phụ huynh từ API
+            loadParents();
+        } else {
+            // Load danh sách bạn bè từ chat rooms
+            loadFriendChatRooms();
+        }
+    }
+
+    /**
+     * Load danh sách phụ huynh của child
+     */
+    private void loadParents() {
+        apiService.getMyParents()
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>>() {
                     @Override
-                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>> call,
-                                           @NonNull Response<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>> response) {
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>> response) {
                         showLoading(false);
                         
                         if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                            List<com.kidsapp.data.websocket.ChatRoomDto> rooms = response.body().data;
+                            List<ApiService.ParentInfoResponse> parents = response.body().data;
                             List<Conversation> conversations = new ArrayList<>();
                             
-                            for (com.kidsapp.data.websocket.ChatRoomDto room : rooms) {
+                            for (ApiService.ParentInfoResponse parent : parents) {
+                                // Sử dụng userId để chat
+                                String chatUserId = parent.userId != null ? parent.userId : parent.id;
+                                conversations.add(new Conversation(
+                                        chatUserId,
+                                        parent.name != null ? parent.name : "Phụ huynh",
+                                        parent.avatarUrl,
+                                        "Nhấn để bắt đầu chat",
+                                        "",
+                                        0,
+                                        parent.isOnline,
+                                        Conversation.TYPE_PARENT
+                                ));
+                            }
+                            
+                            if (conversations.isEmpty()) {
+                                showEmptyMessage("Chưa có phụ huynh được liên kết");
+                            }
+                            adapter.setConversations(conversations);
+                        } else {
+                            Log.e(TAG, "Load parents failed: " + response.code());
+                            showEmptyMessage("Không thể tải danh sách phụ huynh");
+                            adapter.setConversations(new ArrayList<>());
+                        }
+                        updateEmptyState();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>> call,
+                                          @NonNull Throwable t) {
+                        showLoading(false);
+                        Log.e(TAG, "Load parents error: " + t.getMessage());
+                        showEmptyMessage("Lỗi kết nối: " + t.getMessage());
+                        adapter.setConversations(new ArrayList<>());
+                        updateEmptyState();
+                    }
+                });
+    }
+
+    /**
+     * Load danh sách chat rooms với bạn bè
+     */
+    private void loadFriendChatRooms() {
+        String currentUserId = sharedPref.getUserId();
+        if (currentUserId == null || currentUserId.isEmpty()) {
+            showLoading(false);
+            showEmptyMessage("Vui lòng đăng nhập");
+            updateEmptyState();
+            return;
+        }
+        
+        apiService.getChatRoomsByType(currentUserId, "CHILD_CHILD")
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ChatRoomDto>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ChatRoomDto>>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<List<ChatRoomDto>>> response) {
+                        showLoading(false);
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<ChatRoomDto> rooms = response.body().data;
+                            List<Conversation> conversations = new ArrayList<>();
+                            
+                            for (ChatRoomDto room : rooms) {
                                 conversations.add(new Conversation(
                                         room.getOtherUserId(),
                                         room.getOtherUserName(),
@@ -227,65 +291,33 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
                                         formatTime(room.getLastMessageAt()),
                                         room.getUnreadCount(),
                                         room.isOnline(),
-                                        type == TYPE_PARENT ? Conversation.TYPE_PARENT : Conversation.TYPE_FRIEND
+                                        Conversation.TYPE_FRIEND
                                 ));
                             }
                             
-                            if (conversations.isEmpty()) {
-                                // Nếu không có dữ liệu từ API, hiện mock data để test
-                                loadMockConversations();
-                            } else {
-                                adapter.setConversations(conversations);
-                            }
+                            adapter.setConversations(conversations);
                         } else {
-                            // Fallback to mock data
-                            loadMockConversations();
+                            Log.e(TAG, "Load friend rooms failed: " + response.code());
+                            adapter.setConversations(new ArrayList<>());
                         }
                         updateEmptyState();
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>> call,
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<ChatRoomDto>>> call,
                                           @NonNull Throwable t) {
                         showLoading(false);
-                        Log.e(TAG, "Load conversations error: " + t.getMessage());
-                        // Fallback to mock data
-                        loadMockConversations();
+                        Log.e(TAG, "Load friend rooms error: " + t.getMessage());
+                        adapter.setConversations(new ArrayList<>());
                         updateEmptyState();
                     }
                 });
     }
 
-    private void loadMockConversations() {
-        // Mock data với UUID giả để test UI (không gọi API)
-        List<Conversation> conversations = new ArrayList<>();
-
-        if (type == TYPE_PARENT) {
-            // Dùng UUID format để tránh lỗi khi gọi API
-            conversations.add(new Conversation(
-                    "00000000-0000-0000-0000-000000000001", "Bố", null,
-                    "Con học giỏi lắm! 💪", "10:30",
-                    2, true, Conversation.TYPE_PARENT
-            ));
-            conversations.add(new Conversation(
-                    "00000000-0000-0000-0000-000000000002", "Mẹ", null,
-                    "Nhớ ăn cơm đúng giờ nhé con", "Hôm qua",
-                    0, false, Conversation.TYPE_PARENT
-            ));
-        } else {
-            conversations.add(new Conversation(
-                    "00000000-0000-0000-0000-000000000003", "Minh Anh", null,
-                    "Đấu một trận không? 🎮", "09:15",
-                    3, true, Conversation.TYPE_FRIEND
-            ));
-            conversations.add(new Conversation(
-                    "00000000-0000-0000-0000-000000000004", "Bảo Ngọc", null,
-                    "Bài toán này khó quá!", "Hôm qua",
-                    0, true, Conversation.TYPE_FRIEND
-            ));
+    private void showEmptyMessage(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
-
-        adapter.setConversations(conversations);
     }
 
     private String formatTime(String isoTime) {
@@ -308,11 +340,11 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
 
         if (isEmpty) {
             if (type == TYPE_PARENT) {
-                binding.txtEmptyTitle.setText("Chưa có tin nhắn từ phụ huynh");
-                binding.txtEmptyMessage.setText("Tin nhắn từ bố mẹ sẽ hiển thị ở đây");
+                binding.txtEmptyTitle.setText("Chưa có phụ huynh");
+                binding.txtEmptyMessage.setText("Liên kết với phụ huynh để bắt đầu chat");
             } else {
-                binding.txtEmptyTitle.setText("Không tìm thấy bạn bè");
-                binding.txtEmptyMessage.setText("Thử tìm kiếm với từ khóa khác");
+                binding.txtEmptyTitle.setText("Chưa có bạn bè");
+                binding.txtEmptyMessage.setText("Tìm kiếm bạn bè để bắt đầu chat");
             }
         }
     }
@@ -321,7 +353,7 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     public void onConversationClick(Conversation conversation) {
         // Mở màn hình chat
         Bundle args = new Bundle();
-        args.putString("chat_id", conversation.getId());
+        args.putString("chat_id", ""); // Sẽ được tạo khi gửi tin nhắn đầu tiên
         args.putString("receiver_id", conversation.getId()); // User ID của người nhận
         args.putString("chat_name", conversation.getName());
         args.putInt("chat_type", conversation.getType());

@@ -52,6 +52,9 @@ public interface ApiService {
     @GET(ApiConfig.ENDPOINT_CHILDREN)
     Call<List<Child>> getChildren();
     
+    @GET(ApiConfig.ENDPOINT_CHILDREN)
+    Call<ApiResponseWrapper<List<ChildResponse>>> getParentChildren();
+    
     @GET(ApiConfig.ENDPOINT_CHILD_DETAIL)
     Call<Child> getChildDetail(@Path("id") String childId);
     
@@ -91,6 +94,10 @@ public interface ApiService {
             @Query("currentChildId") String currentChildId,
             @Query("keyword") String keyword
     );
+    
+    // Lấy danh sách phụ huynh của child
+    @GET(ApiConfig.ENDPOINT_MY_PARENTS)
+    Call<ApiResponseWrapper<List<ParentInfoResponse>>> getMyParents();
     
     // ==================== CHAT APIs ====================
     
@@ -208,9 +215,24 @@ public interface ApiService {
         public String id;
         public String userId;
         public String parentId;
+        public String name;
         public String nickname;
+        public String avatarUrl;
         public int age;
-        public String grade;
+        public Integer grade;
+        public Integer level;
+        public Integer totalPoints;
+        public Integer currentStreak;
+        public boolean isOnline;
+    }
+    
+    class ParentInfoResponse {
+        public String id;
+        public String userId;
+        public String name;
+        public String avatarUrl;
+        public String phone;
+        public boolean isOnline;
     }
 }
 

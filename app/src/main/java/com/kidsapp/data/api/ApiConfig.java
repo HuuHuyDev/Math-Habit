@@ -36,5 +36,6 @@ public class ApiConfig {
     
     // Children (tìm bạn bè)
     public static final String ENDPOINT_SEARCH_CHILDREN = "children/search";
+    public static final String ENDPOINT_MY_PARENTS = "children/my-parents";
 }
 
