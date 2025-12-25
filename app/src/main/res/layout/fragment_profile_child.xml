@@ -62,6 +62,24 @@
                 android:src="@drawable/ic_child_avatar" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Nút Trang Bị -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEquip"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:text="🎒 Trang bị"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="18dp"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="1dp"
+            android:paddingHorizontal="16dp"
+            android:minWidth="0dp" />
+
         </LinearLayout>
     </RelativeLayout>
 
