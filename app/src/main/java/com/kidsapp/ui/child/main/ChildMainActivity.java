@@ -1,6 +1,7 @@
 package com.kidsapp.ui.child.main;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -12,17 +13,22 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.kidsapp.R;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.websocket.WebSocketManager;
 import com.kidsapp.databinding.ActivityChildMainBinding;
 import com.kidsapp.ui.child.chat.ChatHubFragment;
 import com.kidsapp.ui.child.chat.ChatRoomFragment;
 import com.kidsapp.ui.child.home.ChildHomeFragment;
 
 /**
- * Child Main Activity with FAB Chat
+ * Child Main Activity with FAB Chat and WebSocket
  */
 public class ChildMainActivity extends AppCompatActivity {
     
+    private static final String TAG = "ChildMainActivity";
     private ActivityChildMainBinding binding;
+    private WebSocketManager webSocketManager;
+    private SharedPref sharedPref;
     private int unreadCount = 0;
 
     @Override
@@ -32,8 +38,11 @@ public class ChildMainActivity extends AppCompatActivity {
         binding = ActivityChildMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        sharedPref = new SharedPref(this);
+        
         setupFabChat();
         setupFragmentListener();
+        connectWebSocket();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -47,6 +56,29 @@ public class ChildMainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
+    }
+
+    /**
+     * Kết nối WebSocket khi app khởi động
+     */
+    private void connectWebSocket() {
+        String userId = getCurrentUserId();
+        Log.d(TAG, "Connecting WebSocket with userId: " + userId);
+        
+        webSocketManager = WebSocketManager.getInstance();
+        webSocketManager.connect(userId);
+    }
+
+    private String getCurrentUserId() {
+        String userId = sharedPref.getUserId();
+        if (userId == null || userId.isEmpty()) {
+            userId = sharedPref.getChildId();
+        }
+        if (userId == null || userId.isEmpty()) {
+            // Fallback for testing - thay bằng UUID thực từ database
+            userId = "test-child-user-id";
+        }
+        return userId;
     }
 
     private void setupFabChat() {
@@ -103,5 +135,14 @@ public class ChildMainActivity extends AppCompatActivity {
     public void hideFab() {
         binding.fabChat.hide();
         binding.badgeChat.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Ngắt kết nối WebSocket khi app đóng
+        if (webSocketManager != null) {
+            webSocketManager.disconnect();
+        }
     }
 }

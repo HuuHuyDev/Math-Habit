@@ -200,40 +200,103 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     }
 
     private void loadConversations() {
-        // Mock data - sau này sẽ load từ API
+        showLoading(true);
+        
+        String currentUserId = getCurrentChildId();
+        
+        // Load từ API
+        String roomType = (type == TYPE_PARENT) ? "PARENT_CHILD" : "CHILD_CHILD";
+        
+        apiService.getChatRoomsByType(currentUserId, roomType)
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>> response) {
+                        showLoading(false);
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<com.kidsapp.data.websocket.ChatRoomDto> rooms = response.body().data;
+                            List<Conversation> conversations = new ArrayList<>();
+                            
+                            for (com.kidsapp.data.websocket.ChatRoomDto room : rooms) {
+                                conversations.add(new Conversation(
+                                        room.getOtherUserId(),
+                                        room.getOtherUserName(),
+                                        room.getOtherUserAvatar(),
+                                        room.getLastMessage() != null ? room.getLastMessage() : "Nhấn để bắt đầu chat",
+                                        formatTime(room.getLastMessageAt()),
+                                        room.getUnreadCount(),
+                                        room.isOnline(),
+                                        type == TYPE_PARENT ? Conversation.TYPE_PARENT : Conversation.TYPE_FRIEND
+                                ));
+                            }
+                            
+                            if (conversations.isEmpty()) {
+                                // Nếu không có dữ liệu từ API, hiện mock data để test
+                                loadMockConversations();
+                            } else {
+                                adapter.setConversations(conversations);
+                            }
+                        } else {
+                            // Fallback to mock data
+                            loadMockConversations();
+                        }
+                        updateEmptyState();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.websocket.ChatRoomDto>>> call,
+                                          @NonNull Throwable t) {
+                        showLoading(false);
+                        Log.e(TAG, "Load conversations error: " + t.getMessage());
+                        // Fallback to mock data
+                        loadMockConversations();
+                        updateEmptyState();
+                    }
+                });
+    }
+
+    private void loadMockConversations() {
+        // Mock data với UUID giả để test UI (không gọi API)
         List<Conversation> conversations = new ArrayList<>();
 
         if (type == TYPE_PARENT) {
+            // Dùng UUID format để tránh lỗi khi gọi API
             conversations.add(new Conversation(
-                    "parent_1", "Bố", null,
+                    "00000000-0000-0000-0000-000000000001", "Bố", null,
                     "Con học giỏi lắm! 💪", "10:30",
                     2, true, Conversation.TYPE_PARENT
             ));
             conversations.add(new Conversation(
-                    "parent_2", "Mẹ", null,
+                    "00000000-0000-0000-0000-000000000002", "Mẹ", null,
                     "Nhớ ăn cơm đúng giờ nhé con", "Hôm qua",
                     0, false, Conversation.TYPE_PARENT
             ));
         } else {
             conversations.add(new Conversation(
-                    "friend_1", "Minh Anh", null,
+                    "00000000-0000-0000-0000-000000000003", "Minh Anh", null,
                     "Đấu một trận không? 🎮", "09:15",
                     3, true, Conversation.TYPE_FRIEND
             ));
             conversations.add(new Conversation(
-                    "friend_2", "Bảo Ngọc", null,
+                    "00000000-0000-0000-0000-000000000004", "Bảo Ngọc", null,
                     "Bài toán này khó quá!", "Hôm qua",
                     0, true, Conversation.TYPE_FRIEND
-            ));
-            conversations.add(new Conversation(
-                    "friend_3", "Đức Huy", null,
-                    "Cảm ơn bạn nhé!", "2 ngày trước",
-                    0, false, Conversation.TYPE_FRIEND
             ));
         }
 
         adapter.setConversations(conversations);
-        updateEmptyState();
+    }
+
+    private String formatTime(String isoTime) {
+        if (isoTime == null || isoTime.isEmpty()) return "";
+        try {
+            java.text.SimpleDateFormat isoFormat = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
+            java.util.Date date = isoFormat.parse(isoTime);
+            return new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(date);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     private void updateEmptyState() {
@@ -259,6 +322,7 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
         // Mở màn hình chat
         Bundle args = new Bundle();
         args.putString("chat_id", conversation.getId());
+        args.putString("receiver_id", conversation.getId()); // User ID của người nhận
         args.putString("chat_name", conversation.getName());
         args.putInt("chat_type", conversation.getType());
 
