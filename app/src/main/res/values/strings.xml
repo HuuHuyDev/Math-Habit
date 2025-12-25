@@ -17,6 +17,14 @@
     <string name="parent">Phụ huynh</string>
     <string name="child">Trẻ</string>
 
+    <!-- Google Sign-In - Thay YOUR_WEB_CLIENT_ID bằng Web Client ID từ Google Cloud Console -->
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+    
+    <!-- Facebook Login - Thay bằng App ID và Client Token từ Facebook Developer Console -->
+    <string name="facebook_app_id">YOUR_FACEBOOK_APP_ID</string>
+    <string name="facebook_client_token">YOUR_FACEBOOK_CLIENT_TOKEN</string>
+    <string name="fb_login_protocol_scheme">fbYOUR_FACEBOOK_APP_ID</string>
+
     <!-- Parent -->
     <string name="parent_home">Trang chủ</string>
     <string name="parent_tasks">Mục tiêu</string>

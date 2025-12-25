@@ -10,10 +10,12 @@ public class ApiConfig {
     public static final String API_VERSION = "v1";
     
     // API Endpoints
-    public static final String ENDPOINT_LOGIN = "auth/login";
+    public static final String ENDPOINT_LOGIN = "auth/token";
     public static final String ENDPOINT_REGISTER = "auth/register";
-    public static final String ENDPOINT_FORGOT_PASSWORD = "auth/forgot-password";
-    public static final String ENDPOINT_LOGOUT = "auth/logout";
+    public static final String ENDPOINT_REFRESH_TOKEN = "auth/token/refresh";
+    public static final String ENDPOINT_LOGOUT = "auth/tokens/{refreshToken}";
+    public static final String ENDPOINT_GOOGLE_LOGIN = "auth/google";
+    public static final String ENDPOINT_FACEBOOK_LOGIN = "auth/facebook";
     
     public static final String ENDPOINT_PARENT_PROFILE = "parent/profile";
     public static final String ENDPOINT_CHILDREN = "parent/children";

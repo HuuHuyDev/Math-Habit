@@ -28,6 +28,16 @@ public class SharedPref {
         return sharedPreferences.getString(Constants.KEY_AUTH_TOKEN, null);
     }
 
+    // Refresh Token
+    public void saveRefreshToken(String token) {
+        editor.putString("refresh_token", token);
+        editor.apply();
+    }
+
+    public String getRefreshToken() {
+        return sharedPreferences.getString("refresh_token", null);
+    }
+
     // User ID
     public void saveUserId(String userId) {
         editor.putString(Constants.KEY_USER_ID, userId);

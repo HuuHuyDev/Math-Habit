@@ -28,13 +28,22 @@ public interface ApiService {
     
     // Auth APIs
     @POST(ApiConfig.ENDPOINT_LOGIN)
-    Call<AuthResponse> login(@Body LoginRequest request);
+    Call<ApiResponseWrapper<AuthResponse>> login(@Body LoginRequest request);
     
     @POST(ApiConfig.ENDPOINT_REGISTER)
-    Call<AuthResponse> register(@Body RegisterRequest request);
+    Call<ApiResponseWrapper<AuthResponse>> register(@Body RegisterRequest request);
     
-    @POST(ApiConfig.ENDPOINT_FORGOT_PASSWORD)
-    Call<Void> forgotPassword(@Body ForgotPasswordRequest request);
+    @POST(ApiConfig.ENDPOINT_REFRESH_TOKEN)
+    Call<ApiResponseWrapper<AuthResponse>> refreshToken(@Body RefreshTokenRequest request);
+    
+    @POST(ApiConfig.ENDPOINT_GOOGLE_LOGIN)
+    Call<ApiResponseWrapper<AuthResponse>> loginWithGoogle(@Body SocialLoginRequest request);
+    
+    @POST(ApiConfig.ENDPOINT_FACEBOOK_LOGIN)
+    Call<ApiResponseWrapper<AuthResponse>> loginWithFacebook(@Body SocialLoginRequest request);
+    
+    @DELETE(ApiConfig.ENDPOINT_LOGOUT)
+    Call<Void> logout(@Path("refreshToken") String refreshToken);
     
     // Parent APIs
     @GET(ApiConfig.ENDPOINT_PARENT_PROFILE)
@@ -126,7 +135,7 @@ public interface ApiService {
     
     // Wrapper class cho API response
     class ApiResponseWrapper<T> {
-        public int code;
+        public boolean success;
         public String message;
         public T data;
     }
@@ -143,33 +152,65 @@ public interface ApiService {
     }
     
     class RegisterRequest {
-        public String name;
         public String email;
         public String password;
-        public String role;
+        public String fullName;
+        public String role; // PARENT, CHILD
         
-        public RegisterRequest(String name, String email, String password, String role) {
-            this.name = name;
+        public RegisterRequest(String email, String password, String fullName, String role) {
             this.email = email;
             this.password = password;
+            this.fullName = fullName;
             this.role = role;
         }
     }
     
-    class ForgotPasswordRequest {
-        public String email;
+    class RefreshTokenRequest {
+        public String refreshToken;
         
-        public ForgotPasswordRequest(String email) {
-            this.email = email;
+        public RefreshTokenRequest(String refreshToken) {
+            this.refreshToken = refreshToken;
+        }
+    }
+    
+    class SocialLoginRequest {
+        public String accessToken;
+        
+        public SocialLoginRequest(String accessToken) {
+            this.accessToken = accessToken;
         }
     }
     
     class AuthResponse {
-        public String token;
+        public String accessToken;
+        public String refreshToken;
+        public String tokenType;
+        public Long expiresIn;
+        public UserResponse user;
+    }
+    
+    class UserResponse {
+        public String id;
+        public String email;
+        public String fullName;
+        public String avatarUrl;
+        public String role; // PARENT, CHILD, ADMIN
+        public ParentResponse parentProfile;
+        public ChildResponse childProfile;
+    }
+    
+    class ParentResponse {
+        public String id;
         public String userId;
-        public String role;
-        public Parent parent;
-        public Child child;
+    }
+    
+    class ChildResponse {
+        public String id;
+        public String userId;
+        public String parentId;
+        public String nickname;
+        public int age;
+        public String grade;
     }
 }
 

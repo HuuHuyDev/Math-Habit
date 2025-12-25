@@ -12,11 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentProfileChildBinding;
 import com.kidsapp.ui.auth.LoginActivity;
 import com.kidsapp.ui.child.equip.equip;
+import com.kidsapp.viewmodel.AuthViewModel;
 
 /**
  * Fragment hiển thị thông tin hồ sơ của Bé
@@ -27,6 +29,7 @@ public class ChildProfileFragment extends Fragment {
     
     private FragmentProfileChildBinding binding;
     private SharedPreferences sharedPreferences;
+    private AuthViewModel authViewModel;
     
     // Key để lưu trữ trong SharedPreferences
     private static final String PREF_NAME = "KidsAppPrefs";
@@ -44,6 +47,9 @@ public class ChildProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileChildBinding.inflate(inflater, container, false);
+        
+        // Khởi tạo ViewModel
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         
         // Khởi tạo SharedPreferences
         initSharedPreferences();
@@ -176,15 +182,15 @@ public class ChildProfileFragment extends Fragment {
 
     /**
      * Thực hiện đăng xuất:
-     * 1. Xóa dữ liệu đăng nhập trong SharedPreferences
+     * 1. Gọi API logout và xóa dữ liệu đăng nhập
      * 2. Chuyển về màn đăng nhập
      * 3. Đóng tất cả Activity trước đó (không cho quay lại)
      */
     private void performLogout() {
-        // Xóa trạng thái đăng nhập
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_IS_LOGGED_IN, false);
-        editor.apply();
+        // Gọi logout qua ViewModel (sẽ gọi API và clear SharedPref)
+        try {
+            authViewModel.logout();
+        } catch (Exception ignored) {}
         
         // Hiển thị thông báo
         Toast.makeText(requireContext(), "Đã đăng xuất!", Toast.LENGTH_SHORT).show();

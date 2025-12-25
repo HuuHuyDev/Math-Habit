@@ -1,30 +1,67 @@
 package com.kidsapp.ui.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentLoginBinding;
-import com.kidsapp.utils.Constants;
+import com.kidsapp.ui.child.main.ChildMainActivity;
+import com.kidsapp.ui.parent.main.ParentMainActivity;
 import com.kidsapp.viewmodel.AuthViewModel;
 
+import java.util.Arrays;
+
 /**
- * Login Fragment
+ * Login Fragment with Google and Facebook login support
  */
 public class LoginFragment extends Fragment {
+    private static final String TAG = "LoginFragment";
+    
     private FragmentLoginBinding binding;
     private AuthViewModel authViewModel;
+    
+    // Google Sign-In
+    private GoogleSignInClient googleSignInClient;
+    private ActivityResultLauncher<Intent> googleSignInLauncher;
+    
+    // Facebook Login
+    private CallbackManager callbackManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setupGoogleSignIn();
+        setupFacebookLogin();
+    }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, 
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -40,155 +77,197 @@ public class LoginFragment extends Fragment {
         observeViewModel();
     }
 
+    private void setupGoogleSignIn() {
+        // Configure Google Sign-In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
+
+        // Register activity result launcher for Google Sign-In
+        googleSignInLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                    handleGoogleSignInResult(task);
+                });
+    }
+
+    private void setupFacebookLogin() {
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(TAG, "Facebook login success");
+                        AccessToken accessToken = loginResult.getAccessToken();
+                        handleFacebookAccessToken(accessToken);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "Facebook login cancelled");
+                        Toast.makeText(getContext(), "Đăng nhập Facebook bị hủy", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(@NonNull FacebookException error) {
+                        Log.e(TAG, "Facebook login error", error);
+                        Toast.makeText(getContext(), "Lỗi đăng nhập Facebook: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void setupClickListeners() {
         // Login button
         binding.btnLogin.setOnClickListener(v -> {
-            String username = binding.etEmail.getText().toString().trim();
+            String email = binding.etEmail.getText().toString().trim();
             String password = binding.etPassword.getText().toString().trim();
-            
-            if (validateInput(username, password)) {
-                handleDemoLogin(username, password);
+
+            if (validateInput(email, password)) {
+                authViewModel.login(email, password);
             }
         });
-        
+
         // Forgot password
         binding.tvForgotPassword.setOnClickListener(v -> {
-            // Navigate to forgot password fragment
             Navigation.findNavController(v).navigate(R.id.action_login_to_forgot_password);
         });
 
         binding.tvRegister.setOnClickListener(v -> {
-            // Navigate to register fragment
             Navigation.findNavController(v).navigate(R.id.action_login_to_register);
         });
-        
-        // Google login
-        binding.btnLoginGoogle.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Đăng nhập với Google", Toast.LENGTH_SHORT).show();
-            // TODO: Implement Google login
-        });
-        
-        // Facebook login
-        binding.btnLoginFacebook.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Đăng nhập với Facebook", Toast.LENGTH_SHORT).show();
-            // TODO: Implement Facebook login
-        });
 
+        // Google login
+        binding.btnLoginGoogle.setOnClickListener(v -> signInWithGoogle());
+
+        // Facebook login
+        binding.btnLoginFacebook.setOnClickListener(v -> signInWithFacebook());
+    }
+
+    private void signInWithGoogle() {
+        // Sign out first to allow user to choose account
+        googleSignInClient.signOut().addOnCompleteListener(task -> {
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            googleSignInLauncher.launch(signInIntent);
+        });
+    }
+
+    private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            if (account != null) {
+                String idToken = account.getIdToken();
+                Log.d(TAG, "Google sign in success, idToken: " + (idToken != null ? "received" : "null"));
+                
+                if (idToken != null) {
+                    // Send token to backend
+                    authViewModel.loginWithGoogle(idToken);
+                } else {
+                    Toast.makeText(getContext(), "Không lấy được token từ Google", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (ApiException e) {
+            Log.e(TAG, "Google sign in failed", e);
+            String errorMessage;
+            switch (e.getStatusCode()) {
+                case 12501:
+                    errorMessage = "Đăng nhập bị hủy";
+                    break;
+                case 12502:
+                    errorMessage = "Đang xử lý đăng nhập...";
+                    break;
+                case 10:
+                    errorMessage = "Cấu hình Google Sign-In chưa đúng";
+                    break;
+                default:
+                    errorMessage = "Lỗi đăng nhập Google: " + e.getStatusCode();
+            }
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void signInWithFacebook() {
+        LoginManager.getInstance().logInWithReadPermissions(
+                this,
+                callbackManager,
+                Arrays.asList("email", "public_profile")
+        );
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken: " + token.getToken());
+        authViewModel.loginWithFacebook(token.getToken());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Pass the activity result to Facebook CallbackManager
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private boolean validateInput(String email, String password) {
+        boolean isValid = true;
+
+        binding.tilEmail.setError(null);
+        binding.tilPassword.setError(null);
+
         if (email.isEmpty()) {
             binding.tilEmail.setError("Vui lòng nhập email");
-            return false;
+            isValid = false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.setError("Email không hợp lệ");
+            isValid = false;
         }
 
         if (password.isEmpty()) {
             binding.tilPassword.setError("Vui lòng nhập mật khẩu");
-            return false;
-        }
-
-        if (password.length() < 6) {
+            isValid = false;
+        } else if (password.length() < 6) {
             binding.tilPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
-            return false;
+            isValid = false;
         }
 
-        return true;
+        return isValid;
     }
 
     private void observeViewModel() {
         authViewModel.getAuthResponse().observe(getViewLifecycleOwner(), response -> {
-            if (response != null) {
-                // Navigate to choose role screen
-                Navigation.findNavController(binding.getRoot())
-                    .navigate(R.id.action_login_to_choose_role);
+            if (response != null && response.user != null) {
+                Toast.makeText(getContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                navigateByRole(response.user.role);
             }
         });
-        
+
         authViewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
-        
+
         authViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             binding.btnLogin.setEnabled(!isLoading);
-            // TODO: Show loading indicator
+            binding.btnLoginGoogle.setEnabled(!isLoading);
+            binding.btnLoginFacebook.setEnabled(!isLoading);
+            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         });
     }
 
-    /**
-     * Xử lý đăng nhập demo với tài khoản hardcoded
-     */
-    private void handleDemoLogin(String username, String password) {
-        // Tài khoản Parent demo
-        if (username.equals("parent") && password.equals("123456")) {
-            loginAsParent();
-            return;
+    private void navigateByRole(String role) {
+        Intent intent;
+        if ("PARENT".equalsIgnoreCase(role)) {
+            intent = new Intent(requireContext(), ParentMainActivity.class);
+        } else if ("CHILD".equalsIgnoreCase(role)) {
+            intent = new Intent(requireContext(), ChildMainActivity.class);
+        } else {
+            intent = new Intent(requireContext(), ParentMainActivity.class);
         }
-        
-        // Tài khoản Children demo
-        if (username.equals("huy") && password.equals("123456")) {
-            loginAsChild("1", "Nguyễn Minh Linh");
-            return;
-        }
-        
-        if (username.equals("baoankid") && password.equals("123456")) {
-            loginAsChild("2", "Trần Bảo An");
-            return;
-        }
-        
-        if (username.equals("minhchaukid") && password.equals("123456")) {
-            loginAsChild("3", "Lê Minh Châu");
-            return;
-        }
-        
-        // Sai tài khoản
-        Toast.makeText(requireContext(), 
-                "Tài khoản hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
-    }
 
-    /**
-     * Đăng nhập với vai trò Parent
-     */
-    private void loginAsParent() {
-//        // Lưu thông tin đăng nhập
-//        com.kidsapp.data.local.SharedPref sharedPref =
-//                new com.kidsapp.data.local.SharedPref(requireContext());
-//        sharedPref.setLoggedIn(true);
-////        sharedPref.setUserRole("parent");
-////        sharedPref.setUserName("Nguyễn Phương");
-        
-        Toast.makeText(requireContext(), "Đăng nhập thành công - Parent", Toast.LENGTH_SHORT).show();
-        
-        // Navigate to ParentMainActivity
-        android.content.Intent intent = new android.content.Intent(
-                requireContext(), com.kidsapp.ui.parent.main.ParentMainActivity.class);
-        intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | 
-                android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        requireActivity().finish();
-    }
-
-    /**
-     * Đăng nhập với vai trò Child
-     */
-    private void loginAsChild(String childId, String childName) {
-        // Lưu thông tin đăng nhập
-        com.kidsapp.data.local.SharedPref sharedPref = 
-                new com.kidsapp.data.local.SharedPref(requireContext());
-        sharedPref.setLoggedIn(true);
-//        sharedPref.setUserRole("child");
-//        sharedPref.setUserName(childName);
-//        sharedPref.setUserId(childId);
-        
-        Toast.makeText(requireContext(), 
-                "Đăng nhập thành công - " + childName, Toast.LENGTH_SHORT).show();
-        
-        // Navigate to ChildMainActivity
-        android.content.Intent intent = new android.content.Intent(
-                requireContext(), com.kidsapp.ui.child.main.ChildMainActivity.class);
-        intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | 
-                android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         requireActivity().finish();
     }
@@ -199,4 +278,3 @@ public class LoginFragment extends Fragment {
         binding = null;
     }
 }
-

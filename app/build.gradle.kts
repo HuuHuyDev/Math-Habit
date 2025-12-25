@@ -78,6 +78,12 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    
+    // Facebook Login
+    implementation("com.facebook.android:facebook-login:16.3.0")
+
 
     // Testing
     testImplementation(libs.junit)

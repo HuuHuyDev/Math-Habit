@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Keystore - KHÔNG COMMIT LÊN GIT
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+!app/keystore/README.md

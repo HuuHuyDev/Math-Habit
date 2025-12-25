@@ -27,23 +27,86 @@ public class AuthViewModel extends AndroidViewModel {
 
     public void login(String email, String password) {
         isLoadingLiveData.setValue(true);
+        errorLiveData.setValue(null);
+        
         authRepository.login(email, password, new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(ApiService.AuthResponse response) {
-                isLoadingLiveData.setValue(false);
-                authResponseLiveData.setValue(response);
+                isLoadingLiveData.postValue(false);
+                authResponseLiveData.postValue(response);
             }
 
             @Override
             public void onError(String error) {
-                isLoadingLiveData.setValue(false);
-                errorLiveData.setValue(error);
+                isLoadingLiveData.postValue(false);
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    public void register(String email, String password, String fullName, String role) {
+        isLoadingLiveData.setValue(true);
+        errorLiveData.setValue(null);
+        
+        authRepository.register(email, password, fullName, role, new AuthRepository.AuthCallback() {
+            @Override
+            public void onSuccess(ApiService.AuthResponse response) {
+                isLoadingLiveData.postValue(false);
+                authResponseLiveData.postValue(response);
+            }
+
+            @Override
+            public void onError(String error) {
+                isLoadingLiveData.postValue(false);
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    public void loginWithGoogle(String accessToken) {
+        isLoadingLiveData.setValue(true);
+        errorLiveData.setValue(null);
+        
+        authRepository.loginWithGoogle(accessToken, new AuthRepository.AuthCallback() {
+            @Override
+            public void onSuccess(ApiService.AuthResponse response) {
+                isLoadingLiveData.postValue(false);
+                authResponseLiveData.postValue(response);
+            }
+
+            @Override
+            public void onError(String error) {
+                isLoadingLiveData.postValue(false);
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    public void loginWithFacebook(String accessToken) {
+        isLoadingLiveData.setValue(true);
+        errorLiveData.setValue(null);
+        
+        authRepository.loginWithFacebook(accessToken, new AuthRepository.AuthCallback() {
+            @Override
+            public void onSuccess(ApiService.AuthResponse response) {
+                isLoadingLiveData.postValue(false);
+                authResponseLiveData.postValue(response);
+            }
+
+            @Override
+            public void onError(String error) {
+                isLoadingLiveData.postValue(false);
+                errorLiveData.postValue(error);
             }
         });
     }
 
     public void logout() {
         authRepository.logout();
+    }
+
+    public void clearError() {
+        errorLiveData.setValue(null);
     }
 
     public LiveData<ApiService.AuthResponse> getAuthResponse() {
@@ -58,4 +121,3 @@ public class AuthViewModel extends AndroidViewModel {
         return isLoadingLiveData;
     }
 }
-

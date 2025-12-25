@@ -21,7 +21,6 @@ public class AuthRepository {
             apiService = RetrofitClient.getInstance(sharedPref).getApiService();
         } catch (Exception e) {
             e.printStackTrace();
-            // Fallback: tạo SharedPref nhưng không tạo API service
             sharedPref = new SharedPref(context);
         }
     }
@@ -34,32 +33,27 @@ public class AuthRepository {
         
         try {
             ApiService.LoginRequest request = new ApiService.LoginRequest(email, password);
-            Call<ApiService.AuthResponse> call = apiService.login(request);
+            Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call = apiService.login(request);
             
-            call.enqueue(new Callback<ApiService.AuthResponse>() {
+            call.enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.AuthResponse>>() {
                 @Override
-                public void onResponse(Call<ApiService.AuthResponse> call, Response<ApiService.AuthResponse> response) {
+                public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, 
+                        Response<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        ApiService.AuthResponse authResponse = response.body();
-                        // Save token and user info
-                        if (authResponse.token != null) {
-                            sharedPref.saveAuthToken(authResponse.token);
+                        ApiService.ApiResponseWrapper<ApiService.AuthResponse> wrapper = response.body();
+                        if (wrapper.success && wrapper.data != null) {
+                            saveAuthData(wrapper.data);
+                            callback.onSuccess(wrapper.data);
+                        } else {
+                            callback.onError(wrapper.message != null ? wrapper.message : "Đăng nhập thất bại");
                         }
-                        if (authResponse.userId != null) {
-                            sharedPref.saveUserId(authResponse.userId);
-                        }
-                        if (authResponse.role != null) {
-                            sharedPref.saveUserRole(authResponse.role);
-                        }
-                        sharedPref.setLoggedIn(true);
-                        callback.onSuccess(authResponse);
                     } else {
-                        callback.onError("Đăng nhập thất bại");
+                        callback.onError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<ApiService.AuthResponse> call, Throwable t) {
+                public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, Throwable t) {
                     callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Không thể kết nối đến server"));
                 }
             });
@@ -68,13 +62,185 @@ public class AuthRepository {
         }
     }
 
+    public void register(String email, String password, String fullName, String role, AuthCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo. Vui lòng kiểm tra kết nối mạng.");
+            return;
+        }
+        
+        try {
+            ApiService.RegisterRequest request = new ApiService.RegisterRequest(email, password, fullName, role);
+            Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call = apiService.register(request);
+            
+            call.enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.AuthResponse>>() {
+                @Override
+                public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, 
+                        Response<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        ApiService.ApiResponseWrapper<ApiService.AuthResponse> wrapper = response.body();
+                        if (wrapper.success && wrapper.data != null) {
+                            saveAuthData(wrapper.data);
+                            callback.onSuccess(wrapper.data);
+                        } else {
+                            callback.onError(wrapper.message != null ? wrapper.message : "Đăng ký thất bại");
+                        }
+                    } else {
+                        callback.onError("Đăng ký thất bại. Email có thể đã được sử dụng.");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, Throwable t) {
+                    callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Không thể kết nối đến server"));
+                }
+            });
+        } catch (Exception e) {
+            callback.onError("Lỗi: " + e.getMessage());
+        }
+    }
+
+    public void loginWithGoogle(String accessToken, AuthCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo. Vui lòng kiểm tra kết nối mạng.");
+            return;
+        }
+        
+        try {
+            ApiService.SocialLoginRequest request = new ApiService.SocialLoginRequest(accessToken);
+            Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call = apiService.loginWithGoogle(request);
+            
+            call.enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.AuthResponse>>() {
+                @Override
+                public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, 
+                        Response<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        ApiService.ApiResponseWrapper<ApiService.AuthResponse> wrapper = response.body();
+                        if (wrapper.success && wrapper.data != null) {
+                            saveAuthData(wrapper.data);
+                            callback.onSuccess(wrapper.data);
+                        } else {
+                            callback.onError(wrapper.message != null ? wrapper.message : "Đăng nhập Google thất bại");
+                        }
+                    } else {
+                        callback.onError("Đăng nhập Google thất bại");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, Throwable t) {
+                    callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Không thể kết nối đến server"));
+                }
+            });
+        } catch (Exception e) {
+            callback.onError("Lỗi: " + e.getMessage());
+        }
+    }
+
+    public void loginWithFacebook(String accessToken, AuthCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo. Vui lòng kiểm tra kết nối mạng.");
+            return;
+        }
+        
+        try {
+            ApiService.SocialLoginRequest request = new ApiService.SocialLoginRequest(accessToken);
+            Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call = apiService.loginWithFacebook(request);
+            
+            call.enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.AuthResponse>>() {
+                @Override
+                public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, 
+                        Response<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        ApiService.ApiResponseWrapper<ApiService.AuthResponse> wrapper = response.body();
+                        if (wrapper.success && wrapper.data != null) {
+                            saveAuthData(wrapper.data);
+                            callback.onSuccess(wrapper.data);
+                        } else {
+                            callback.onError(wrapper.message != null ? wrapper.message : "Đăng nhập Facebook thất bại");
+                        }
+                    } else {
+                        callback.onError("Đăng nhập Facebook thất bại");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, Throwable t) {
+                    callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Không thể kết nối đến server"));
+                }
+            });
+        } catch (Exception e) {
+            callback.onError("Lỗi: " + e.getMessage());
+        }
+    }
+
+    private void saveAuthData(ApiService.AuthResponse authResponse) {
+        if (authResponse.accessToken != null) {
+            sharedPref.saveAuthToken(authResponse.accessToken);
+        }
+        if (authResponse.refreshToken != null) {
+            sharedPref.saveRefreshToken(authResponse.refreshToken);
+        }
+        if (authResponse.user != null) {
+            if (authResponse.user.id != null) {
+                sharedPref.saveUserId(authResponse.user.id);
+            }
+            if (authResponse.user.email != null) {
+                sharedPref.saveUserEmail(authResponse.user.email);
+            }
+            if (authResponse.user.fullName != null) {
+                sharedPref.saveUserName(authResponse.user.fullName);
+            }
+            if (authResponse.user.role != null) {
+                sharedPref.saveUserRole(authResponse.user.role);
+            }
+            // Save child ID if user is a child
+            if (authResponse.user.childProfile != null && authResponse.user.childProfile.id != null) {
+                sharedPref.saveChildId(authResponse.user.childProfile.id);
+            }
+        }
+        sharedPref.setLoggedIn(true);
+    }
+
     public void logout() {
+        logout(null);
+    }
+
+    public void logout(LogoutCallback callback) {
+        String refreshToken = sharedPref.getRefreshToken();
+        
+        // Clear local data first
         sharedPref.clearAll();
+        
+        if (apiService != null && refreshToken != null && !refreshToken.isEmpty()) {
+            apiService.logout(refreshToken).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    // Still consider logout successful since local data is cleared
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
+                }
+            });
+        } else {
+            if (callback != null) {
+                callback.onSuccess();
+            }
+        }
     }
 
     public interface AuthCallback {
         void onSuccess(ApiService.AuthResponse response);
         void onError(String error);
     }
-}
 
+    public interface LogoutCallback {
+        void onSuccess();
+    }
+}
