@@ -99,4 +99,8 @@
     <color name="gold">#FFD700</color>
     <color name="silver">#C0C0C0</color>
     <color name="bronze">#CD7F32</color>
+    
+    <!-- Chat Colors -->
+    <color name="green_500">#22C55E</color>
+    <color name="gray_500">#6B7280</color>
 </resources>

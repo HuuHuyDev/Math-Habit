@@ -1,4 +1,4 @@
-package com.kidsapp.ui.child.chat;
+package com.kidsapp.ui.parent.chat;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,24 +8,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.kidsapp.R;
-import com.kidsapp.databinding.FragmentChatHubBinding;
+import com.kidsapp.databinding.FragmentParentChatHubBinding;
 
 /**
- * Fragment chính cho Chat Hub - chứa 3 tab: Phụ huynh, Bạn bè, AI
+ * Fragment chính cho Parent Chat Hub - chứa 2 tab: Con & Trợ lý AI
  */
-public class ChatHubFragment extends Fragment {
+public class ParentChatHubFragment extends Fragment {
 
-    private FragmentChatHubBinding binding;
+    private FragmentParentChatHubBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentChatHubBinding.inflate(inflater, container, false);
+        binding = FragmentParentChatHubBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -45,12 +45,9 @@ public class ChatHubFragment extends Fragment {
         new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
-                    tab.setText("👨‍👩‍👧 Phụ huynh");
+                    tab.setText("👶 Các con");
                     break;
                 case 1:
-                    tab.setText("👫 Bạn bè");
-                    break;
-                case 2:
                     tab.setText("🤖 Trợ lý AI");
                     break;
             }
@@ -58,15 +55,13 @@ public class ChatHubFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
-
-        binding.btnFindFriend.setOnClickListener(v -> {
-            // Mở màn hình tìm bạn mới
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.childHomeHost, new FindFriendFragment())
-                    .addToBackStack(null)
-                    .commit();
+        binding.btnBack.setOnClickListener(v -> {
+            // Sử dụng Navigation để quay lại
+            try {
+                Navigation.findNavController(requireView()).popBackStack();
+            } catch (Exception e) {
+                requireActivity().onBackPressed();
+            }
         });
     }
 
@@ -90,19 +85,17 @@ public class ChatHubFragment extends Fragment {
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
-                    return ChatListFragment.newInstance(ChatListFragment.TYPE_PARENT);
+                    return new ParentChatListFragment();
                 case 1:
-                    return ChatListFragment.newInstance(ChatListFragment.TYPE_FRIENDS);
-                case 2:
-                    return ChatWithAiFragment.newInstance("CHILD");
+                    return ParentChatWithAiFragment.newInstance();
                 default:
-                    return ChatListFragment.newInstance(ChatListFragment.TYPE_PARENT);
+                    return new ParentChatListFragment();
             }
         }
 
         @Override
         public int getItemCount() {
-            return 3;
+            return 2;
         }
     }
 }

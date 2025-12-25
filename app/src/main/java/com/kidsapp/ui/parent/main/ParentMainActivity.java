@@ -248,6 +248,20 @@ public class ParentMainActivity extends AppCompatActivity {
             if (navController != null && navController.getCurrentDestination() != null) {
                 int currentDestId = navController.getCurrentDestination().getId();
                 
+                // Nếu đang ở chat room, pop back về chat hub
+                if (currentDestId == R.id.parentChatRoomFragment) {
+                    navController.popBackStack();
+                    return;
+                }
+                
+                // Nếu đang ở chat hub, pop back về home
+                if (currentDestId == R.id.parentChatHubFragment) {
+                    if (navController.popBackStack()) {
+                        setActive(0); // Set home tab active
+                        return;
+                    }
+                }
+                
                 // Nếu đang ở detail fragment, pop back về home
                 if (currentDestId == R.id.parentChildDetailFragment) {
                     if (navController.popBackStack()) {
@@ -255,17 +269,11 @@ public class ParentMainActivity extends AppCompatActivity {
                         return;
                     }
                 }
-                // Nếu đang ở detail fragment, pop back về home
-                if (currentDestId == R.id.nav_report) {
+                
+                // Nếu đang ở report hoặc tasks, pop back
+                if (currentDestId == R.id.nav_report || currentDestId == R.id.nav_tasks) {
                     if (navController.popBackStack()) {
-                        setActive(5); // Set home tab active
-                        return;
-                    }
-                }
-
-                if (currentDestId == R.id.nav_tasks) {
-                    if (navController.popBackStack()) {
-                        setActive(5); // Set home tab active
+                        setActive(0); // Set home tab active
                         return;
                     }
                 }

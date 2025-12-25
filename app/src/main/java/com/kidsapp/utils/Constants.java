@@ -5,7 +5,13 @@ package com.kidsapp.utils;
  */
 public class Constants {
     // API Base URL
-    public static final String BASE_URL = "https://api.kidsapp.com/";
+    // Thiết bị thật: dùng IP máy tính (cùng WiFi với điện thoại)
+    // Emulator: đổi thành http://10.0.2.2:8080/api/
+    // IP nhà: 192.168.1.35 | IP hiện tại: 192.168.34.177
+    public static final String BASE_URL = "http://192.168.34.177:8080/api/";
+    
+    // WebSocket URL
+    public static final String WS_URL = "ws://192.168.34.177:8080/api/ws";
     
     // SharedPreferences Keys
     public static final String PREF_NAME = "KidsAppPrefs";
