@@ -4,13 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.kidsapp.R;
 import com.kidsapp.data.local.SharedPref;
@@ -34,7 +29,6 @@ public class ChildMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = ActivityChildMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -50,12 +44,6 @@ public class ChildMainActivity extends AppCompatActivity {
                     .replace(R.id.childHomeHost, new ChildHomeFragment())
                     .commit();
         }
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });
     }
 
     /**

@@ -4,8 +4,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import com.kidsapp.R;
 import com.kidsapp.databinding.ActivityLoginBinding;
 
@@ -21,10 +19,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
-        // Setup Navigation - Đợi FragmentContainerView sẵn sàng
-        // NavController sẽ được tìm sau khi FragmentContainerView đã được khởi tạo
-        // Không cần setup ActionBar vì đang dùng NoActionBar theme
     }
 
     @Override

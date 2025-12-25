@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.kidsapp.R;
 import com.kidsapp.data.model.Skin;
 
@@ -18,7 +19,7 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinAdapter.SkinViewHolder
 
     private List<Skin> skinList;
     private OnSkinSelectedListener listener;
-    private int selectedPosition = -1; // Vị trí item đang được chọn
+    private int selectedPosition = -1;
 
     public interface OnSkinSelectedListener {
         void onSkinSelected(Skin skin, int position);
@@ -28,24 +29,17 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinAdapter.SkinViewHolder
         this.skinList = list;
         this.listener = listener;
     }
-    
-    /**
-     * Đặt item được chọn
-     */
+
     public void setSelectedPosition(int position) {
         int previousPosition = selectedPosition;
         selectedPosition = position;
-        
-        // Refresh item cũ và mới
+
         if (previousPosition != -1) {
             notifyItemChanged(previousPosition);
         }
         notifyItemChanged(selectedPosition);
     }
-    
-    /**
-     * Lấy vị trí đang chọn
-     */
+
     public int getSelectedPosition() {
         return selectedPosition;
     }
@@ -64,16 +58,36 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinAdapter.SkinViewHolder
         holder.imgSkin.setImageResource(skin.getIconRes());
         holder.txtSkinName.setText(skin.getName());
 
+        // Hiển thị giá (giả lập)
+        int price = (position + 1) * 100;
+        if (position == 0) {
+            holder.txtPrice.setText("Miễn phí");
+        } else {
+            holder.txtPrice.setText(String.valueOf(price));
+        }
+
         // Hiển thị viền khi được chọn
         if (position == selectedPosition) {
-            holder.itemView.setBackgroundResource(R.drawable.bg_round_20);
-            holder.itemView.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(0xFF2D8CFF) // Màu xanh
-            );
-            holder.itemView.setElevation(8f);
+            holder.cardSkin.setStrokeColor(0xFF2563EB); // Primary color
+            holder.cardSkin.setStrokeWidth(3);
+            holder.cardSkin.setCardElevation(8f);
+            holder.txtStatus.setText("Đang chọn");
+            holder.txtStatus.setBackgroundResource(R.drawable.bg_status_equipped);
+            holder.txtStatus.setVisibility(View.VISIBLE);
         } else {
-            holder.itemView.setBackground(null);
-            holder.itemView.setElevation(0f);
+            holder.cardSkin.setStrokeColor(0xFFE5E7EB); // Border color
+            holder.cardSkin.setStrokeWidth(1);
+            holder.cardSkin.setCardElevation(2f);
+            
+            if (position == 0) {
+                holder.txtStatus.setText("Đang dùng");
+                holder.txtStatus.setBackgroundResource(R.drawable.bg_status_owned);
+                holder.txtStatus.setVisibility(View.VISIBLE);
+            } else {
+                holder.txtStatus.setText("Mua");
+                holder.txtStatus.setBackgroundResource(R.drawable.bg_status_badge);
+                holder.txtStatus.setVisibility(View.VISIBLE);
+            }
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -88,13 +102,19 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinAdapter.SkinViewHolder
     }
 
     static class SkinViewHolder extends RecyclerView.ViewHolder {
+        MaterialCardView cardSkin;
         ImageView imgSkin;
         TextView txtSkinName;
+        TextView txtPrice;
+        TextView txtStatus;
 
         SkinViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardSkin = itemView.findViewById(R.id.cardSkin);
             imgSkin = itemView.findViewById(R.id.imgSkin);
             txtSkinName = itemView.findViewById(R.id.txtSkinName);
+            txtPrice = itemView.findViewById(R.id.txtPrice);
+            txtStatus = itemView.findViewById(R.id.txtStatus);
         }
     }
 }

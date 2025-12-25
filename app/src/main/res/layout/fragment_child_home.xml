@@ -37,7 +37,6 @@
                 android:id="@+id/cardLevel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-16dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 app:strokeWidth="0dp">
@@ -457,7 +456,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="32dp" />
+                android:layout_height="100dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

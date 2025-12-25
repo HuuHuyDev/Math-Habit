@@ -3,51 +3,104 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient_primary"
+    android:background="@drawable/bg_app_gradient"
     android:orientation="vertical">
 
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="16dp">
 
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/bg_circle_white"
-            android:src="@drawable/ic_arrow_back"
+            android:background="@drawable/bg_circle_white_alpha"
             android:contentDescription="Quay lại"
-            app:tint="@color/primary" />
+            android:padding="8dp"
+            android:src="@drawable/ic_back"
+            app:tint="@android:color/white" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:text="🎒 Trang bị"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/inter_bold" />
-
-        <!-- Nút trang bị (có thể dùng để save) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEquip"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="Lưu"
-            android:textColor="@color/primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
             android:fontFamily="@font/inter_bold"
-            app:backgroundTint="@color/white"
-            app:cornerRadius="18dp"
-            android:paddingHorizontal="16dp"
-            android:minWidth="0dp" />
+            android:text="🎒 Cửa hàng Avatar"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <!-- Coins Display -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/bg_white_card"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Coins -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_coin" />
+
+            <TextView
+                android:id="@+id/txtCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="1,250"
+                android:textColor="@color/coin_orange"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <!-- XP -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_xp_badge"
+                android:fontFamily="@font/inter_bold"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="XP"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtXP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="2,400"
+                android:textColor="@color/primary"
+                android:textSize="20sp" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -56,77 +109,107 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp">
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:orientation="vertical">
 
-            <!-- Avatar Preview -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                app:cardCornerRadius="60dp"
-                app:cardElevation="8dp"
-                app:strokeColor="@color/white"
-                app:strokeWidth="3dp"
-                android:layout_marginBottom="16dp">
-
-                <ImageView
-                    android:id="@+id/imgCurrentAvatar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_child_avatar" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:id="@+id/tvCurrentSkinName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mặc định"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:fontFamily="@font/inter_regular"
-                android:alpha="0.9"
-                android:layout_marginBottom="32dp" />
-
-            <!-- Skins Grid -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Current Avatar Preview -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white"
-                android:layout_marginBottom="16dp">
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Avatar hiện tại"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="6dp"
+                    app:strokeColor="@color/primary"
+                    app:strokeWidth="3dp">
+
+                    <ImageView
+                        android:id="@+id/imgCurrentAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_child_avatar" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tvCurrentSkinName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:text="Mặc định"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEquip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:minWidth="120dp"
+                    android:paddingHorizontal="24dp"
+                    android:text="Đang dùng"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="20dp" />
+
+            </LinearLayout>
+
+            <!-- Skins Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="🛒 Chọn Avatar"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSkins"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Chọn skin"
-                        android:textColor="@color/primary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/inter_bold"
-                        android:layout_marginBottom="16dp" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvSkins"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

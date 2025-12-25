@@ -88,6 +88,7 @@ public class ChildProfileFragment extends Fragment {
         String grade = sharedPreferences.getString(KEY_CHILD_GRADE, "Lớp 3A");
         int xp = sharedPreferences.getInt(KEY_CHILD_XP, 1250);
         int coins = sharedPreferences.getInt(KEY_CHILD_COINS, 850);
+        int level = xp / 250 + 1; // Tính level dựa trên XP
         
         // Hiển thị dữ liệu lên UI
         binding.txtChildName.setText(name);
@@ -97,6 +98,7 @@ public class ChildProfileFragment extends Fragment {
         binding.txtGrade.setText(grade);
         binding.txtXP.setText(String.valueOf(xp));
         binding.txtCoins.setText(String.valueOf(coins));
+        binding.txtLevel.setText("Level " + level);
         
         // Đổi icon giới tính
         if (gender.equals("Nữ")) {
