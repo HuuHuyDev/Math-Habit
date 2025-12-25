@@ -67,7 +67,7 @@ public class equip extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new SkinAdapter(skinList, skin -> {
+        adapter = new SkinAdapter(skinList, (skin, position) -> {
             // Chọn skin → cập nhật preview
             binding.imgCurrentAvatar.setImageResource(skin.getIconRes());
             binding.tvCurrentSkinName.setText(skin.getName());

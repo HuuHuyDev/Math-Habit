@@ -33,9 +33,9 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-        
+
         setupClickListeners();
         observeViewModel();
     }
@@ -81,17 +81,17 @@ public class LoginFragment extends Fragment {
             binding.tilEmail.setError("Vui lòng nhập email");
             return false;
         }
-        
+
         if (password.isEmpty()) {
             binding.tilPassword.setError("Vui lòng nhập mật khẩu");
             return false;
         }
-        
+
         if (password.length() < 6) {
             binding.tilPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
             return false;
         }
-        
+
         return true;
     }
 
@@ -151,12 +151,12 @@ public class LoginFragment extends Fragment {
      * Đăng nhập với vai trò Parent
      */
     private void loginAsParent() {
-        // Lưu thông tin đăng nhập
-        com.kidsapp.data.local.SharedPref sharedPref = 
-                new com.kidsapp.data.local.SharedPref(requireContext());
-        sharedPref.setLoggedIn(true);
-//        sharedPref.setUserRole("parent");
-//        sharedPref.setUserName("Nguyễn Phương");
+//        // Lưu thông tin đăng nhập
+//        com.kidsapp.data.local.SharedPref sharedPref =
+//                new com.kidsapp.data.local.SharedPref(requireContext());
+//        sharedPref.setLoggedIn(true);
+////        sharedPref.setUserRole("parent");
+////        sharedPref.setUserName("Nguyễn Phương");
         
         Toast.makeText(requireContext(), "Đăng nhập thành công - Parent", Toast.LENGTH_SHORT).show();
         

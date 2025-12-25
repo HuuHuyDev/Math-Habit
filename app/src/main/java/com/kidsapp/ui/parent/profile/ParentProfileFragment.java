@@ -18,11 +18,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
 import com.kidsapp.databinding.BottomsheetChoosePhotoBinding;
 import com.kidsapp.databinding.FragmentProfileParentBinding;
+import com.kidsapp.ui.auth.LoginActivity;
+import com.kidsapp.viewmodel.AuthViewModel;
 
 import java.io.IOException;
 
@@ -32,6 +36,7 @@ import java.io.IOException;
 public class ParentProfileFragment extends Fragment {
     private FragmentProfileParentBinding binding;
     private BottomSheetDialog photoBottomSheet;
+    private AuthViewModel authViewModel;
 
     // Activity Result Launchers
     private ActivityResultLauncher<Intent> takePictureLauncher;
@@ -43,6 +48,7 @@ public class ParentProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActivityResultLaunchers();
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
     }
 
     @Nullable
@@ -325,13 +331,17 @@ public class ParentProfileFragment extends Fragment {
      * Logout
      */
     private void logout() {
-        // Show confirmation dialog
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Đăng xuất")
                 .setMessage("Bạn có chắc chắn muốn đăng xuất?")
                 .setPositiveButton("Đăng xuất", (dialog, which) -> {
-                    // TODO: Clear session and navigate to login
-                    Toast.makeText(requireContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+                    // Xóa session (token, user info)
+                    try { authViewModel.logout(); } catch (Exception ignored) {}
+                    // Chuyển về màn hình đăng nhập
+                    Intent intent = new Intent(requireContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    requireActivity().finish();
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
