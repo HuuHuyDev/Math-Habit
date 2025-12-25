@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentChallengeHomeBinding;
 import com.kidsapp.ui.challenge.JoinByChallengeCodeActivity;
+import com.kidsapp.ui.challenge.QuickMatchActivity;
 
 /**
  * Fragment trang chủ Thách đấu
@@ -59,7 +60,23 @@ public class ChallengeHomeFragment extends Fragment {
 
         // Quick Match - Thách đấu nhanh
         binding.cardQuickMatch.setOnClickListener(v -> {
-            navigateToFragment(new QuickMatchFragment());
+            // Thêm haptic feedback
+            try {
+                Vibrator vibrator = (Vibrator) requireContext().getSystemService(android.content.Context.VIBRATOR_SERVICE);
+                if (vibrator != null && vibrator.hasVibrator()) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        vibrator.vibrate(30);
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore vibration errors
+            }
+            
+            // Navigate to QuickMatchActivity instead of Fragment
+            Intent intent = new Intent(requireContext(), QuickMatchActivity.class);
+            startActivity(intent);
         });
 
         // Invite Friend - Mời bạn

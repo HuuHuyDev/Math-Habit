@@ -99,10 +99,25 @@ public class QuickMatchFragment extends Fragment {
         // Navigate to QuizBattleFragment after short delay
         handler.postDelayed(() -> {
             if (getActivity() != null) {
-                // Use the correct container ID for QuickMatchActivity
+                // Create QuizBattleFragment
+                QuizBattleFragment battleFragment = new QuizBattleFragment();
+                
+                // Pass data to battle fragment if needed
+                Bundle args = getArguments();
+                if (args != null) {
+                    battleFragment.setArguments(args);
+                }
+                
+                // Navigate to QuizBattleFragment
                 getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragmentContainer, new QuizBattleFragment())
+                    .setCustomAnimations(
+                        R.anim.slide_in_right,  // enter animation
+                        R.anim.slide_out_left,  // exit animation
+                        R.anim.slide_in_left,   // pop enter animation
+                        R.anim.slide_out_right  // pop exit animation
+                    )
+                    .replace(R.id.fragmentContainer, battleFragment)
                     .addToBackStack(null)
                     .commit();
             }
