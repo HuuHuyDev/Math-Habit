@@ -30,35 +30,43 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Nút back -->
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btnBackAchievement"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_16"
-            android:layout_marginStart="@dimen/spacing_8"
-            android:background="@drawable/bg_button_google"
+            android:layout_marginStart="@dimen/spacing_16"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp"
             android:clickable="true"
             android:focusable="true">
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_back"
-                app:tint="@color/text_primary" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="20dp"
+                android:background="@android:color/white">
 
-            <TextView
-                android:layout_width="77dp"
-                android:layout_height="37dp"
-                android:layout_marginStart="6dp"
-                android:text="Quay lại"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_size_medium"
-                android:textStyle="bold" />
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_back"
+                    app:tint="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Quay lại"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
 
         <LinearLayout

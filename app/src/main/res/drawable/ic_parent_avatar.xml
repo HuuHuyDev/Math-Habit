@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Background circle -->
+    <path
+        android:fillColor="#E8F5E9"
+        android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+    <!-- Person icon -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M24,24C27.31,24 30,21.31 30,18C30,14.69 27.31,12 24,12C20.69,12 18,14.69 18,18C18,21.31 20.69,24 24,24ZM24,27C19.33,27 10,29.34 10,34V36H38V34C38,29.34 28.67,27 24,27Z" />
+</vector>

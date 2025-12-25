@@ -68,6 +68,16 @@ public class SharedPref {
         return sharedPreferences.getString(Constants.KEY_USER_ROLE, null);
     }
 
+    // Child ID (for child users)
+    public void saveChildId(String childId) {
+        editor.putString("child_id", childId);
+        editor.apply();
+    }
+
+    public String getChildId() {
+        return sharedPreferences.getString("child_id", null);
+    }
+
     // Login Status
     public void setLoggedIn(boolean isLoggedIn) {
         editor.putBoolean(Constants.KEY_IS_LOGGED_IN, isLoggedIn);

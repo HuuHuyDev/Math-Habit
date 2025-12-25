@@ -4,14 +4,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kidsapp.R;
 import com.kidsapp.data.model.ChatMessage;
-import com.kidsapp.databinding.ItemChatMessageBinding;
+import com.kidsapp.databinding.ItemBattleChatMessageBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemChatMessageBinding binding = ItemChatMessageBinding.inflate(
+        ItemBattleChatMessageBinding binding = ItemBattleChatMessageBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
         return new ChatViewHolder(binding);
     }
@@ -54,9 +53,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     }
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
-        private final ItemChatMessageBinding binding;
+        private final ItemBattleChatMessageBinding binding;
 
-        ChatViewHolder(ItemChatMessageBinding binding) {
+        ChatViewHolder(ItemBattleChatMessageBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

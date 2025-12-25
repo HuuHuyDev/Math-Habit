@@ -64,7 +64,7 @@ public class ChallengeHomeFragment extends Fragment {
 
         // Invite Friend - Mời bạn
         binding.cardInviteFriend.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Mời bạn bè - Đang phát triển", Toast.LENGTH_SHORT).show();
+            navigateToFragment(new InviteFriendFragment());
         });
 
         // Join by Code - Tham gia bằng mã

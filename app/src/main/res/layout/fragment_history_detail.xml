@@ -631,73 +631,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 6: Hành động -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/surface"
-                android:layout_marginBottom="@dimen/spacing_20">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_16">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚡ Hành động"
-                        android:textColor="@color/primary"
-                        android:textSize="@dimen/text_size_large"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/inter_bold"
-                        android:layout_marginBottom="@dimen/spacing_16" />
-
-                    <!-- Nút Làm lại bài -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnRetry"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Làm lại bài"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/text_size_medium"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/inter_bold"
-                        android:paddingTop="@dimen/spacing_16"
-                        android:paddingBottom="@dimen/spacing_16"
-                        android:background="@drawable/bg_button_primary"
-                        app:icon="@drawable/ic_refresh"
-                        app:iconGravity="textStart"
-                        app:iconPadding="@dimen/spacing_8"
-                        app:iconTint="@color/white"
-                        app:cornerRadius="16dp"
-                        android:layout_marginBottom="@dimen/spacing_12" />
-
-                    <!-- Nút Xem chi tiết đáp án -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnViewAnswers"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Xem chi tiết đáp án"
-                        android:textColor="@color/primary"
-                        android:textSize="@dimen/text_size_medium"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/inter_bold"
-                        android:paddingTop="@dimen/spacing_16"
-                        android:paddingBottom="@dimen/spacing_16"
-                        app:icon="@drawable/ic_eye"
-                        app:iconGravity="textStart"
-                        app:iconPadding="@dimen/spacing_8"
-                        app:iconTint="@color/primary"
-                        app:strokeColor="@color/primary"
-                        app:strokeWidth="2dp"
-                        app:cornerRadius="16dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

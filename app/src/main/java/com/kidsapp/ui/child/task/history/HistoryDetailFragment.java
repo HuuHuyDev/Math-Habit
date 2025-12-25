@@ -97,7 +97,6 @@ public class HistoryDetailFragment extends Fragment {
             setupDetailData();
             setupProgressData();
             setupFeedbackData();
-            setupActionButtons();
         }
     }
     
@@ -145,27 +144,7 @@ public class HistoryDetailFragment extends Fragment {
         binding.txtFeedback.setText(feedback);
     }
     
-    /**
-     * Thiết lập các nút hành động
-     */
-    private void setupActionButtons() {
-        // Nút Làm lại bài
-        binding.btnRetry.setOnClickListener(v -> {
-            // TODO: Implement retry logic
-            if (getActivity() != null) {
-                android.widget.Toast.makeText(requireContext(), 
-                    "Chức năng làm lại bài đang được phát triển", 
-                    android.widget.Toast.LENGTH_SHORT).show();
-            }
-        });
-        
-        // Nút Xem chi tiết đáp án
-        binding.btnViewAnswers.setOnClickListener(v -> {
-            // Chuyển sang màn hình xem đáp án
-            navigateToReviewAnswers();
-        });
-    }
-    
+
     /**
      * Chuyển sang màn hình xem lại đáp án
      */
