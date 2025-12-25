@@ -6,6 +6,9 @@ import com.kidsapp.data.model.Child;
 import com.kidsapp.data.model.Parent;
 import com.kidsapp.data.model.Task;
 import com.kidsapp.data.model.WeeklyProgress;
+import com.kidsapp.data.request.AiChatRequest;
+import com.kidsapp.data.response.AiChatResponse;
+import com.kidsapp.data.response.ChildSearchResponse;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -66,6 +69,24 @@ public interface ApiService {
     
     @GET(ApiConfig.ENDPOINT_REPORTS)
     Call<List<WeeklyProgress>> getReports(@Query("parent_id") String parentId);
+    
+    // AI Chat API
+    @POST(ApiConfig.ENDPOINT_AI_CHAT)
+    Call<AiChatResponse> sendChatMessage(@Body AiChatRequest request);
+    
+    // Children Search API (tìm bạn bè)
+    @GET(ApiConfig.ENDPOINT_SEARCH_CHILDREN)
+    Call<ApiResponseWrapper<List<ChildSearchResponse>>> searchChildren(
+            @Query("currentChildId") String currentChildId,
+            @Query("keyword") String keyword
+    );
+    
+    // Wrapper class cho API response
+    class ApiResponseWrapper<T> {
+        public int code;
+        public String message;
+        public T data;
+    }
     
     // Request/Response classes
     class LoginRequest {

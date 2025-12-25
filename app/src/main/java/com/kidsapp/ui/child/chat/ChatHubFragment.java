@@ -15,7 +15,7 @@ import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentChatHubBinding;
 
 /**
- * Fragment chính cho Chat Hub - chứa 2 tab: Phụ huynh và Bạn bè
+ * Fragment chính cho Chat Hub - chứa 3 tab: Phụ huynh, Bạn bè, AI
  */
 public class ChatHubFragment extends Fragment {
 
@@ -43,10 +43,16 @@ public class ChatHubFragment extends Fragment {
 
         // Kết nối TabLayout với ViewPager2
         new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
-            if (position == 0) {
-                tab.setText("👨‍👩‍👧 Phụ huynh");
-            } else {
-                tab.setText("👫 Bạn bè");
+            switch (position) {
+                case 0:
+                    tab.setText("👨‍👩‍👧 Phụ huynh");
+                    break;
+                case 1:
+                    tab.setText("👫 Bạn bè");
+                    break;
+                case 2:
+                    tab.setText("🤖 Trợ lý AI");
+                    break;
             }
         }).attach();
     }
@@ -82,16 +88,21 @@ public class ChatHubFragment extends Fragment {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            if (position == 0) {
-                return ChatListFragment.newInstance(ChatListFragment.TYPE_PARENT);
-            } else {
-                return ChatListFragment.newInstance(ChatListFragment.TYPE_FRIENDS);
+            switch (position) {
+                case 0:
+                    return ChatListFragment.newInstance(ChatListFragment.TYPE_PARENT);
+                case 1:
+                    return ChatListFragment.newInstance(ChatListFragment.TYPE_FRIENDS);
+                case 2:
+                    return ChatWithAiFragment.newInstance("CHILD");
+                default:
+                    return ChatListFragment.newInstance(ChatListFragment.TYPE_PARENT);
             }
         }
 
         @Override
         public int getItemCount() {
-            return 2;
+            return 3;
         }
     }
 }

@@ -28,5 +28,11 @@ public class ApiConfig {
     public static final String ENDPOINT_ACTIVITY_LOGS = "activities";
     public static final String ENDPOINT_WEEKLY_PROGRESS = "reports/weekly";
     public static final String ENDPOINT_REPORTS = "reports";
+    
+    // AI Chat
+    public static final String ENDPOINT_AI_CHAT = "chat";
+    
+    // Children (tìm bạn bè)
+    public static final String ENDPOINT_SEARCH_CHILDREN = "children/search";
 }
 

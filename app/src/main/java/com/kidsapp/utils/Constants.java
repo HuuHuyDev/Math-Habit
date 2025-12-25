@@ -5,7 +5,9 @@ package com.kidsapp.utils;
  */
 public class Constants {
     // API Base URL
-    public static final String BASE_URL = "https://api.kidsapp.com/";
+    // Thiết bị thật: dùng IP máy tính (cùng WiFi với điện thoại)
+    // Emulator: đổi thành http://10.0.2.2:8080/api/
+    public static final String BASE_URL = "http://192.168.1.35:8080/api/";
     
     // SharedPreferences Keys
     public static final String PREF_NAME = "KidsAppPrefs";

@@ -1,9 +1,15 @@
 package com.kidsapp.ui.child.chat;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,16 +17,28 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiConfig;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.response.ChildSearchResponse;
 import com.kidsapp.databinding.FragmentChatListBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Fragment hiển thị danh sách chat (dùng cho cả tab Phụ huynh và Bạn bè)
+ * Tab Bạn bè có thêm thanh tìm kiếm để tìm bạn mới từ database
  */
 public class ChatListFragment extends Fragment implements ConversationAdapter.OnConversationClickListener {
 
+    private static final String TAG = "ChatListFragment";
     private static final String ARG_TYPE = "type";
     public static final int TYPE_PARENT = 0;
     public static final int TYPE_FRIENDS = 1;
@@ -28,6 +46,15 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     private FragmentChatListBinding binding;
     private ConversationAdapter adapter;
     private int type;
+    
+    // API
+    private ApiService apiService;
+    private SharedPref sharedPref;
+    
+    // Debounce search
+    private Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
+    private static final long SEARCH_DELAY = 500;
 
     public static ChatListFragment newInstance(int type) {
         ChatListFragment fragment = new ChatListFragment();
@@ -50,9 +77,20 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
         super.onViewCreated(view, savedInstanceState);
         
         type = getArguments() != null ? getArguments().getInt(ARG_TYPE, TYPE_PARENT) : TYPE_PARENT;
+        sharedPref = new SharedPref(requireContext());
         
+        setupRetrofit();
         setupRecyclerView();
+        setupSearch();
         loadConversations();
+    }
+
+    private void setupRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiConfig.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        apiService = retrofit.create(ApiService.class);
     }
 
     private void setupRecyclerView() {
@@ -61,8 +99,108 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
         binding.rvChats.setAdapter(adapter);
     }
 
+    private void setupSearch() {
+        // Chỉ hiện thanh tìm kiếm cho tab Bạn bè
+        if (type == TYPE_FRIENDS) {
+            binding.searchContainer.setVisibility(View.VISIBLE);
+            
+            binding.edtSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // Cancel previous search
+                    if (searchRunnable != null) {
+                        searchHandler.removeCallbacks(searchRunnable);
+                    }
+                    
+                    // Schedule new search
+                    searchRunnable = () -> searchFriends(s.toString());
+                    searchHandler.postDelayed(searchRunnable, SEARCH_DELAY);
+                }
+                
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+        } else {
+            binding.searchContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void searchFriends(String keyword) {
+        if (keyword.isEmpty()) {
+            // Nếu không có keyword, hiện lại danh sách chat cũ
+            loadConversations();
+            return;
+        }
+        
+        showLoading(true);
+        
+        String currentChildId = getCurrentChildId();
+        Log.d(TAG, "Searching friends: " + keyword);
+        
+        apiService.searchChildren(currentChildId, keyword)
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> response) {
+                        showLoading(false);
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<ChildSearchResponse> friends = response.body().data;
+                            Log.d(TAG, "Found " + friends.size() + " friends");
+                            
+                            // Convert to Conversation list
+                            List<Conversation> conversations = new ArrayList<>();
+                            for (ChildSearchResponse friend : friends) {
+                                conversations.add(new Conversation(
+                                        friend.getId(),
+                                        friend.getDisplayName(),
+                                        friend.getAvatarUrl(),
+                                        "Nhấn để bắt đầu chat",
+                                        "",
+                                        0,
+                                        friend.isOnline(),
+                                        Conversation.TYPE_FRIEND
+                                ));
+                            }
+                            adapter.setConversations(conversations);
+                        } else {
+                            adapter.setConversations(new ArrayList<>());
+                        }
+                        updateEmptyState();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> call,
+                                          @NonNull Throwable t) {
+                        showLoading(false);
+                        Log.e(TAG, "Search error: " + t.getMessage());
+                        Toast.makeText(requireContext(), "Không thể tìm kiếm", Toast.LENGTH_SHORT).show();
+                        updateEmptyState();
+                    }
+                });
+    }
+
+    private String getCurrentChildId() {
+        String childId = sharedPref.getChildId();
+        if (childId == null || childId.isEmpty()) {
+            childId = sharedPref.getUserId();
+        }
+        if (childId == null || childId.isEmpty()) {
+            childId = "00000000-0000-0000-0000-000000000000";
+        }
+        return childId;
+    }
+
+    private void showLoading(boolean show) {
+        if (binding == null) return;
+        binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void loadConversations() {
-        // Mock data
+        // Mock data - sau này sẽ load từ API
         List<Conversation> conversations = new ArrayList<>();
 
         if (type == TYPE_PARENT) {
@@ -99,6 +237,8 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     }
 
     private void updateEmptyState() {
+        if (binding == null) return;
+        
         boolean isEmpty = adapter.isEmpty();
         binding.layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         binding.rvChats.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
@@ -108,8 +248,8 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
                 binding.txtEmptyTitle.setText("Chưa có tin nhắn từ phụ huynh");
                 binding.txtEmptyMessage.setText("Tin nhắn từ bố mẹ sẽ hiển thị ở đây");
             } else {
-                binding.txtEmptyTitle.setText("Chưa có bạn bè nào");
-                binding.txtEmptyMessage.setText("Tìm bạn mới để bắt đầu trò chuyện!");
+                binding.txtEmptyTitle.setText("Không tìm thấy bạn bè");
+                binding.txtEmptyMessage.setText("Thử tìm kiếm với từ khóa khác");
             }
         }
     }
@@ -135,6 +275,9 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+        }
         binding = null;
     }
 }
