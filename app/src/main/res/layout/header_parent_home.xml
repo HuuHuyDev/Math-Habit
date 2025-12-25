@@ -44,9 +44,25 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
+            android:id="@+id/flChat"
+            android:layout_width="@dimen/icon_circle_size"
+            android:layout_height="@dimen/icon_circle_size"
+            android:background="@drawable/bg_icon_circle"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_chat"
+                android:tint="@color/parent_header_text" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/flBell"
             android:layout_width="@dimen/icon_circle_size"
             android:layout_height="@dimen/icon_circle_size"
+            android:layout_marginStart="@dimen/spacing_8"
             android:background="@drawable/bg_icon_circle"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 

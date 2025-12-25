@@ -8,8 +8,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
+import com.kidsapp.data.FakeNotificationRepository;
+import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentTaskListBinding;
+import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
+import com.kidsapp.ui.parent.home.model.Notification;
+
+import java.util.List;
 
 /**
  * Child Task List Fragment
@@ -26,15 +33,14 @@ public class ChildTaskListFragment extends Fragment {
         setupBackButton();
         setupRecyclerView();
         setupTabLayout();
-        setupStartButton();
         return binding.getRoot();
     }
 
     private void setupHeader() {
         binding.headerUser.setUserName("Hồ Hữu Huy");
         binding.headerUser.setAvatar(R.drawable.ic_user_default);
-        binding.headerUser.setNotificationClick(v ->
-                Toast.makeText(requireContext(), R.string.feature_coming_soon, Toast.LENGTH_SHORT).show());
+        // Click vào chuông để xem thông báo từ parent
+        binding.headerUser.setNotificationClick(v -> showNotificationsBottomSheet());
     }
 
     private void setupBackButton() {
@@ -82,9 +88,45 @@ public class ChildTaskListFragment extends Fragment {
         }
     }
 
-    private void setupStartButton() {
-        binding.btnStart.setOnClickListener(v ->
-                Toast.makeText(requireContext(), R.string.task_start, Toast.LENGTH_SHORT).show());
+    /**
+     * Hiển thị BottomSheet danh sách thông báo từ parent
+     */
+    private void showNotificationsBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
+                getLayoutInflater());
+
+        // Load dữ liệu thông báo từ parent
+        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
+
+        // Setup adapter
+        NotificationAdapter adapter = new NotificationAdapter();
+        adapter.setNotifications(notifications);
+        adapter.setOnNotificationClickListener((notification, position) -> {
+            // Đánh dấu đã đọc khi click
+            Toast.makeText(requireContext(),
+                    notification.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+
+        bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
+
+        // Hiển thị empty state nếu không có thông báo
+        if (notifications.isEmpty()) {
+            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+            bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+        } else {
+            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
+            bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
+        }
+
+        // Xử lý nút "Đánh dấu đã đọc"
+        bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
+            adapter.markAllAsRead();
+            Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
+        });
+
+        bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
+        bottomSheetDialog.show();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.kidsapp.ui.parent.child.detail.tabs.housework;
 
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -21,14 +21,6 @@ import java.util.List;
 public class HouseworkAdapter extends RecyclerView.Adapter<HouseworkAdapter.HouseworkViewHolder> {
 
     private List<HouseworkTask> taskList;
-    
-    // Màu sắc
-    private static final int COLOR_GREEN = 0xFF4CAF50;
-    private static final int COLOR_GREEN_LIGHT = 0xFFE8F5E9;
-    private static final int COLOR_GREEN_BORDER = 0xFFA5D6A7;
-    private static final int COLOR_GRAY = 0xFF9E9E9E;
-    private static final int COLOR_GRAY_BORDER = 0xFFE0E0E0;
-    private static final int COLOR_WHITE = 0xFFFFFFFF;
 
     public HouseworkAdapter(List<HouseworkTask> taskList) {
         this.taskList = taskList;
@@ -49,12 +41,17 @@ public class HouseworkAdapter extends RecyclerView.Adapter<HouseworkAdapter.Hous
         holder.txtTitle.setText(task.getTitle());
         holder.imgIcon.setImageResource(task.getIconRes());
         
+        int colorGreen = ContextCompat.getColor(holder.itemView.getContext(), R.color.status_success);
+        int colorGreenLight = ContextCompat.getColor(holder.itemView.getContext(), R.color.surface_variant);
+        int colorGray = ContextCompat.getColor(holder.itemView.getContext(), R.color.text_tertiary);
+        int colorWhite = ContextCompat.getColor(holder.itemView.getContext(), R.color.white);
+        int colorSurface = ContextCompat.getColor(holder.itemView.getContext(), R.color.surface);
+        
         // Cập nhật trạng thái dựa trên isCompleted
         if (task.isCompleted()) {
             // Đã hoàn thành
-            // Card: nền xanh nhạt, viền xanh
-            holder.cardView.setCardBackgroundColor(COLOR_GREEN_LIGHT);
-            holder.cardView.setStrokeColor(COLOR_GREEN_BORDER);
+            holder.cardView.setCardBackgroundColor(colorGreenLight);
+            holder.cardView.setCardElevation(1);
             
             // Checkbox: nền xanh, hiện checkmark trắng
             holder.containerCheckIcon.setBackgroundResource(R.drawable.bg_checkmark_square);
@@ -62,16 +59,15 @@ public class HouseworkAdapter extends RecyclerView.Adapter<HouseworkAdapter.Hous
             
             // Task icon: nền xanh, icon trắng
             holder.containerTaskIcon.setBackgroundResource(R.drawable.bg_task_icon_checked);
-            holder.imgIcon.setColorFilter(COLOR_WHITE);
+            holder.imgIcon.setColorFilter(colorWhite);
             
             // Text trạng thái: màu xanh
             holder.txtStatus.setText("Đã hoàn thành");
-            holder.txtStatus.setTextColor(COLOR_GREEN);
+            holder.txtStatus.setTextColor(colorGreen);
         } else {
             // Chưa làm
-            // Card: nền trắng, viền xám
-            holder.cardView.setCardBackgroundColor(COLOR_WHITE);
-            holder.cardView.setStrokeColor(COLOR_GRAY_BORDER);
+            holder.cardView.setCardBackgroundColor(colorSurface);
+            holder.cardView.setCardElevation(2);
             
             // Checkbox: viền xám, ẩn checkmark
             holder.containerCheckIcon.setBackgroundResource(R.drawable.bg_checkbox_unchecked);
@@ -79,11 +75,11 @@ public class HouseworkAdapter extends RecyclerView.Adapter<HouseworkAdapter.Hous
             
             // Task icon: nền xám, icon xám
             holder.containerTaskIcon.setBackgroundResource(R.drawable.bg_task_icon_unchecked);
-            holder.imgIcon.setColorFilter(COLOR_GRAY);
+            holder.imgIcon.setColorFilter(colorGray);
             
             // Text trạng thái: màu xám
             holder.txtStatus.setText("Chưa làm");
-            holder.txtStatus.setTextColor(COLOR_GRAY);
+            holder.txtStatus.setTextColor(colorGray);
         }
         
         // Parent chỉ xem, không thể click để đánh dấu hoàn thành

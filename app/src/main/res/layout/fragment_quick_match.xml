@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app_gradient"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Loading Animation -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminateTint="@android:color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Đang tìm đối thủ..."
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:fontFamily="@font/inter_bold" />
+
+    <TextView
+        android:id="@+id/txtTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Mẹo: Đọc kỹ câu hỏi trước khi chọn đáp án nhé!"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_regular"
+        android:alpha="0.9" />
+
+    <!-- Cancel Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:text="Hủy"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/inter_semibold"
+        app:backgroundTint="@android:color/transparent"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="2dp"
+        app:cornerRadius="16dp" />
+
+</LinearLayout>

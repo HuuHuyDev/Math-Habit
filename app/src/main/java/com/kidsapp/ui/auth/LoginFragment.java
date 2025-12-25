@@ -127,7 +127,7 @@ public class LoginFragment extends Fragment {
         }
         
         // Tài khoản Children demo
-        if (username.equals("minhlinhkid") && password.equals("123456")) {
+        if (username.equals("huy") && password.equals("123456")) {
             loginAsChild("1", "Nguyễn Minh Linh");
             return;
         }

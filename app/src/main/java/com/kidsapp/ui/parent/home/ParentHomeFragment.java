@@ -70,6 +70,16 @@ public class ParentHomeFragment extends Fragment {
         
         // Click vào bell icon để hiện thông báo
         binding.headerParent.flBell.setOnClickListener(v -> showNotificationsBottomSheet());
+        
+        // Click vào chat icon để mở Chat Hub
+        binding.headerParent.flChat.setOnClickListener(v -> {
+            try {
+                Navigation.findNavController(requireView())
+                        .navigate(R.id.action_nav_home_to_chat);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void setupChildrenRecycler() {

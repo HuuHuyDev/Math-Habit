@@ -18,8 +18,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.kidsapp.R;
 import com.kidsapp.data.model.HistoryTask;
 import com.kidsapp.databinding.FragmentHistoryTabBinding;
-import com.kidsapp.ui.child.task.HistoryDetailFragment;
-import com.kidsapp.ui.child.task.TaskHistoryAdapter;
+import com.kidsapp.ui.child.task.history.HistoryDetailFragment;
+import com.kidsapp.ui.child.task.history.TaskHistoryAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

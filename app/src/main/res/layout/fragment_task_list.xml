@@ -110,24 +110,10 @@
                 android:layout_height="400dp"
                 android:layout_marginTop="@dimen/spacing_16"
                 android:layout_marginHorizontal="@dimen/spacing_20"
+                android:layout_marginBottom="@dimen/spacing_20"
                 android:clipToPadding="false"
                 android:overScrollMode="never" />
 
-            <!-- Start Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_24"
-                android:layout_marginHorizontal="@dimen/spacing_20"
-                android:layout_marginBottom="@dimen/spacing_20"
-                android:text="@string/task_start"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_large"
-                android:paddingTop="@dimen/spacing_16"
-                android:paddingBottom="@dimen/spacing_16"
-                android:background="@drawable/bg_button_primary"
-                app:cornerRadius="@dimen/radius_input" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

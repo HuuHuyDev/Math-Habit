@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_app_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 1. Header Section -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/bg_app_gradient"
+            android:padding="@dimen/spacing_20">
+
+            <!-- Nút Back -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_round_20"
+                android:src="@drawable/ic_back"
+                android:padding="@dimen/spacing_8"
+                app:tint="@color/primary"
+                android:contentDescription="Quay lại"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Icon nhiệm vụ -->
+            <ImageView
+                android:id="@+id/imgTaskIcon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_book"
+                app:tint="@color/white"
+                android:contentDescription="Icon nhiệm vụ"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnBack"
+                android:layout_marginTop="@dimen/spacing_16"
+                tools:src="@drawable/ic_book" />
+
+            <!-- Tiêu đề -->
+            <TextView
+                android:id="@+id/txtTaskTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Đọc sách 30 phút"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imgTaskIcon"
+                android:layout_marginTop="@dimen/spacing_12"
+                tools:text="Đọc sách 30 phút" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:id="@+id/txtTaskSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Hôm nay con hãy đọc sách nhé 😊"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_medium"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:alpha="0.9"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtTaskTitle"
+                android:layout_marginTop="@dimen/spacing_8"
+                tools:text="Hôm nay con hãy đọc sách nhé 😊" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 2. Task Info Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_20"
+            android:layout_marginEnd="@dimen/spacing_20"
+            android:layout_marginTop="-30dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/surface">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_20"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <!-- Thời gian -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_clock"
+                        app:tint="@color/primary"
+                        android:layout_marginBottom="@dimen/spacing_8" />
+
+                    <TextView
+                        android:id="@+id/txtDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30 phút"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        tools:text="30 phút" />
+
+                </LinearLayout>
+
+                <!-- Số câu hỏi -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_quiz"
+                        app:tint="@color/status_warning"
+                        android:layout_marginBottom="@dimen/spacing_8" />
+
+                    <TextView
+                        android:id="@+id/txtQuestions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1 câu hỏi"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        tools:text="1 câu hỏi" />
+
+                </LinearLayout>
+
+                <!-- Rating -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_star"
+                        app:tint="@color/coin_gold"
+                        android:layout_marginBottom="@dimen/spacing_8" />
+
+                    <TextView
+                        android:id="@+id/txtRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4.8"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_large"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        tools:text="4.8" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- 3. Timer Section -->
+        <LinearLayout
+            android:id="@+id/layoutTimerSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="@dimen/spacing_32"
+            android:layout_marginTop="@dimen/spacing_20">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thời gian còn lại"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_size_medium"
+                android:fontFamily="@font/inter_regular"
+                android:layout_marginBottom="@dimen/spacing_20" />
+
+            <!-- Circular Timer -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:background="@drawable/bg_timer_circle">
+
+                <TextView
+                    android:id="@+id/txtTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30:00"
+                    android:textColor="@color/primary"
+                    android:textSize="64sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/inter_bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="30:00" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Start/Pause Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartPause"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:text="Bắt đầu"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                android:background="@drawable/bg_button_primary"
+                app:cornerRadius="30dp"
+                android:layout_marginTop="@dimen/spacing_32" />
+
+        </LinearLayout>
+
+        <!-- 4. Question Section (Hidden initially) -->
+        <LinearLayout
+            android:id="@+id/layoutQuestionSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_20"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_24">
+
+                    <!-- Icon câu hỏi -->
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:src="@drawable/ic_quiz"
+                        app:tint="@color/primary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/spacing_16" />
+
+                    <!-- Câu hỏi -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Con vừa đọc sách gì?"
+                        android:textColor="@color/text_primary"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/spacing_24" />
+
+                    <!-- Đáp án 1 -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAnswer1"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="📖 Truyện"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:backgroundTint="#FF6B6B"
+                        app:cornerRadius="20dp"
+                        android:layout_marginBottom="@dimen/spacing_12" />
+
+                    <!-- Đáp án 2 -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAnswer2"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="📚 Sách học"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:backgroundTint="#4ECDC4"
+                        app:cornerRadius="20dp"
+                        android:layout_marginBottom="@dimen/spacing_12" />
+
+                    <!-- Đáp án 3 -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAnswer3"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:text="🎨 Sách tranh"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:backgroundTint="#FFD93D"
+                        app:cornerRadius="20dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- 5. Reward Section (Hidden initially) -->
+        <LinearLayout
+            android:id="@+id/layoutRewardSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_20"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_24"
+                    android:gravity="center">
+
+                    <!-- Icon chúc mừng -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎉"
+                        android:textSize="80sp"
+                        android:layout_marginBottom="@dimen/spacing_16" />
+
+                    <!-- Text chúc mừng -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tuyệt vời!"
+                        android:textColor="@color/primary"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/inter_bold"
+                        android:layout_marginBottom="@dimen/spacing_8" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Con đã hoàn thành nhiệm vụ!"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_size_large"
+                        android:fontFamily="@font/inter_regular"
+                        android:layout_marginBottom="@dimen/spacing_24" />
+
+                    <!-- Phần thưởng -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
+
+                        <!-- Sao -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="@dimen/spacing_16"
+                            android:background="@drawable/bg_round_20"
+                            android:backgroundTint="#FFF8E1"
+                            android:layout_marginEnd="@dimen/spacing_8">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_star"
+                                app:tint="@color/coin_gold"
+                                android:layout_marginBottom="@dimen/spacing_8" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="+1 Sao"
+                                android:textColor="@color/coin_gold"
+                                android:textSize="@dimen/text_size_large"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold" />
+
+                        </LinearLayout>
+
+                        <!-- Streak -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="@dimen/spacing_16"
+                            android:background="@drawable/bg_round_20"
+                            android:backgroundTint="#FFEBEE"
+                            android:layout_marginStart="@dimen/spacing_8">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_fire"
+                                app:tint="@color/status_error"
+                                android:layout_marginBottom="@dimen/spacing_8" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="+1 ngày"
+                                android:textColor="@color/status_error"
+                                android:textSize="@dimen/text_size_large"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/inter_bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- 6. Complete Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnComplete"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/spacing_20"
+            android:text="Hoàn thành nhiệm vụ"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold"
+            android:fontFamily="@font/inter_bold"
+            android:background="@drawable/bg_button_primary"
+            app:cornerRadius="20dp" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

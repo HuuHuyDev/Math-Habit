@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Sword 1 (left) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6.5,2L5,3.5L8.5,7L7,8.5L3.5,5L2,6.5L5.5,10L4,11.5L5.5,13L7,11.5L10.5,15L9,16.5L10.5,18L12,16.5L15.5,20L17,18.5L13.5,15L15,13.5L18.5,17L20,15.5L16.5,12L18,10.5L16.5,9L15,10.5L11.5,7L13,5.5L11.5,4L10,5.5L6.5,2Z"/>
+    <!-- VS circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,10m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+</vector>

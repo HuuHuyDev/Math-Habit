@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_16"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <!-- Header: Số câu + Trạng thái -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_12">
+
+            <TextView
+                android:id="@+id/txtQuestionNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Câu 1"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                tools:text="Câu 1" />
+
+            <!-- Trạng thái Đúng/Sai -->
+            <LinearLayout
+                android:id="@+id/layoutStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/spacing_8"
+                android:background="@drawable/bg_round_20"
+                android:backgroundTint="@color/surface_variant">
+
+                <ImageView
+                    android:id="@+id/imgStatus"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_checkmark_completed"
+                    app:tint="@color/status_success"
+                    tools:src="@drawable/ic_checkmark_completed" />
+
+                <TextView
+                    android:id="@+id/txtStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_4"
+                    android:text="Đúng"
+                    android:textColor="@color/status_success"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/inter_bold"
+                    tools:text="Đúng" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tiêu đề câu hỏi -->
+        <TextView
+            android:id="@+id/txtQuestionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hãy chọn đáp án đúng cho phép tính 2 + 2 = ?"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_medium"
+            android:fontFamily="@font/inter_regular"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="@dimen/spacing_16"
+            tools:text="Hãy chọn đáp án đúng cho phép tính 2 + 2 = ?" />
+
+        <!-- Container cho các đáp án -->
+        <LinearLayout
+            android:id="@+id/layoutAnswers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <!-- Giải thích (nếu có) -->
+        <LinearLayout
+            android:id="@+id/layoutExplanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/spacing_16"
+            android:padding="@dimen/spacing_12"
+            android:background="@drawable/bg_round_20"
+            android:backgroundTint="#F0F9FF"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💡 Giải thích"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                android:layout_marginBottom="@dimen/spacing_8" />
+
+            <TextView
+                android:id="@+id/txtExplanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2 + 2 = 4, không phải 10."
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_small"
+                android:fontFamily="@font/inter_regular"
+                android:lineSpacingExtra="4dp"
+                tools:text="2 + 2 = 4, không phải 10." />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

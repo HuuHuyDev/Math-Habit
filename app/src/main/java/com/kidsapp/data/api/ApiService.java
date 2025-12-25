@@ -6,6 +6,11 @@ import com.kidsapp.data.model.Child;
 import com.kidsapp.data.model.Parent;
 import com.kidsapp.data.model.Task;
 import com.kidsapp.data.model.WeeklyProgress;
+import com.kidsapp.data.request.AiChatRequest;
+import com.kidsapp.data.response.AiChatResponse;
+import com.kidsapp.data.response.ChildSearchResponse;
+import com.kidsapp.data.websocket.ChatMessageDto;
+import com.kidsapp.data.websocket.ChatRoomDto;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -66,6 +71,65 @@ public interface ApiService {
     
     @GET(ApiConfig.ENDPOINT_REPORTS)
     Call<List<WeeklyProgress>> getReports(@Query("parent_id") String parentId);
+    
+    // AI Chat API
+    @POST(ApiConfig.ENDPOINT_AI_CHAT)
+    Call<AiChatResponse> sendChatMessage(@Body AiChatRequest request);
+    
+    // Children Search API (tìm bạn bè)
+    @GET(ApiConfig.ENDPOINT_SEARCH_CHILDREN)
+    Call<ApiResponseWrapper<List<ChildSearchResponse>>> searchChildren(
+            @Query("currentChildId") String currentChildId,
+            @Query("keyword") String keyword
+    );
+    
+    // ==================== CHAT APIs ====================
+    
+    // Lấy danh sách phòng chat
+    @GET("chat/rooms")
+    Call<ApiResponseWrapper<List<ChatRoomDto>>> getChatRooms(@Query("userId") String userId);
+    
+    // Lấy phòng chat theo loại
+    @GET("chat/rooms/type")
+    Call<ApiResponseWrapper<List<ChatRoomDto>>> getChatRoomsByType(
+            @Query("userId") String userId,
+            @Query("roomType") String roomType
+    );
+    
+    // Lấy tin nhắn trong phòng chat
+    @GET("chat/rooms/{roomId}/messages")
+    Call<ApiResponseWrapper<List<ChatMessageDto>>> getChatMessages(
+            @Path("roomId") String roomId,
+            @Query("userId") String userId,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+    
+    // Tạo hoặc lấy phòng chat
+    @POST("chat/rooms/create")
+    Call<ApiResponseWrapper<ChatRoomDto>> createOrGetChatRoom(
+            @Query("user1Id") String user1Id,
+            @Query("user2Id") String user2Id,
+            @Query("roomType") String roomType
+    );
+    
+    // Đánh dấu đã đọc
+    @POST("chat/rooms/{roomId}/read")
+    Call<ApiResponseWrapper<Void>> markMessagesAsRead(
+            @Path("roomId") String roomId,
+            @Query("userId") String userId
+    );
+    
+    // Đếm tin nhắn chưa đọc
+    @GET("chat/unread-count")
+    Call<ApiResponseWrapper<Integer>> getUnreadCount(@Query("userId") String userId);
+    
+    // Wrapper class cho API response
+    class ApiResponseWrapper<T> {
+        public int code;
+        public String message;
+        public T data;
+    }
     
     // Request/Response classes
     class LoginRequest {

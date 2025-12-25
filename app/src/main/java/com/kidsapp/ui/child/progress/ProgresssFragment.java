@@ -97,7 +97,7 @@ public class ProgresssFragment extends Fragment {
         // Cập nhật UI lần đầu
         updateProgressUI();
 
-        // Xử lý nút "Hoàn thành phần còn lại"
+        // Xử lý nút "Hoàn thành phần còn lại."
         btnCompleteRest.setOnClickListener(v -> {
             for (Habit habit : habitList) {
                 habit.setDone(true);

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_nav_home_to_parentChildDetail"
             app:destination="@id/parentChildDetailFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_chat"
+            app:destination="@id/parentChatHubFragment" />
     </fragment>
 
     <fragment
@@ -96,6 +99,34 @@
         <action
             android:id="@+id/action_childDetail_to_weeklyGoal"
             app:destination="@id/nav_tasks" />
+    </fragment>
+
+    <!-- Parent Chat Hub -->
+    <fragment
+        android:id="@+id/parentChatHubFragment"
+        android:name="com.kidsapp.ui.parent.chat.ParentChatHubFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_parent_chat_hub">
+        
+        <action
+            android:id="@+id/action_chatHub_to_chatRoom"
+            app:destination="@id/parentChatRoomFragment" />
+    </fragment>
+
+    <!-- Parent Chat Room (chat với con) -->
+    <fragment
+        android:id="@+id/parentChatRoomFragment"
+        android:name="com.kidsapp.ui.parent.chat.ParentChatRoomFragment"
+        android:label="Chat với con"
+        tools:layout="@layout/fragment_parent_chat_room">
+        
+        <argument
+            android:name="child_id"
+            app:argType="string" />
+        <argument
+            android:name="child_name"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>
 

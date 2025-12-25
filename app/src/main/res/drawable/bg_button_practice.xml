@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#A8C5FF" />
-    <corners android:radius="20dp" />
+    <gradient
+        android:type="linear"
+        android:angle="135"
+        android:startColor="@color/primary_dark"
+        android:endColor="@color/primary" />
+    <corners android:radius="@dimen/radius_button" />
 </shape>

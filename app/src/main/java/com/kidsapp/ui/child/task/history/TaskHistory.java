@@ -1,4 +1,4 @@
-package com.kidsapp.ui.child.task;
+package com.kidsapp.ui.child.task.history;
 
 /**
  * Model cho lịch sử bài tập
@@ -48,4 +48,3 @@ public class TaskHistory {
         this.rating = rating;
     }
 }
-
