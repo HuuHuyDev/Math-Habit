@@ -158,12 +158,9 @@ public class WebSocketManager {
         }
 
         String json = String.format(
-                "{\"receiverId\":\"%s\",\"content\":\"%s\",\"messageType\":\"TEXT\"}",
-                receiverId, escapeJson(content)
+                "{\"senderId\":\"%s\",\"receiverId\":\"%s\",\"content\":\"%s\",\"messageType\":\"TEXT\"}",
+                currentUserId, receiverId, escapeJson(content)
         );
-
-        List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("senderId", currentUserId));
 
         Disposable disposable = stompClient.send("/app/chat.send", json)
                 .subscribeOn(Schedulers.io())
@@ -184,9 +181,6 @@ public class WebSocketManager {
     public void sendTyping(String receiverId) {
         if (stompClient == null || !isConnected) return;
 
-        List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("senderId", currentUserId));
-
         Disposable disposable = stompClient.send("/app/chat.typing", "\"" + receiverId + "\"")
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {}, throwable -> {
@@ -201,9 +195,6 @@ public class WebSocketManager {
      */
     public void markAsRead(String roomId) {
         if (stompClient == null || !isConnected) return;
-
-        List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("userId", currentUserId));
 
         Disposable disposable = stompClient.send("/app/chat.read", "\"" + roomId + "\"")
                 .subscribeOn(Schedulers.io())
