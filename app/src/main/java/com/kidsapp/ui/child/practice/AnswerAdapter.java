@@ -92,23 +92,23 @@ public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.AnswerView
             binding.txtOptionLabel.setText(option.getLabel());
             binding.txtOptionContent.setText(option.getContent());
 
+            // Reset về selector mặc định
+            binding.layoutAnswer.setBackgroundResource(R.drawable.answer_selector);
+            
             // Reset states
             binding.layoutAnswer.setSelected(false);
             binding.layoutAnswer.setActivated(false);
             
             // Set state dựa trên index
             if (position == selectedIndex) {
-                // Đúng (màu xanh lá)
+                // Đúng (màu xanh lá) - dùng state_selected
                 binding.layoutAnswer.setSelected(true);
             } else if (position == wrongIndex) {
-                // Sai (màu đỏ)
+                // Sai (màu đỏ) - dùng state_activated
                 binding.layoutAnswer.setActivated(true);
             } else if (position == justSelectedIndex) {
                 // Đã chọn nhưng chưa biết đúng/sai (màu xanh nhạt)
                 binding.layoutAnswer.setBackgroundResource(R.drawable.bg_answer_selected);
-            } else {
-                // Chưa chọn (màu trắng)
-                binding.layoutAnswer.setBackgroundResource(R.drawable.bg_answer_default);
             }
 
             binding.getRoot().setOnClickListener(v -> {

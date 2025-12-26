@@ -92,6 +92,13 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
      * Load câu hỏi từ API
      */
     private void loadQuestionsFromAPI() {
+        // TẠM THỜI DÙNG SAMPLE DATA ĐỂ TEST
+        // TODO: Uncomment để dùng API
+        setupQuestions();
+        updateUI();
+        return;
+        
+        /* COMMENT TẠM THỜI - UNCOMMENT ĐỂ DÙNG API
         if (contentId == null || contentId.isEmpty()) {
             // Fallback to sample data
             setupQuestions();
@@ -135,6 +142,7 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
                 updateUI();
             }
         });
+        */
     }
 
     /**
@@ -258,6 +266,9 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
 
         updateIndicators();
         updateNavigationButtons();
+        
+        // ✅ Update trạng thái nút Hoàn thành
+        checkAllAnswered();
     }
 
     /**
@@ -269,6 +280,11 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         // Ẩn nút Next, hiện nút Hoàn thành khi ở câu cuối
         binding.btnNext.setVisibility(isLastQuestion ? View.GONE : View.VISIBLE);
         binding.btnComplete.setVisibility(isLastQuestion ? View.VISIBLE : View.GONE);
+        
+        // ✅ Nếu đang ở câu cuối, check xem đã làm hết chưa
+        if (isLastQuestion) {
+            checkAllAnswered();
+        }
     }
 
     private void updateIndicators() {
@@ -291,14 +307,17 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
 
     private void showPetHint() {
         binding.txtPetBubble.setText(getString(R.string.practice_hint_start));
+        // Không đổi màu header
     }
 
     private void showPetCorrect() {
-        binding.txtPetBubble.setText(getString(R.string.practice_pet_correct));
+        binding.txtPetBubble.setText("Chính xác! Giỏi lắm! 🎉");
+        // Không đổi màu header - chỉ đổi màu đáp án
     }
 
     private void showPetWrong() {
-        binding.txtPetBubble.setText(getString(R.string.practice_pet_wrong));
+        binding.txtPetBubble.setText("Chưa đúng rồi! Đọc giải thích bên dưới nhé 💡");
+        // Không đổi màu header - chỉ đổi màu đáp án
     }
 
     @Override
@@ -310,30 +329,67 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         // Lưu đáp án người dùng chọn vào Question
         current.setSelectedIndex(position);
         
-        // Kiểm tra xem đã làm hết câu chưa để enable/disable nút Hoàn Thành
-        checkAllAnswered();
+        // Kiểm tra xem có correctIndex không (sample data vs API data)
+        if (current.getCorrectIndex() != -1) {
+            // ✅ SAMPLE DATA: Có correctIndex → Feedback ngay lập tức
+            handleSampleDataAnswer(position, current);
+        } else {
+            // ✅ API DATA: Không có correctIndex → Chỉ lưu lại
+            handleAPIDataAnswer(position, current);
+        }
         
+        // Update trạng thái nút Hoàn thành
+        checkAllAnswered();
+    }
+    
+    /**
+     * Xử lý khi dùng sample data (có correctIndex)
+     * Hiển thị feedback ngay lập tức: đúng/sai
+     */
+    private void handleSampleDataAnswer(int position, Question current) {
         isAnswerLocked = true;
+        
         if (position == current.getCorrectIndex()) {
+            // ✅ Đúng
             correctCount++;
             showPetCorrect();
-            binding.layoutExplanation.setVisibility(View.GONE);
             answerAdapter.markCorrect(position);
+            binding.layoutExplanation.setVisibility(View.GONE);
             
-            // Nếu không phải câu cuối thì tự động chuyển câu
+            // Auto next sau 1.5s (nếu không phải câu cuối)
             if (currentIndex < questions.size() - 1) {
                 binding.recyclerAnswers.postDelayed(() -> {
                     currentIndex++;
                     updateUI();
                 }, 1500);
             }
-            // Nếu là câu cuối, người dùng sẽ bấm nút "Hoàn thành"
         } else {
+            // ❌ Sai
             showPetWrong();
             binding.layoutExplanation.setVisibility(View.VISIBLE);
             binding.txtExplanationContent.setText(current.getExplanation());
             answerAdapter.markWrong(position);
-            isAnswerLocked = false;
+            isAnswerLocked = false; // Cho phép chọn lại
+        }
+    }
+    
+    /**
+     * Xử lý khi dùng API data (không có correctIndex)
+     * Chỉ highlight đáp án đã chọn, không biết đúng/sai ngay
+     */
+    private void handleAPIDataAnswer(int position, Question current) {
+        // Chỉ highlight đáp án đã chọn (màu xanh nhạt)
+        answerAdapter.markSelected(position);
+        
+        // Show pet hint - không đổi màu header
+        binding.txtPetBubble.setText("Đã chọn! Làm tiếp câu khác nhé!");
+        
+        // Auto next sau 0.5s (không cần đợi lâu)
+        if (currentIndex < questions.size() - 1) {
+            binding.recyclerAnswers.postDelayed(() -> {
+                currentIndex++;
+                updateUI();
+            }, 500);
         }
     }
     
@@ -352,7 +408,22 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
                 break;
             }
         }
-
+        
+        // Enable/disable nút Hoàn thành
+        if (binding.btnComplete != null) {
+            binding.btnComplete.setEnabled(allAnswered);
+            
+            // Đổi màu nút
+            if (allAnswered) {
+                // Màu xanh - có thể nộp bài
+                binding.btnComplete.setBackgroundResource(R.drawable.bg_button_primary);
+                binding.btnComplete.setAlpha(1.0f);
+            } else {
+                // Màu xám - chưa thể nộp bài
+                binding.btnComplete.setBackgroundResource(R.drawable.bg_button_disabled);
+                binding.btnComplete.setAlpha(0.5f);
+            }
+        }
     }
 
     private void finishPractice() {
