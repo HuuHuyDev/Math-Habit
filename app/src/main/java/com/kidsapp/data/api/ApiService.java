@@ -12,12 +12,15 @@ import com.kidsapp.data.response.ChildSearchResponse;
 import com.kidsapp.data.websocket.ChatMessageDto;
 import com.kidsapp.data.websocket.ChatRoomDto;
 import java.util.List;
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -62,8 +65,45 @@ public interface ApiService {
     @GET(ApiConfig.ENDPOINT_TASKS)
     Call<List<Task>> getTasks(@Query("child_id") String childId);
     
+    @GET(ApiConfig.ENDPOINT_TASKS_BY_CHILD)
+    Call<ApiResponseWrapper<List<Task>>> getTasksByChild(@Path("childId") String childId);
+    
+    @GET(ApiConfig.ENDPOINT_TASKS_BY_STATUS)
+    Call<ApiResponseWrapper<List<Task>>> getTasksByStatus(
+            @Path("childId") String childId,
+            @Query("status") String status
+    );
+    
+    @GET(ApiConfig.ENDPOINT_TASKS_BY_TYPE)
+    Call<ApiResponseWrapper<List<Task>>> getTasksByType(
+            @Path("childId") String childId,
+            @Query("type") String type
+    );
+    
     @GET(ApiConfig.ENDPOINT_TASK_DETAIL)
-    Call<Task> getTaskDetail(@Path("id") String taskId);
+    Call<ApiResponseWrapper<Task>> getTaskDetail(@Path("id") String taskId);
+    
+    @POST(ApiConfig.ENDPOINT_TASK_SUBMIT)
+    Call<ApiResponseWrapper<Task>> submitTaskProof(
+            @Path("id") String taskId,
+            @Body TaskSubmissionRequest request
+    );
+    
+    /**
+     * Submit minh chứng với file upload trực tiếp
+     * POST /tasks/{id}/submit
+     * Multipart: file + note (optional)
+     */
+    @Multipart
+    @POST(ApiConfig.ENDPOINT_TASK_SUBMIT)
+    Call<ApiResponseWrapper<TaskProofResponse>> submitTaskProofWithFile(
+            @Path("id") String taskId,
+            @Part MultipartBody.Part file,
+            @Part("note") okhttp3.RequestBody note
+    );
+    
+    @POST(ApiConfig.ENDPOINT_TASK_COMPLETE)
+    Call<ApiResponseWrapper<Task>> completeTask(@Path("id") String taskId);
     
     @POST(ApiConfig.ENDPOINT_CREATE_TASK)
     Call<Task> createTask(@Body Task task);
@@ -73,6 +113,59 @@ public interface ApiService {
     
     @DELETE(ApiConfig.ENDPOINT_DELETE_TASK)
     Call<Void> deleteTask(@Path("id") String taskId);
+    
+    // Task submission request
+    class TaskSubmissionRequest {
+        public String proofUrl;
+        public String proofType; // IMAGE or VIDEO
+        public String note;
+        
+        public TaskSubmissionRequest(String proofUrl, String proofType, String note) {
+            this.proofUrl = proofUrl;
+            this.proofType = proofType;
+            this.note = note;
+        }
+    }
+    
+    // ==================== FILE UPLOAD APIs ====================
+    
+    /**
+     * Upload ảnh minh chứng
+     * POST /upload/image
+     */
+    @Multipart
+    @POST(ApiConfig.ENDPOINT_UPLOAD_IMAGE)
+    Call<ApiResponseWrapper<UploadResponse>> uploadImage(@Part MultipartBody.Part file);
+    
+    /**
+     * Upload video minh chứng
+     * POST /upload/video
+     */
+    @Multipart
+    @POST(ApiConfig.ENDPOINT_UPLOAD_VIDEO)
+    Call<ApiResponseWrapper<UploadResponse>> uploadVideo(@Part MultipartBody.Part file);
+    
+    // Upload response
+    class UploadResponse {
+        public String url;
+        public String filename;
+        public String type; // IMAGE or VIDEO
+    }
+    
+    // TaskProof response
+    class TaskProofResponse {
+        public String id;
+        public String taskId;
+        public String proofUrl;
+        public String proofType;
+        public String note;
+        public String submittedAt;
+        public String status; // pending, approved, rejected
+        public String reviewedBy;
+        public String reviewedAt;
+        public String rejectionReason;
+        public Boolean isActive;
+    }
     
     // Activity & Report APIs
     @GET(ApiConfig.ENDPOINT_ACTIVITY_LOGS)

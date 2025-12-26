@@ -21,11 +21,21 @@ public class ApiConfig {
     public static final String ENDPOINT_CHILDREN = "parent/children";
     public static final String ENDPOINT_CHILD_DETAIL = "parent/child/{id}";
     
+    // Task endpoints
     public static final String ENDPOINT_TASKS = "tasks";
+    public static final String ENDPOINT_TASKS_BY_CHILD = "tasks/child/{childId}";
+    public static final String ENDPOINT_TASKS_BY_STATUS = "tasks/child/{childId}/by-status";
+    public static final String ENDPOINT_TASKS_BY_TYPE = "tasks/child/{childId}/by-type";
     public static final String ENDPOINT_TASK_DETAIL = "tasks/{id}";
+    public static final String ENDPOINT_TASK_SUBMIT = "tasks/{id}/submit";
+    public static final String ENDPOINT_TASK_COMPLETE = "tasks/{id}/complete";
     public static final String ENDPOINT_CREATE_TASK = "tasks/create";
     public static final String ENDPOINT_UPDATE_TASK = "tasks/{id}";
     public static final String ENDPOINT_DELETE_TASK = "tasks/{id}";
+    
+    // Upload endpoints
+    public static final String ENDPOINT_UPLOAD_IMAGE = "upload/image";
+    public static final String ENDPOINT_UPLOAD_VIDEO = "upload/video";
     
     public static final String ENDPOINT_ACTIVITY_LOGS = "activities";
     public static final String ENDPOINT_WEEKLY_PROGRESS = "reports/weekly";

@@ -60,6 +60,12 @@ public class ChildTaskListFragment extends Fragment {
         // ViewPager2 sẽ được setup trong setupTabLayout
     }
 
+    /**
+     * Setup TabLayout với 3 tabs
+     * - Công việc (Việc nhà + Cá nhân)
+     * - Bài tập
+     * - Lịch sử
+     */
     private void setupTabLayout() {
         // Setup ViewPager2 với adapter
         TaskPagerAdapter pagerAdapter = new TaskPagerAdapter(requireActivity());
@@ -72,24 +78,21 @@ public class ChildTaskListFragment extends Fragment {
                 (tab, position) -> {
                     switch (position) {
                         case 0:
-                            tab.setText(R.string.task_tab_homework);
+                            tab.setText("Công việc"); // Gộp Việc nhà + Cá nhân
                             break;
                         case 1:
-                            tab.setText(R.string.task_tab_personal);
+                            tab.setText(R.string.task_tab_exercise); // Bài tập
                             break;
                         case 2:
-                            tab.setText(R.string.task_tab_exercise);
-                            break;
-                        case 3:
-                            tab.setText(R.string.task_tab_history);
+                            tab.setText(R.string.task_tab_history); // Lịch sử
                             break;
                     }
                 }
         ).attach();
         
-        // Select "Bài tập" tab (index 2) by default
-        if (binding.tabLayout.getTabCount() > 2) {
-            binding.tabLayout.getTabAt(2).select();
+        // Select "Công việc" tab (index 0) by default
+        if (binding.tabLayout.getTabCount() > 0) {
+            binding.tabLayout.getTabAt(0).select();
         }
     }
 
