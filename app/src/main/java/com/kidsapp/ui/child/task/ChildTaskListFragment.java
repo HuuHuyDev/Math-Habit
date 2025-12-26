@@ -13,6 +13,7 @@ import com.kidsapp.R;
 import com.kidsapp.data.FakeNotificationRepository;
 import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentTaskListBinding;
+import com.kidsapp.ui.child.components.ChildProfileLoader;
 import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
 import com.kidsapp.ui.parent.home.model.Notification;
 
@@ -23,12 +24,16 @@ import java.util.List;
  */
 public class ChildTaskListFragment extends Fragment {
     private FragmentTaskListBinding binding;
+    private ChildProfileLoader profileLoader;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, 
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTaskListBinding.inflate(inflater, container, false);
+        
+        profileLoader = new ChildProfileLoader(requireContext());
+        
         setupHeader();
         setupBackButton();
         setupRecyclerView();
@@ -37,8 +42,9 @@ public class ChildTaskListFragment extends Fragment {
     }
 
     private void setupHeader() {
-        binding.headerUser.setUserName("Hồ Hữu Huy");
-        binding.headerUser.setAvatar(R.drawable.ic_user_default);
+        // Load profile từ API và fill vào header
+        profileLoader.loadAndFillHeader(binding.headerUser, null);
+        
         // Click vào chuông để xem thông báo từ parent
         binding.headerUser.setNotificationClick(v -> showNotificationsBottomSheet());
     }

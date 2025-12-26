@@ -1,7 +1,6 @@
 package com.kidsapp.ui.child.profile;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +14,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.kidsapp.R;
+import com.kidsapp.data.model.Child;
+import com.kidsapp.data.repository.ChildRepository;
 import com.kidsapp.databinding.FragmentProfileChildBinding;
 import com.kidsapp.ui.auth.LoginActivity;
 import com.kidsapp.ui.child.equip.equip;
 import com.kidsapp.viewmodel.AuthViewModel;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Fragment hiển thị thông tin hồ sơ của Bé
@@ -28,19 +32,8 @@ import com.kidsapp.viewmodel.AuthViewModel;
 public class ChildProfileFragment extends Fragment {
     
     private FragmentProfileChildBinding binding;
-    private SharedPreferences sharedPreferences;
     private AuthViewModel authViewModel;
-    
-    // Key để lưu trữ trong SharedPreferences
-    private static final String PREF_NAME = "KidsAppPrefs";
-    private static final String KEY_CHILD_NAME = "child_name";
-    private static final String KEY_CHILD_AGE = "child_age";
-    private static final String KEY_CHILD_BIRTHDAY = "child_birthday";
-    private static final String KEY_CHILD_GENDER = "child_gender";
-    private static final String KEY_CHILD_GRADE = "child_grade";
-    private static final String KEY_CHILD_XP = "child_xp";
-    private static final String KEY_CHILD_COINS = "child_coins";
-    private static final String KEY_IS_LOGGED_IN = "is_logged_in";
+    private ChildRepository childRepository;
 
     @Nullable
     @Override
@@ -48,14 +41,12 @@ public class ChildProfileFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileChildBinding.inflate(inflater, container, false);
         
-        // Khởi tạo ViewModel
+        // Khởi tạo ViewModel và Repository
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+        childRepository = new ChildRepository(requireContext());
         
-        // Khởi tạo SharedPreferences
-        initSharedPreferences();
-        
-        // Load dữ liệu từ SharedPreferences
-        loadChildData();
+        // Load dữ liệu từ API
+        loadChildProfile();
         
         // Xử lý sự kiện nút Back
         setupBackButton();
@@ -70,44 +61,112 @@ public class ChildProfileFragment extends Fragment {
     }
 
     /**
-     * Khởi tạo SharedPreferences để lưu/đọc dữ liệu
+     * Load dữ liệu profile từ API (dựa trên token trong Redis)
      */
-    private void initSharedPreferences() {
-        sharedPreferences = requireContext().getSharedPreferences(PREF_NAME, 0);
+    private void loadChildProfile() {
+        // Hiển thị loading (optional)
+        // binding.progressBar.setVisibility(View.VISIBLE);
+        
+        childRepository.getMyProfile(new ChildRepository.ChildCallback() {
+            @Override
+            public void onSuccess(Child child) {
+                if (getActivity() == null) return;
+                
+                // Ẩn loading
+                // binding.progressBar.setVisibility(View.GONE);
+                
+                // Hiển thị dữ liệu lên UI
+                displayChildData(child);
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                
+                // Ẩn loading
+                // binding.progressBar.setVisibility(View.GONE);
+                
+                // Hiển thị thông báo lỗi
+                Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                
+                // Load dữ liệu mặc định hoặc từ cache
+                loadDefaultData();
+            }
+        });
     }
 
     /**
-     * Load dữ liệu bé từ SharedPreferences và hiển thị lên UI
+     * Hiển thị dữ liệu child lên UI
      */
-    private void loadChildData() {
-        // Lấy dữ liệu từ SharedPreferences (nếu không có thì dùng giá trị mặc định)
-        String name = sharedPreferences.getString(KEY_CHILD_NAME, "Hồ Hữu Huy");
-        int age = sharedPreferences.getInt(KEY_CHILD_AGE, 8);
-        String birthday = sharedPreferences.getString(KEY_CHILD_BIRTHDAY, "15/03/2016");
-        String gender = sharedPreferences.getString(KEY_CHILD_GENDER, "Nam");
-        String grade = sharedPreferences.getString(KEY_CHILD_GRADE, "Lớp 3A");
-        int xp = sharedPreferences.getInt(KEY_CHILD_XP, 1250);
-        int coins = sharedPreferences.getInt(KEY_CHILD_COINS, 850);
-        int level = xp / 250 + 1; // Tính level dựa trên XP
+    private void displayChildData(Child child) {
+        // Tên (ưu tiên nickname)
+        String displayName = child.getDisplayName();
+        binding.txtChildName.setText(displayName);
         
-        // Hiển thị dữ liệu lên UI
-        binding.txtChildName.setText(name);
-        binding.txtAge.setText(age + " tuổi");
-        binding.txtBirthday.setText(birthday);
-        binding.txtGender.setText(gender);
-        binding.txtGrade.setText(grade);
-        binding.txtXP.setText(String.valueOf(xp));
+        // Level
+        binding.txtLevel.setText("Level " + child.getLevel());
+        
+        // XP (totalPoints)
+        binding.txtXP.setText(String.valueOf(child.getTotalPoints()));
+        
+        // Coins - Tạm thời dùng totalPoints / 2 (hoặc có thể thêm field coins vào backend)
+        int coins = child.getTotalPoints() / 2;
         binding.txtCoins.setText(String.valueOf(coins));
-        binding.txtLevel.setText("Level " + level);
         
-        // Đổi icon giới tính
-        if (gender.equals("Nữ")) {
-            binding.imgGender.setImageResource(R.drawable.ic_user);
-            binding.imgGender.setColorFilter(0xFFE91E63); // Màu hồng
+        // Tuổi
+        int age = child.getAge();
+        binding.txtAge.setText(age > 0 ? age + " tuổi" : "Chưa cập nhật");
+        
+        // Ngày sinh
+        String birthDate = formatBirthDate(child.getBirthDate());
+        binding.txtBirthday.setText(birthDate);
+        
+        // Giới tính - Tạm thời ẩn vì backend chưa có field này
+        binding.txtGender.setText("Chưa cập nhật");
+        
+        // Lớp học
+        Integer grade = child.getGrade();
+        if (grade != null && grade > 0) {
+            binding.txtGrade.setText("Lớp " + grade);
         } else {
-            binding.imgGender.setImageResource(R.drawable.ic_user);
-            binding.imgGender.setColorFilter(0xFF2196F3); // Màu xanh
+            binding.txtGrade.setText("Chưa cập nhật");
         }
+        
+        // TODO: Load avatar từ URL nếu có
+        // if (child.getAvatarUrl() != null && !child.getAvatarUrl().isEmpty()) {
+        //     Glide.with(this).load(child.getAvatarUrl()).into(binding.imgAvatar);
+        // }
+    }
+
+    /**
+     * Format ngày sinh từ yyyy-MM-dd sang dd/MM/yyyy
+     */
+    private String formatBirthDate(String birthDate) {
+        if (birthDate == null || birthDate.isEmpty()) {
+            return "Chưa cập nhật";
+        }
+        
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return outputFormat.format(inputFormat.parse(birthDate));
+        } catch (Exception e) {
+            return birthDate;
+        }
+    }
+
+    /**
+     * Load dữ liệu mặc định khi API lỗi
+     */
+    private void loadDefaultData() {
+        binding.txtChildName.setText("Bé yêu");
+        binding.txtLevel.setText("Level 1");
+        binding.txtXP.setText("0");
+        binding.txtCoins.setText("0");
+        binding.txtAge.setText("Chưa cập nhật");
+        binding.txtBirthday.setText("Chưa cập nhật");
+        binding.txtGender.setText("Chưa cập nhật");
+        binding.txtGrade.setText("Chưa cập nhật");
     }
 
     /**
@@ -215,4 +274,3 @@ public class ChildProfileFragment extends Fragment {
         binding = null;
     }
 }
-

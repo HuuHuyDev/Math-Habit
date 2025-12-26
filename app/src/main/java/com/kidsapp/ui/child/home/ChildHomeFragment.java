@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
 import com.kidsapp.data.FakeNotificationRepository;
+import com.kidsapp.data.model.Child;
 import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.ui.child.challenge.ChallengeHomeFragment;
+import com.kidsapp.ui.child.components.ChildProfileLoader;
 import com.kidsapp.ui.child.progress.ProgresssFragment;
 import com.kidsapp.ui.child.shop.ShopFragment;
 import com.kidsapp.ui.child.task.ChildTaskListFragment;
@@ -26,6 +28,7 @@ import java.util.List;
 
 public class ChildHomeFragment extends Fragment {
     private FragmentChildHomeBinding binding;
+    private ChildProfileLoader profileLoader;
 
     @Nullable
     @Override
@@ -33,7 +36,12 @@ public class ChildHomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentChildHomeBinding.inflate(inflater, container, false);
         
-        setupHeader();
+        // Khởi tạo profile loader
+        profileLoader = new ChildProfileLoader(requireContext());
+        
+        // Load profile từ API
+        loadChildProfile();
+        
         setupLevelCard();
         setupTodayGoal();
         setupClickListeners();
@@ -41,10 +49,48 @@ public class ChildHomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Load profile từ API và fill vào header
+     */
+    private void loadChildProfile() {
+        profileLoader.loadAndFillHeader(binding.headerUser, new ChildProfileLoader.ProfileLoadListener() {
+            @Override
+            public void onProfileLoaded(Child child) {
+                if (getActivity() == null) return;
+                
+                // Cập nhật level card với dữ liệu thực
+                updateLevelCard(child);
+            }
+
+            @Override
+            public void onProfileLoadError(String error) {
+                // Dữ liệu mặc định đã được fill bởi loader
+            }
+        });
+    }
+
+    /**
+     * Cập nhật level card với dữ liệu từ API
+     */
+    private void updateLevelCard(Child child) {
+        int level = child.getLevel();
+        int currentExp = child.getTotalPoints();
+        
+        // Tính XP cần để lên level tiếp theo (mỗi level cần 100 XP)
+        int targetExp = level * 100;
+        int currentLevelExp = currentExp % 100; // XP trong level hiện tại
+        int remainExp = 100 - currentLevelExp;
+        int percent = currentLevelExp;
+
+        binding.txtLevelLabel.setText(getString(R.string.child_level_value, level));
+        binding.txtExp.setText(currentLevelExp + " / 100 XP");
+        binding.txtExpPercent.setText(percent + "%");
+        binding.progressExp.setProgress(percent);
+        binding.txtExpHint.setText("Chỉ còn " + remainExp + " XP nữa để lên cấp!");
+    }
+
     private void setupHeader() {
-        // Sử dụng HeaderUserView component
-        binding.headerUser.setUserName("Minh An");
-        binding.headerUser.setAvatar(R.drawable.ic_child_face);
+        // Notification count - TODO: Lấy từ API
         binding.headerUser.setNotificationCount(3);
         
         binding.headerUser.setAvatarClick(v -> navigateToProfile());
@@ -52,11 +98,12 @@ public class ChildHomeFragment extends Fragment {
     }
 
     private void setupLevelCard() {
-        int level = 5;
-        int currentExp = 100;
-        int targetExp = 150;
+        // Dữ liệu mặc định, sẽ được cập nhật khi load profile thành công
+        int level = 1;
+        int currentExp = 0;
+        int targetExp = 100;
         int remainExp = targetExp - currentExp;
-        int percent = (int) (100f * currentExp / targetExp);
+        int percent = 0;
 
         binding.txtLevelLabel.setText(getString(R.string.child_level_value, level));
         binding.txtExp.setText(currentExp + " / " + targetExp + " XP");
@@ -66,15 +113,19 @@ public class ChildHomeFragment extends Fragment {
     }
 
     private void setupTodayGoal() {
-        int tasksCompleted = 2;
+        // TODO: Lấy từ API
+        int tasksCompleted = 0;
         int totalTasks = 5;
-        int xpEarned = 50;
+        int xpEarned = 0;
 
         binding.txtTasksInfo.setText("Hoàn thành " + tasksCompleted + "/" + totalTasks + " nhiệm vụ");
         binding.txtXpInfo.setText("Nhận " + xpEarned + " XP");
     }
 
     private void setupClickListeners() {
+        // Setup header listeners
+        setupHeader();
+        
         // Cards
         binding.cardLevel.setOnClickListener(v -> navigateToProgress());
         binding.cardTodayGoal.setOnClickListener(v -> navigateToTaskList());

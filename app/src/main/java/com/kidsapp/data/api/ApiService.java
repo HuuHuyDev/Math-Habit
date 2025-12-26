@@ -103,6 +103,10 @@ public interface ApiService {
     @GET(ApiConfig.ENDPOINT_MY_SIBLINGS)
     Call<ApiResponseWrapper<List<ChildSearchResponse>>> getMySiblings();
     
+    // Lấy thông tin profile của child hiện tại
+    @GET(ApiConfig.ENDPOINT_MY_PROFILE)
+    Call<ApiResponseWrapper<Child>> getMyProfile();
+    
     // ==================== CHAT APIs ====================
     
     // Lấy danh sách phòng chat

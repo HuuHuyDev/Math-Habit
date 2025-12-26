@@ -9,52 +9,77 @@ public class Child {
     @SerializedName("id")
     private String id;
     
+    @SerializedName("userId")
+    private String userId;
+    
     @SerializedName("name")
     private String name;
     
-    @SerializedName("email")
-    private String email;
+    @SerializedName("avatarUrl")
+    private String avatarUrl;
     
-    @SerializedName("avatar")
-    private String avatar;
+    @SerializedName("birthDate")
+    private String birthDate;
     
-    @SerializedName("age")
-    private int age;
+    @SerializedName("grade")
+    private Integer grade;
     
-    @SerializedName("parent_id")
-    private String parentId;
+    @SerializedName("school")
+    private String school;
     
-    @SerializedName("total_xp")
-    private int totalXP;
+    @SerializedName("nickname")
+    private String nickname;
     
     @SerializedName("level")
     private int level;
     
-    @SerializedName("created_at")
-    private String createdAt;
+    @SerializedName("isOnline")
+    private boolean isOnline;
+    
+    // Tiến độ học tập
+    @SerializedName("totalPoints")
+    private int totalPoints;
+    
+    @SerializedName("currentLevel")
+    private int currentLevel;
+    
+    @SerializedName("currentStreak")
+    private int currentStreak;
+    
+    @SerializedName("longestStreak")
+    private int longestStreak;
+    
+    @SerializedName("totalExercisesCompleted")
+    private int totalExercisesCompleted;
+    
+    @SerializedName("totalStudyTimeMinutes")
+    private int totalStudyTimeMinutes;
+    
+    // Mục tiêu
+    @SerializedName("dailyGoalMinutes")
+    private int dailyGoalMinutes;
+    
+    @SerializedName("dailyGoalExercises")
+    private int dailyGoalExercises;
 
     public Child() {
     }
 
-    public Child(String id, String name, String email, String avatar, int age, 
-                 String parentId, int totalXP, int level, String createdAt) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.avatar = avatar;
-        this.age = age;
-        this.parentId = parentId;
-        this.totalXP = totalXP;
-        this.level = level;
-        this.createdAt = createdAt;
-    }
-
+    // Getters and Setters
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -65,44 +90,44 @@ public class Child {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getBirthDate() {
+        return birthDate;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public int getAge() {
-        return age;
+    public Integer getGrade() {
+        return grade;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setGrade(Integer grade) {
+        this.grade = grade;
     }
 
-    public String getParentId() {
-        return parentId;
+    public String getSchool() {
+        return school;
     }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
+    public void setSchool(String school) {
+        this.school = school;
     }
 
-    public int getTotalXP() {
-        return totalXP;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setTotalXP(int totalXP) {
-        this.totalXP = totalXP;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public int getLevel() {
@@ -113,12 +138,97 @@ public class Child {
         this.level = level;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public boolean isOnline() {
+        return isOnline;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    public int getTotalPoints() {
+        return totalPoints;
+    }
+
+    public void setTotalPoints(int totalPoints) {
+        this.totalPoints = totalPoints;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
+    }
+
+    public int getCurrentStreak() {
+        return currentStreak;
+    }
+
+    public void setCurrentStreak(int currentStreak) {
+        this.currentStreak = currentStreak;
+    }
+
+    public int getLongestStreak() {
+        return longestStreak;
+    }
+
+    public void setLongestStreak(int longestStreak) {
+        this.longestStreak = longestStreak;
+    }
+
+    public int getTotalExercisesCompleted() {
+        return totalExercisesCompleted;
+    }
+
+    public void setTotalExercisesCompleted(int totalExercisesCompleted) {
+        this.totalExercisesCompleted = totalExercisesCompleted;
+    }
+
+    public int getTotalStudyTimeMinutes() {
+        return totalStudyTimeMinutes;
+    }
+
+    public void setTotalStudyTimeMinutes(int totalStudyTimeMinutes) {
+        this.totalStudyTimeMinutes = totalStudyTimeMinutes;
+    }
+
+    public int getDailyGoalMinutes() {
+        return dailyGoalMinutes;
+    }
+
+    public void setDailyGoalMinutes(int dailyGoalMinutes) {
+        this.dailyGoalMinutes = dailyGoalMinutes;
+    }
+
+    public int getDailyGoalExercises() {
+        return dailyGoalExercises;
+    }
+
+    public void setDailyGoalExercises(int dailyGoalExercises) {
+        this.dailyGoalExercises = dailyGoalExercises;
+    }
+    
+    /**
+     * Tính tuổi từ birthDate (format: yyyy-MM-dd)
+     */
+    public int getAge() {
+        if (birthDate == null || birthDate.isEmpty()) return 0;
+        try {
+            String[] parts = birthDate.split("-");
+            int birthYear = Integer.parseInt(parts[0]);
+            int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+            return currentYear - birthYear;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+    
+    /**
+     * Lấy tên hiển thị (ưu tiên nickname)
+     */
+    public String getDisplayName() {
+        return (nickname != null && !nickname.isEmpty()) ? nickname : name;
     }
 }
-

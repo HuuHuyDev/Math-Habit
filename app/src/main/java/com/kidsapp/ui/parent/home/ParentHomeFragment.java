@@ -93,7 +93,7 @@ public class ParentHomeFragment extends Fragment {
                 bundle.putString("childId", child.getId());
                 bundle.putString("childName", child.getName());
                 bundle.putInt("childLevel", child.getLevel());
-                bundle.putInt("childXP", child.getTotalXP());
+                bundle.putInt("childXP", child.getTotalPoints());
 
                 // Tìm NavController - thử nhiều cách
                 View view = getView();
@@ -113,7 +113,7 @@ public class ParentHomeFragment extends Fragment {
                     bundle.putString("childId", child.getId());
                     bundle.putString("childName", child.getName());
                     bundle.putInt("childLevel", child.getLevel());
-                    bundle.putInt("childXP", child.getTotalXP());
+                    bundle.putInt("childXP", child.getTotalPoints());
                     navController.navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -137,7 +137,7 @@ public class ParentHomeFragment extends Fragment {
         child.setId(id);
         child.setName(name);
         child.setLevel(level);
-        child.setTotalXP(xp);
+        child.setTotalPoints(xp);
         return child;
     }
 
