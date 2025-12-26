@@ -13,6 +13,8 @@
     <dimen name="spacing_28">28dp</dimen>
     <dimen name="spacing_32">32dp</dimen>
     <dimen name="spacing_40">40dp</dimen>
+    <dimen name="spacing_48">48dp</dimen>
+    <dimen name="spacing_96">96dp</dimen>
 
     <!-- Parent Header -->
     <dimen name="header_height">260dp</dimen>
@@ -27,9 +29,12 @@
     <!-- Text Size -->
     <dimen name="text_size_xsmall">12sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_large">18sp</dimen>
     <dimen name="text_size_xlarge">18sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
     <dimen name="text_size_xxlarge">20sp</dimen>
     <dimen name="text_size_title">22sp</dimen>
     <dimen name="text_size_headline">26sp</dimen>

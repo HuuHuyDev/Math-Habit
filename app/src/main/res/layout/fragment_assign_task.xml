@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_24">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="@dimen/spacing_40"
+                android:layout_height="@dimen/spacing_40"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                android:contentDescription="@string/back" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Giao bài cho con"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginStart="@dimen/spacing_12" />
+
+        </LinearLayout>
+
+        <!-- Chọn con -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn con"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <Spinner
+            android:id="@+id/spinnerChild"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_48"
+            android:background="@drawable/bg_input"
+            android:padding="@dimen/spacing_12"
+            android:layout_marginBottom="@dimen/spacing_16" />
+
+        <!-- Loại bài tập -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loại bài tập"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupTaskType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_16">
+
+            <RadioButton
+                android:id="@+id/radioExercise"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bài tập"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioHousework"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Công việc" />
+
+            <RadioButton
+                android:id="@+id/radioHabit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thói quen" />
+
+        </RadioGroup>
+
+        <!-- Chọn bài tập (chỉ hiện khi chọn "Bài tập") -->
+        <LinearLayout
+            android:id="@+id/layoutExerciseSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn bài tập"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/text_secondary"
+                android:layout_marginBottom="@dimen/spacing_8" />
+
+            <Spinner
+                android:id="@+id/spinnerExercise"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/spacing_48"
+                android:background="@drawable/bg_input"
+                android:padding="@dimen/spacing_12"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+        </LinearLayout>
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiêu đề"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <EditText
+            android:id="@+id/edtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_48"
+            android:background="@drawable/bg_input"
+            android:padding="@dimen/spacing_12"
+            android:hint="Ví dụ: Bài 1: Luyện phép cộng"
+            android:inputType="text"
+            android:maxLines="1"
+            android:layout_marginBottom="@dimen/spacing_16" />
+
+        <!-- Mô tả -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mô tả (tùy chọn)"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <EditText
+            android:id="@+id/edtDescription"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_96"
+            android:background="@drawable/bg_input"
+            android:padding="@dimen/spacing_12"
+            android:hint="Mô tả chi tiết về bài tập..."
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:layout_marginBottom="@dimen/spacing_16" />
+
+        <!-- Hạn hoàn thành -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hạn hoàn thành"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_16">
+
+            <EditText
+                android:id="@+id/edtDueDate"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/spacing_48"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input"
+                android:padding="@dimen/spacing_12"
+                android:hint="Ngày (dd/MM/yyyy)"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:layout_marginEnd="@dimen/spacing_8" />
+
+            <EditText
+                android:id="@+id/edtDueTime"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/spacing_48"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input"
+                android:padding="@dimen/spacing_12"
+                android:hint="Giờ (HH:mm)"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+        <!-- Điểm thưởng -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Điểm thưởng"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <EditText
+            android:id="@+id/edtPointsReward"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_48"
+            android:background="@drawable/bg_input"
+            android:padding="@dimen/spacing_12"
+            android:hint="10"
+            android:inputType="number"
+            android:maxLines="1"
+            android:layout_marginBottom="@dimen/spacing_16" />
+
+        <!-- Độ ưu tiên -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Độ ưu tiên"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_8" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_24">
+
+            <RadioButton
+                android:id="@+id/radioPriorityLow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thấp"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioPriorityMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Trung bình" />
+
+            <RadioButton
+                android:id="@+id/radioPriorityHigh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cao" />
+
+        </RadioGroup>
+
+        <!-- Nút giao bài -->
+        <Button
+            android:id="@+id/btnAssignTask"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_48"
+            android:text="Giao bài"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold"
+            android:background="@drawable/bg_button_primary"
+            android:layout_marginTop="@dimen/spacing_8" />
+
+    </LinearLayout>
+
+</ScrollView>

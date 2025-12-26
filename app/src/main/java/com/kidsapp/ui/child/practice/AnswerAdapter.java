@@ -24,6 +24,7 @@ public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.AnswerView
     private final OnAnswerSelectedListener listener;
     private int selectedIndex = -1;
     private int wrongIndex = -1;
+    private int justSelectedIndex = -1; // Cho API data (chưa biết đúng/sai)
 
     public AnswerAdapter(List<AnswerOption> options, OnAnswerSelectedListener listener) {
         this.options = options;
@@ -33,18 +34,31 @@ public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.AnswerView
     public void resetState() {
         selectedIndex = -1;
         wrongIndex = -1;
+        justSelectedIndex = -1;
         notifyDataSetChanged();
     }
 
     public void markCorrect(int index) {
         selectedIndex = index;
         wrongIndex = -1;
+        justSelectedIndex = -1;
         notifyDataSetChanged();
     }
 
     public void markWrong(int index) {
         wrongIndex = index;
         selectedIndex = -1;
+        justSelectedIndex = -1;
+        notifyDataSetChanged();
+    }
+    
+    /**
+     * Đánh dấu đáp án đã chọn (cho API data - chưa biết đúng/sai)
+     */
+    public void markSelected(int index) {
+        justSelectedIndex = index;
+        selectedIndex = -1;
+        wrongIndex = -1;
         notifyDataSetChanged();
     }
 
@@ -78,8 +92,24 @@ public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.AnswerView
             binding.txtOptionLabel.setText(option.getLabel());
             binding.txtOptionContent.setText(option.getContent());
 
-            binding.layoutAnswer.setSelected(position == selectedIndex);
-            binding.layoutAnswer.setActivated(position == wrongIndex);
+            // Reset về selector mặc định
+            binding.layoutAnswer.setBackgroundResource(R.drawable.answer_selector);
+            
+            // Reset states
+            binding.layoutAnswer.setSelected(false);
+            binding.layoutAnswer.setActivated(false);
+            
+            // Set state dựa trên index
+            if (position == selectedIndex) {
+                // Đúng (màu xanh lá) - dùng state_selected
+                binding.layoutAnswer.setSelected(true);
+            } else if (position == wrongIndex) {
+                // Sai (màu đỏ) - dùng state_activated
+                binding.layoutAnswer.setActivated(true);
+            } else if (position == justSelectedIndex) {
+                // Đã chọn nhưng chưa biết đúng/sai (màu xanh nhạt)
+                binding.layoutAnswer.setBackgroundResource(R.drawable.bg_answer_selected);
+            }
 
             binding.getRoot().setOnClickListener(v -> {
                 if (listener != null) {
