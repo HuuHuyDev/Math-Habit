@@ -7,8 +7,10 @@ import com.kidsapp.data.model.Parent;
 import com.kidsapp.data.model.Task;
 import com.kidsapp.data.model.WeeklyProgress;
 import com.kidsapp.data.request.AiChatRequest;
+import com.kidsapp.data.request.CreateTaskRequest;
 import com.kidsapp.data.response.AiChatResponse;
 import com.kidsapp.data.response.ChildSearchResponse;
+import com.kidsapp.data.response.TaskResponse;
 import com.kidsapp.data.websocket.ChatMessageDto;
 import com.kidsapp.data.websocket.ChatRoomDto;
 import java.util.List;
@@ -47,6 +49,74 @@ public interface ApiService {
     
     @DELETE(ApiConfig.ENDPOINT_LOGOUT)
     Call<Void> logout(@Path("refreshToken") String refreshToken);
+    
+    // ==================== EXERCISE APIs ====================
+    
+    /**
+     * Lấy tất cả bài tập
+     * GET /exercises?childId={childId}
+     */
+    @GET("exercises")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.ExerciseContent>>> getAllExercises(@Query("childId") String childId);
+    
+    /**
+     * Lấy bài tập theo lớp
+     * GET /exercises/grade/{gradeLevel}?childId={childId}
+     */
+    @GET("exercises/grade/{gradeLevel}")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.ExerciseContent>>> getExercisesByGrade(
+            @Path("gradeLevel") int gradeLevel,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy bài tập theo môn
+     * GET /exercises/subject/{subject}?childId={childId}
+     */
+    @GET("exercises/subject/{subject}")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.ExerciseContent>>> getExercisesBySubject(
+            @Path("subject") String subject,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy chi tiết bài tập
+     * GET /exercises/{exerciseId}?childId={childId}
+     */
+    @GET("exercises/{exerciseId}")
+    Call<ApiResponseWrapper<com.kidsapp.data.model.ExerciseContent>> getExerciseDetail(
+            @Path("exerciseId") String exerciseId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy danh sách câu hỏi
+     * GET /exercises/{exerciseId}/questions
+     */
+    @GET("exercises/{exerciseId}/questions")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.QuestionResponse>>> getExerciseQuestions(
+            @Path("exerciseId") String exerciseId
+    );
+    
+    /**
+     * Bắt đầu làm bài
+     * POST /exercises/{exerciseId}/start?childId={childId}
+     */
+    @POST("exercises/{exerciseId}/start")
+    Call<ApiResponseWrapper<Void>> startExercise(
+            @Path("exerciseId") String exerciseId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Submit bài làm
+     * POST /exercises/submit?childId={childId}
+     */
+    @POST("exercises/submit")
+    Call<ApiResponseWrapper<com.kidsapp.data.model.ExerciseResult>> submitExercise(
+            @Query("childId") String childId,
+            @Body com.kidsapp.data.request.SubmitAnswerRequest request
+    );
     
     // Parent APIs
     @GET(ApiConfig.ENDPOINT_PARENT_PROFILE)
@@ -104,6 +174,9 @@ public interface ApiService {
     
     @POST(ApiConfig.ENDPOINT_TASK_COMPLETE)
     Call<ApiResponseWrapper<Task>> completeTask(@Path("id") String taskId);
+    
+    @POST(ApiConfig.ENDPOINT_TASKS)
+    Call<ApiResponseWrapper<TaskResponse>> createTask(@Body CreateTaskRequest request);
     
     @POST(ApiConfig.ENDPOINT_CREATE_TASK)
     Call<Task> createTask(@Body Task task);
