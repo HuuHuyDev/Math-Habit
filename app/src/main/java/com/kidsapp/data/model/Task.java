@@ -1,11 +1,12 @@
 package com.kidsapp.data.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
 /**
  * Model class for Task
  */
-public class Task {
+public class Task implements Serializable {
     @SerializedName("id")
     private String id;
     
@@ -35,6 +36,25 @@ public class Task {
     
     @SerializedName("created_at")
     private String createdAt;
+    
+    // Xác nhận hoàn thành
+    @SerializedName("proof_image_url")
+    private String proofImageUrl; // URL ảnh chứng minh
+    
+    @SerializedName("proof_video_url")
+    private String proofVideoUrl; // URL video chứng minh
+    
+    @SerializedName("proof_note")
+    private String proofNote; // Ghi chú khi hoàn thành
+    
+    @SerializedName("is_verified")
+    private boolean isVerified; // Phụ huynh đã xác nhận chưa
+    
+    @SerializedName("verified_at")
+    private String verifiedAt; // Thời gian phụ huynh xác nhận
+    
+    @SerializedName("verified_by")
+    private String verifiedBy; // ID phụ huynh xác nhận
 
     public Task() {
     }
@@ -132,6 +152,54 @@ public class Task {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getProofImageUrl() {
+        return proofImageUrl;
+    }
+
+    public void setProofImageUrl(String proofImageUrl) {
+        this.proofImageUrl = proofImageUrl;
+    }
+
+    public String getProofVideoUrl() {
+        return proofVideoUrl;
+    }
+
+    public void setProofVideoUrl(String proofVideoUrl) {
+        this.proofVideoUrl = proofVideoUrl;
+    }
+
+    public String getProofNote() {
+        return proofNote;
+    }
+
+    public void setProofNote(String proofNote) {
+        this.proofNote = proofNote;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public String getVerifiedAt() {
+        return verifiedAt;
+    }
+
+    public void setVerifiedAt(String verifiedAt) {
+        this.verifiedAt = verifiedAt;
+    }
+
+    public String getVerifiedBy() {
+        return verifiedBy;
+    }
+
+    public void setVerifiedBy(String verifiedBy) {
+        this.verifiedBy = verifiedBy;
     }
 }
 

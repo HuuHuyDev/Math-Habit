@@ -12,12 +12,18 @@ import com.kidsapp.data.response.ChildSearchResponse;
 import com.kidsapp.data.websocket.ChatMessageDto;
 import com.kidsapp.data.websocket.ChatRoomDto;
 import java.util.List;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -73,6 +79,45 @@ public interface ApiService {
     
     @DELETE(ApiConfig.ENDPOINT_DELETE_TASK)
     Call<Void> deleteTask(@Path("id") String taskId);
+    
+    // ==================== TASK COMPLETION APIs ====================
+    
+    // Upload ảnh/video chứng minh hoàn thành
+    @Multipart
+    @POST("tasks/{taskId}/complete")
+    Call<ApiResponseWrapper<Task>> completeTaskWithProof(
+            @Path("taskId") String taskId,
+            @Part MultipartBody.Part proofImage,  // Ảnh chứng minh (optional)
+            @Part MultipartBody.Part proofVideo,  // Video chứng minh (optional)
+            @Part("note") RequestBody note        // Ghi chú (optional)
+    );
+    
+    // Hoàn thành nhiệm vụ không cần chứng minh
+    @POST("tasks/{taskId}/complete-simple")
+    Call<ApiResponseWrapper<Task>> completeTaskSimple(
+            @Path("taskId") String taskId,
+            @Body TaskCompletionRequest request
+    );
+    
+    // Phụ huynh xác nhận hoàn thành
+    @POST("tasks/{taskId}/verify")
+    Call<ApiResponseWrapper<Task>> verifyTaskCompletion(
+            @Path("taskId") String taskId,
+            @Body TaskVerificationRequest request
+    );
+    
+    // Phụ huynh từ chối xác nhận
+    @POST("tasks/{taskId}/reject")
+    Call<ApiResponseWrapper<Task>> rejectTaskCompletion(
+            @Path("taskId") String taskId,
+            @Body TaskRejectionRequest request
+    );
+    
+    // Lấy danh sách nhiệm vụ chờ xác nhận
+    @GET("tasks/pending-verification")
+    Call<ApiResponseWrapper<List<Task>>> getPendingVerificationTasks(
+            @Query("parentId") String parentId
+    );
     
     // Activity & Report APIs
     @GET(ApiConfig.ENDPOINT_ACTIVITY_LOGS)
@@ -237,6 +282,34 @@ public interface ApiService {
         public String avatarUrl;
         public String phone;
         public boolean isOnline;
+    }
+    
+    // ==================== TASK COMPLETION REQUEST/RESPONSE ====================
+    
+    class TaskCompletionRequest {
+        public String note;
+        
+        public TaskCompletionRequest(String note) {
+            this.note = note;
+        }
+    }
+    
+    class TaskVerificationRequest {
+        public boolean approved;
+        public String feedback;
+        
+        public TaskVerificationRequest(boolean approved, String feedback) {
+            this.approved = approved;
+            this.feedback = feedback;
+        }
+    }
+    
+    class TaskRejectionRequest {
+        public String reason;
+        
+        public TaskRejectionRequest(String reason) {
+            this.reason = reason;
+        }
     }
 }
 
