@@ -4,16 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-import com.kidsapp.ui.child.task.tabs.HomeworkTabFragment;
-import com.kidsapp.ui.child.task.tabs.PersonalTabFragment;
+import com.kidsapp.ui.child.task.tabs.WorkTabFragment;
 import com.kidsapp.ui.child.task.tabs.ExerciseTabFragment;
 import com.kidsapp.ui.child.task.tabs.HistoryTabFragment;
 
 /**
- * Adapter cho ViewPager2 với 4 tabs
+ * Adapter cho ViewPager2 với 3 tabs
+ * - Tab 0: Công việc (Việc nhà + Cá nhân)
+ * - Tab 1: Bài tập
+ * - Tab 2: Lịch sử
  */
 public class TaskPagerAdapter extends FragmentStateAdapter {
-    private static final int TAB_COUNT = 4;
+    private static final int TAB_COUNT = 3;
 
     public TaskPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -23,16 +25,14 @@ public class TaskPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 0: // Việc nhà
-                return HomeworkTabFragment.newInstance("", "");
-            case 1: // Cá nhân
-                return PersonalTabFragment.newInstance("", "");
-            case 2: // Bài tập
+            case 0: // Công việc (housework + habit + custom)
+                return new WorkTabFragment();
+            case 1: // Bài tập (exercise)
                 return ExerciseTabFragment.newInstance("", "");
-            case 3: // Lịch sử
+            case 2: // Lịch sử
                 return HistoryTabFragment.newInstance("", "");
             default:
-                return ExerciseTabFragment.newInstance("", "");
+                return new WorkTabFragment();
         }
     }
 
