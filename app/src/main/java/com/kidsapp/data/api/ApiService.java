@@ -186,9 +186,16 @@ public interface ApiService {
     
     class SocialLoginRequest {
         public String accessToken;
+        public String role;
         
         public SocialLoginRequest(String accessToken) {
             this.accessToken = accessToken;
+            this.role = "PARENT"; // Default role for social login
+        }
+        
+        public SocialLoginRequest(String accessToken, String role) {
+            this.accessToken = accessToken;
+            this.role = role;
         }
     }
     

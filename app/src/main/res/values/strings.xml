@@ -17,8 +17,8 @@
     <string name="parent">Phụ huynh</string>
     <string name="child">Trẻ</string>
 
-    <!-- Google Sign-In - Thay YOUR_WEB_CLIENT_ID bằng Web Client ID từ Google Cloud Console -->
-    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+    <!-- Google Sign-In - Web Client ID -->
+    <string name="default_web_client_id">445939716162-1r58hk7jucccp0e3rlgv239t7bfk7rht.apps.googleusercontent.com</string>
     
     <!-- Facebook Login - Thay bằng App ID và Client Token từ Facebook Developer Console -->
     <string name="facebook_app_id">YOUR_FACEBOOK_APP_ID</string>

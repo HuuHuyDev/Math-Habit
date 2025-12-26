@@ -95,9 +95,23 @@ public class ResetPasswordFragment extends Fragment {
         );
     }
 
+    private boolean isPasswordValid(String password) {
+        if (password.length() < 8) return false;
+        
+        boolean hasUpper = !password.equals(password.toLowerCase());
+        boolean hasLower = !password.equals(password.toUpperCase());
+        boolean hasNumber = password.matches(".*\\d.*");
+        
+        return hasUpper && hasLower && hasNumber;
+    }
+
     private void resetPassword() {
         String newPassword = binding.etNewPassword.getText().toString().trim();
         String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
+
+        // Clear previous errors
+        binding.tilNewPassword.setError(null);
+        binding.tilConfirmPassword.setError(null);
 
         if (newPassword.isEmpty()) {
             binding.tilNewPassword.setError("Vui lòng nhập mật khẩu mới");
@@ -109,14 +123,33 @@ public class ResetPasswordFragment extends Fragment {
             return;
         }
 
+        // Check uppercase
+        if (newPassword.equals(newPassword.toLowerCase())) {
+            binding.tilNewPassword.setError("Mật khẩu phải có ít nhất 1 chữ hoa");
+            return;
+        }
+
+        // Check lowercase
+        if (newPassword.equals(newPassword.toUpperCase())) {
+            binding.tilNewPassword.setError("Mật khẩu phải có ít nhất 1 chữ thường");
+            return;
+        }
+
+        // Check number
+        if (!newPassword.matches(".*\\d.*")) {
+            binding.tilNewPassword.setError("Mật khẩu phải có ít nhất 1 số");
+            return;
+        }
+
+        if (confirmPassword.isEmpty()) {
+            binding.tilConfirmPassword.setError("Vui lòng xác nhận mật khẩu");
+            return;
+        }
+
         if (!newPassword.equals(confirmPassword)) {
             binding.tilConfirmPassword.setError("Mật khẩu xác nhận không khớp");
             return;
         }
-
-        // Clear errors
-        binding.tilNewPassword.setError(null);
-        binding.tilConfirmPassword.setError(null);
 
         // TODO: Call API to reset password
         Toast.makeText(requireContext(), "Đặt lại mật khẩu thành công!", Toast.LENGTH_SHORT).show();

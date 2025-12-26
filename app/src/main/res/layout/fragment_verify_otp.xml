@@ -95,80 +95,86 @@
 
                 <EditText
                     android:id="@+id/etOtp1"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_input_field"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="1"
                     android:textColor="@color/text_primary"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <EditText
                     android:id="@+id/etOtp2"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_input_field"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="1"
                     android:textColor="@color/text_primary"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <EditText
                     android:id="@+id/etOtp3"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_input_field"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="1"
                     android:textColor="@color/text_primary"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <EditText
                     android:id="@+id/etOtp4"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_input_field"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="1"
                     android:textColor="@color/text_primary"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <EditText
                     android:id="@+id/etOtp5"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_input_field"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="1"
                     android:textColor="@color/text_primary"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <EditText
                     android:id="@+id/etOtp6"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
                     android:background="@drawable/bg_input_field"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="1"
                     android:textColor="@color/text_primary"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
             </LinearLayout>
 
             <!-- Timer -->
