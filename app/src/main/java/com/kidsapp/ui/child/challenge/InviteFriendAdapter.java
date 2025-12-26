@@ -100,12 +100,12 @@ public class InviteFriendAdapter extends RecyclerView.Adapter<InviteFriendAdapte
             // Level
             binding.txtLevel.setText("Level " + friend.getLevel());
 
-            // XP with formatting
+            // XP with formatting (sử dụng totalPoints thay vì totalXP)
             NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
-            binding.txtXP.setText(formatter.format(friend.getTotalXP()) + " XP");
+            binding.txtXP.setText(formatter.format(friend.getTotalPoints()) + " XP");
 
             // Avatar - có thể load từ URL nếu có
-            // Glide.with(binding.getRoot()).load(friend.getAvatar()).into(binding.imgAvatar);
+            // Glide.with(binding.getRoot()).load(friend.getAvatarUrl()).into(binding.imgAvatar);
             binding.imgAvatar.setImageResource(R.drawable.ic_child_avatar);
 
             // Check if already invited

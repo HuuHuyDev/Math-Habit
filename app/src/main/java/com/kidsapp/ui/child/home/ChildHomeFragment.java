@@ -12,20 +12,23 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
-import com.kidsapp.data.FakeNotificationRepository;
+import com.kidsapp.data.model.Child;
 import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentChildHomeBinding;
 import com.kidsapp.ui.child.challenge.ChallengeHomeFragment;
+import com.kidsapp.ui.child.components.ChildProfileLoader;
 import com.kidsapp.ui.child.progress.ProgresssFragment;
 import com.kidsapp.ui.child.shop.ShopFragment;
 import com.kidsapp.ui.child.task.ChildTaskListFragment;
 import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
 import com.kidsapp.ui.parent.home.model.Notification;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChildHomeFragment extends Fragment {
     private FragmentChildHomeBinding binding;
+    private ChildProfileLoader profileLoader;
 
     @Nullable
     @Override
@@ -33,7 +36,12 @@ public class ChildHomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentChildHomeBinding.inflate(inflater, container, false);
         
-        setupHeader();
+        // Khởi tạo profile loader
+        profileLoader = new ChildProfileLoader(requireContext());
+        
+        // Load profile từ API
+        loadChildProfile();
+        
         setupLevelCard();
         setupTodayGoal();
         setupClickListeners();
@@ -41,10 +49,48 @@ public class ChildHomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Load profile từ API và fill vào header
+     */
+    private void loadChildProfile() {
+        profileLoader.loadAndFillHeader(binding.headerUser, new ChildProfileLoader.ProfileLoadListener() {
+            @Override
+            public void onProfileLoaded(Child child) {
+                if (getActivity() == null) return;
+                
+                // Cập nhật level card với dữ liệu thực
+                updateLevelCard(child);
+            }
+
+            @Override
+            public void onProfileLoadError(String error) {
+                // Dữ liệu mặc định đã được fill bởi loader
+            }
+        });
+    }
+
+    /**
+     * Cập nhật level card với dữ liệu từ API
+     */
+    private void updateLevelCard(Child child) {
+        int level = child.getLevel();
+        int currentExp = child.getTotalPoints();
+        
+        // Tính XP cần để lên level tiếp theo (mỗi level cần 100 XP)
+        int targetExp = level * 100;
+        int currentLevelExp = currentExp % 100; // XP trong level hiện tại
+        int remainExp = 100 - currentLevelExp;
+        int percent = currentLevelExp;
+
+        binding.txtLevelLabel.setText(getString(R.string.child_level_value, level));
+        binding.txtExp.setText(currentLevelExp + " / 100 XP");
+        binding.txtExpPercent.setText(percent + "%");
+        binding.progressExp.setProgress(percent);
+        binding.txtExpHint.setText("Chỉ còn " + remainExp + " XP nữa để lên cấp!");
+    }
+
     private void setupHeader() {
-        // Sử dụng HeaderUserView component
-        binding.headerUser.setUserName("Minh An");
-        binding.headerUser.setAvatar(R.drawable.ic_child_face);
+        // Notification count - TODO: Lấy từ API
         binding.headerUser.setNotificationCount(3);
         
         binding.headerUser.setAvatarClick(v -> navigateToProfile());
@@ -52,11 +98,12 @@ public class ChildHomeFragment extends Fragment {
     }
 
     private void setupLevelCard() {
-        int level = 5;
-        int currentExp = 100;
-        int targetExp = 150;
+        // Dữ liệu mặc định, sẽ được cập nhật khi load profile thành công
+        int level = 1;
+        int currentExp = 0;
+        int targetExp = 100;
         int remainExp = targetExp - currentExp;
-        int percent = (int) (100f * currentExp / targetExp);
+        int percent = 0;
 
         binding.txtLevelLabel.setText(getString(R.string.child_level_value, level));
         binding.txtExp.setText(currentExp + " / " + targetExp + " XP");
@@ -66,15 +113,19 @@ public class ChildHomeFragment extends Fragment {
     }
 
     private void setupTodayGoal() {
-        int tasksCompleted = 2;
+        // TODO: Lấy từ API
+        int tasksCompleted = 0;
         int totalTasks = 5;
-        int xpEarned = 50;
+        int xpEarned = 0;
 
         binding.txtTasksInfo.setText("Hoàn thành " + tasksCompleted + "/" + totalTasks + " nhiệm vụ");
         binding.txtXpInfo.setText("Nhận " + xpEarned + " XP");
     }
 
     private void setupClickListeners() {
+        // Setup header listeners
+        setupHeader();
+        
         // Cards
         binding.cardLevel.setOnClickListener(v -> navigateToProgress());
         binding.cardTodayGoal.setOnClickListener(v -> navigateToTaskList());
@@ -125,24 +176,121 @@ public class ChildHomeFragment extends Fragment {
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         BottomsheetNotificationsBinding sheetBinding = BottomsheetNotificationsBinding.inflate(getLayoutInflater());
 
-        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
-        NotificationAdapter adapter = new NotificationAdapter();
-        adapter.setNotifications(notifications);
-        adapter.setOnNotificationClickListener((notification, position) -> 
-            Toast.makeText(requireContext(), notification.getMessage(), Toast.LENGTH_SHORT).show()
-        );
+        // ✅ Load thông báo từ API thay vì fake data
+        com.kidsapp.data.repository.NotificationRepository notificationRepo = 
+            new com.kidsapp.data.repository.NotificationRepository(requireContext());
+        
+        notificationRepo.getNotifications(new com.kidsapp.data.repository.NotificationRepository.NotificationListCallback() {
+            @Override
+            public void onSuccess(List<com.kidsapp.data.model.Notification> notifications) {
+                if (getActivity() == null) return;
+                
+                // Convert sang model của UI (nếu cần)
+                List<com.kidsapp.ui.parent.home.model.Notification> uiNotifications = 
+                    convertToUINotifications(notifications);
+                
+                NotificationAdapter adapter = new NotificationAdapter();
+                adapter.setNotifications(uiNotifications);
+                adapter.setOnNotificationClickListener((notification, position) -> {
+                    // Đánh dấu đã đọc
+                    String notifId = notifications.get(position).getId();
+                    notificationRepo.markAsRead(notifId, new com.kidsapp.data.repository.NotificationRepository.ActionCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // Reload notification count
+                            profileLoader.loadNotificationCount(binding.headerUser);
+                        }
 
-        sheetBinding.recyclerNotifications.setAdapter(adapter);
-        sheetBinding.layoutEmptyNotifications.setVisibility(notifications.isEmpty() ? View.VISIBLE : View.GONE);
-        sheetBinding.recyclerNotifications.setVisibility(notifications.isEmpty() ? View.GONE : View.VISIBLE);
+                        @Override
+                        public void onError(String error) {
+                            // Ignore error
+                        }
+                    });
+                    
+                    // Xử lý click notification
+                    handleNotificationClick(notifications.get(position));
+                });
 
+                sheetBinding.recyclerNotifications.setAdapter(adapter);
+                
+                // Show/hide empty state
+                boolean isEmpty = notifications.isEmpty();
+                sheetBinding.layoutEmptyNotifications.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                sheetBinding.recyclerNotifications.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                
+                // Hiển thị empty state
+                sheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+                sheetBinding.recyclerNotifications.setVisibility(View.GONE);
+            }
+        });
+
+        // Đánh dấu tất cả đã đọc
         sheetBinding.txtMarkAllRead.setOnClickListener(v -> {
-            adapter.markAllAsRead();
-            Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
+            notificationRepo.markAllAsRead(new com.kidsapp.data.repository.NotificationRepository.ActionCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
+                    // Reload notification count
+                    profileLoader.loadNotificationCount(binding.headerUser);
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onError(String error) {
+                    Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         dialog.setContentView(sheetBinding.getRoot());
         dialog.show();
+    }
+    
+    /**
+     * Convert từ API Notification sang UI Notification model
+     */
+    private List<com.kidsapp.ui.parent.home.model.Notification> convertToUINotifications(
+            List<com.kidsapp.data.model.Notification> apiNotifications) {
+        List<com.kidsapp.ui.parent.home.model.Notification> uiNotifications = new ArrayList<>();
+        
+        for (com.kidsapp.data.model.Notification apiNotif : apiNotifications) {
+            // Map API notification fields to UI notification constructor
+            // Constructor: (id, childName, childAvatar, taskTitle, taskType, time, isRead)
+            com.kidsapp.ui.parent.home.model.Notification uiNotif = 
+                new com.kidsapp.ui.parent.home.model.Notification(
+                    apiNotif.getId(),
+                    apiNotif.getTitle(),           // childName -> title
+                    "",                             // childAvatar -> empty (không cần cho child)
+                    apiNotif.getMessage(),          // taskTitle -> message
+                    apiNotif.getType(),             // taskType -> type
+                    apiNotif.getTimeAgo(),          // time -> timeAgo
+                    apiNotif.isRead()               // isRead
+                );
+            uiNotifications.add(uiNotif);
+        }
+        
+        return uiNotifications;
+    }
+    
+    /**
+     * Xử lý khi click vào notification
+     */
+    private void handleNotificationClick(com.kidsapp.data.model.Notification notification) {
+        // Hiển thị message
+        Toast.makeText(requireContext(), notification.getMessage(), Toast.LENGTH_SHORT).show();
+        
+        // TODO: Navigate dựa vào referenceType
+        // if ("TASK".equals(notification.getReferenceType())) {
+        //     // Navigate to task detail
+        // } else if ("CHALLENGE".equals(notification.getReferenceType())) {
+        //     // Navigate to challenge
+        // }
     }
 
     @Override

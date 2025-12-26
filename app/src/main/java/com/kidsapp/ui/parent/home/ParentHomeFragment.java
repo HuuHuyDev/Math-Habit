@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
-import com.kidsapp.data.FakeNotificationRepository;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.ActivityLog;
 import com.kidsapp.data.model.Child;
@@ -93,7 +92,7 @@ public class ParentHomeFragment extends Fragment {
                 bundle.putString("childId", child.getId());
                 bundle.putString("childName", child.getName());
                 bundle.putInt("childLevel", child.getLevel());
-                bundle.putInt("childXP", child.getTotalXP());
+                bundle.putInt("childXP", child.getTotalPoints());
 
                 // Tìm NavController - thử nhiều cách
                 View view = getView();
@@ -113,7 +112,7 @@ public class ParentHomeFragment extends Fragment {
                     bundle.putString("childId", child.getId());
                     bundle.putString("childName", child.getName());
                     bundle.putInt("childLevel", child.getLevel());
-                    bundle.putInt("childXP", child.getTotalXP());
+                    bundle.putInt("childXP", child.getTotalPoints());
                     navController.navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -137,7 +136,7 @@ public class ParentHomeFragment extends Fragment {
         child.setId(id);
         child.setName(name);
         child.setLevel(level);
-        child.setTotalXP(xp);
+        child.setTotalPoints(xp);
         return child;
     }
 
@@ -165,14 +164,16 @@ public class ParentHomeFragment extends Fragment {
 
     /**
      * Hiển thị BottomSheet danh sách thông báo
+     * TODO: Implement real notification API for parent
      */
     private void showNotificationsBottomSheet() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
                 getLayoutInflater());
 
-        // Load dữ liệu demo
-        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
+        // TODO: Load dữ liệu thông báo từ API
+        // Hiện tại chưa có API notification cho parent
+        List<Notification> notifications = new ArrayList<>();
 
         // Setup adapter
         NotificationAdapter adapter = new NotificationAdapter();
@@ -184,14 +185,9 @@ public class ParentHomeFragment extends Fragment {
 
         bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
 
-        // Hiển thị empty state nếu không có thông báo
-        if (notifications.isEmpty()) {
-            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
-            bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
-        } else {
-            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
-            bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
-        }
+        // Hiển thị empty state
+        bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+        bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
 
         // Đánh dấu tất cả đã đọc
         bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
