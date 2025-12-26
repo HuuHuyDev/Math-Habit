@@ -5,15 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.ActivityLog;
 import com.kidsapp.data.model.Child;
@@ -23,6 +26,8 @@ import com.kidsapp.ui.parent.home.adapter.ChildCardAdapter;
 import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
 import com.kidsapp.ui.parent.home.adapter.RecentActivityAdapter;
 import com.kidsapp.ui.parent.home.model.Notification;
+import com.kidsapp.viewmodel.HomeViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +38,7 @@ public class ParentHomeFragment extends Fragment {
 
     private FragmentParentHomeBinding binding;
     private SharedPref sharedPref;
+    private HomeViewModel viewModel;
     private ChildCardAdapter childCardAdapter;
     private RecentActivityAdapter recentActivityAdapter;
 
@@ -48,18 +54,18 @@ public class ParentHomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         sharedPref = new SharedPref(requireContext());
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        
         setupHeader();
         setupChildrenRecycler();
         setupRecentRecycler();
+        observeViewModel();
         applyAnimations();
+        
+        // Load data từ API
+        viewModel.loadHomeData();
     }
-    private void setupClickListeners() {
-        binding.rvChildren.setOnClickListener(v -> {
-            // Navigate to forgot password fragment
-            Navigation.findNavController(v).navigate(R.id.action_register_to_login);
-        });
 
-    }
     private void setupHeader() {
         String userName = sharedPref.getUserName();
         if (userName == null || userName.isEmpty()) {
@@ -82,46 +88,8 @@ public class ParentHomeFragment extends Fragment {
     }
 
     private void setupChildrenRecycler() {
-        List<Child> children = new ArrayList<>();
-        children.add(createChild("1", "Hồ Hữu Huy", 3, 650));
-        children.add(createChild("2", "Linh", 2, 480));
-
-        childCardAdapter = new ChildCardAdapter(children, child -> {
-            try {
-                Bundle bundle = new Bundle();
-                bundle.putString("childId", child.getId());
-                bundle.putString("childName", child.getName());
-                bundle.putInt("childLevel", child.getLevel());
-                bundle.putInt("childXP", child.getTotalPoints());
-
-                // Tìm NavController - thử nhiều cách
-                View view = getView();
-                if (view == null) {
-                    view = binding.getRoot();
-                }
-                
-                androidx.navigation.NavController navController = Navigation.findNavController(view);
-                navController.navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
-                
-            } catch (IllegalArgumentException e) {
-                // Nếu không tìm thấy NavController từ view, thử từ Activity
-                try {
-                    androidx.navigation.NavController navController = 
-                        Navigation.findNavController(requireActivity(), R.id.navHostFragment);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("childId", child.getId());
-                    bundle.putString("childName", child.getName());
-                    bundle.putInt("childLevel", child.getLevel());
-                    bundle.putInt("childXP", child.getTotalPoints());
-                    navController.navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Toast.makeText(requireContext(), "Lỗi navigation: " + ex.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        childCardAdapter = new ChildCardAdapter(new ArrayList<>(), child -> {
+            navigateToChildDetail(child);
         });
 
         RecyclerView rvChildren = binding.rvChildren;
@@ -130,66 +98,122 @@ public class ParentHomeFragment extends Fragment {
         rvChildren.setAdapter(childCardAdapter);
     }
 
+    private void setupRecentRecycler() {
+        recentActivityAdapter = new RecentActivityAdapter(new ArrayList<>());
+        binding.rvRecentActivities.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvRecentActivities.setAdapter(recentActivityAdapter);
+    }
 
-    private Child createChild(String id, String name, int level, int xp) {
+    private void observeViewModel() {
+        // Observe loading
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null) {
+                binding.loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        // Observe children
+        viewModel.getChildren().observe(getViewLifecycleOwner(), children -> {
+            if (children != null && !children.isEmpty()) {
+                List<Child> childList = new ArrayList<>();
+                for (ApiService.ChildResponse response : children) {
+                    childList.add(mapToChild(response));
+                }
+                childCardAdapter.updateChildren(childList);
+            }
+        });
+
+        // Observe activities
+        viewModel.getActivities().observe(getViewLifecycleOwner(), activities -> {
+            if (activities != null) {
+                List<ActivityLog> activityLogs = new ArrayList<>();
+                for (ApiService.ActivityLogResponse response : activities) {
+                    activityLogs.add(mapToActivityLog(response));
+                }
+                recentActivityAdapter.updateActivities(activityLogs);
+            }
+        });
+
+        // Observe errors
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private Child mapToChild(ApiService.ChildResponse response) {
         Child child = new Child();
-        child.setId(id);
-        child.setName(name);
-        child.setLevel(level);
-        child.setTotalPoints(xp);
+        child.setId(response.id);
+        child.setName(response.name != null ? response.name : response.nickname);
+        child.setLevel(response.level != null ? response.level : 1);
+        child.setTotalPoints(response.totalPoints != null ? response.totalPoints : 0);
+        child.setAvatarUrl(response.avatarUrl);
+        child.setGrade(response.grade);
+        child.setDailyProgress(response.dailyProgress != null ? response.dailyProgress : 0f);
         return child;
     }
 
-    private void setupRecentRecycler() {
-        List<ActivityLog> activities = new ArrayList<>();
-        activities.add(new ActivityLog("1", "1", "Huy",
-                "đã hoàn thành bài tập Cộng level 2", 15, null, null, "10 phút trước"));
-        activities.add(new ActivityLog("2", "2", "Linh",
-                "đã dọn đồ chơi", 12, null, null, "25 phút trước"));
-        activities.add(new ActivityLog("3", "1", "Huy",
-                "đã đánh răng sáng", 5, null, null, "2 giờ trước"));
+    private ActivityLog mapToActivityLog(ApiService.ActivityLogResponse response) {
+        return new ActivityLog(
+                response.id,
+                response.childId,
+                response.childName,
+                response.description,
+                response.xpEarned != null ? response.xpEarned : 0,
+                response.childAvatar,  // avatar
+                response.activityType, // icon
+                response.timeAgo
+        );
+    }
 
-        recentActivityAdapter = new RecentActivityAdapter(activities);
-        binding.rvRecentActivities.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.rvRecentActivities.setAdapter(recentActivityAdapter);
+    private void navigateToChildDetail(Child child) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString("childId", child.getId());
+            bundle.putString("childName", child.getName());
+            bundle.putInt("childLevel", child.getLevel());
+            bundle.putInt("childXP", child.getTotalPoints());
+
+            View view = getView();
+            if (view == null) {
+                view = binding.getRoot();
+            }
+            
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_nav_home_to_parentChildDetail, bundle);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "Lỗi navigation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void applyAnimations() {
         binding.headerParent.getRoot().setAlpha(0f);
         binding.headerParent.getRoot().animate()
                 .alpha(1f)
-                .setDuration(getResources().getInteger(com.kidsapp.R.integer.anim_duration_medium))
+                .setDuration(getResources().getInteger(R.integer.anim_duration_medium))
                 .start();
     }
 
-    /**
-     * Hiển thị BottomSheet danh sách thông báo
-     * TODO: Implement real notification API for parent
-     */
     private void showNotificationsBottomSheet() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
                 getLayoutInflater());
 
-        // TODO: Load dữ liệu thông báo từ API
-        // Hiện tại chưa có API notification cho parent
         List<Notification> notifications = new ArrayList<>();
 
-        // Setup adapter
         NotificationAdapter adapter = new NotificationAdapter();
         adapter.setNotifications(notifications);
         adapter.setOnNotificationClickListener((notification, position) -> {
-            Toast.makeText(requireContext(),
-                    notification.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), notification.getMessage(), Toast.LENGTH_SHORT).show();
         });
 
         bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
-
-        // Hiển thị empty state
         bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
         bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
 
-        // Đánh dấu tất cả đã đọc
         bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
             adapter.markAllAsRead();
             Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
@@ -205,4 +229,3 @@ public class ParentHomeFragment extends Fragment {
         binding = null;
     }
 }
-

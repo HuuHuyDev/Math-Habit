@@ -44,7 +44,7 @@ public class ChildProfileLoader {
         }
         
         // Load từ API
-        childRepository.getMyProfile(new ChildRepository.ChildCallback() {
+        childRepository.getMyProfile(new ChildRepository.MyProfileCallback() {
             @Override
             public void onSuccess(Child child) {
                 cachedChild = child;

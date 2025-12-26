@@ -61,6 +61,10 @@ public class Child {
     
     @SerializedName("dailyGoalExercises")
     private int dailyGoalExercises;
+    
+    // Tiến độ hoàn thành task trong ngày (0-100%)
+    @SerializedName("dailyProgress")
+    private float dailyProgress;
 
     public Child() {
     }
@@ -208,6 +212,14 @@ public class Child {
 
     public void setDailyGoalExercises(int dailyGoalExercises) {
         this.dailyGoalExercises = dailyGoalExercises;
+    }
+    
+    public float getDailyProgress() {
+        return dailyProgress;
+    }
+    
+    public void setDailyProgress(float dailyProgress) {
+        this.dailyProgress = dailyProgress;
     }
     
     /**

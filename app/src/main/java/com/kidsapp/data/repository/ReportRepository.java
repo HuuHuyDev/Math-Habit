@@ -23,21 +23,34 @@ public class ReportRepository {
         apiService = RetrofitClient.getInstance(sharedPref).getApiService();
     }
 
-    public void getActivityLogs(String parentId, ActivityLogsCallback callback) {
-        Call<List<ActivityLog>> call = apiService.getActivityLogs(parentId);
-        
-        call.enqueue(new Callback<List<ActivityLog>>() {
+    public void getActivityLogs(int limit, ActivityLogsCallback callback) {
+        apiService.getActivities(limit).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.ActivityLogResponse>>>() {
             @Override
-            public void onResponse(Call<List<ActivityLog>> call, Response<List<ActivityLog>> response) {
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.ActivityLogResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.ActivityLogResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    ApiService.ApiResponseWrapper<List<ApiService.ActivityLogResponse>> wrapper = response.body();
+                    if (wrapper.success && wrapper.data != null) {
+                        // Map to ActivityLog
+                        List<ActivityLog> logs = new java.util.ArrayList<>();
+                        for (ApiService.ActivityLogResponse r : wrapper.data) {
+                            logs.add(new ActivityLog(
+                                    r.id, r.childId, r.childName, r.description,
+                                    r.xpEarned != null ? r.xpEarned : 0,
+                                    r.activityType, r.childAvatar, r.timeAgo
+                            ));
+                        }
+                        callback.onSuccess(logs);
+                    } else {
+                        callback.onError("Không thể tải nhật ký hoạt động");
+                    }
                 } else {
                     callback.onError("Không thể tải nhật ký hoạt động");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<ActivityLog>> call, Throwable t) {
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.ActivityLogResponse>>> call, Throwable t) {
                 callback.onError(t.getMessage());
             }
         });
@@ -73,4 +86,3 @@ public class ReportRepository {
         void onError(String error);
     }
 }
-

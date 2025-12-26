@@ -99,13 +99,15 @@ public class AddChildBottomSheet extends BottomSheetDialogFragment {
     private void saveChild() {
         String name = binding.edtChildName.getText().toString().trim();
         String className = binding.edtChildClass.getText().toString().trim();
-        String gender = binding.spinnerGender.getSelectedItem().toString();
+        // Lấy giới tính: Nam = true, Nữ = false
+        String genderStr = binding.spinnerGender.getSelectedItem().toString();
+        Boolean gender = "Nam".equals(genderStr);
         String username = binding.edtUsername.getText().toString().trim();
         String password = binding.edtPassword.getText().toString().trim();
 
         // Tạo child mới với dữ liệu mặc định
         ChildModel child = new ChildModel(
-                String.valueOf(System.currentTimeMillis()),
+                null, // ID sẽ được server tạo
                 name,
                 className,
                 1, // Level mặc định
@@ -117,6 +119,7 @@ public class AddChildBottomSheet extends BottomSheetDialogFragment {
         child.setGender(gender);
         child.setUsername(username);
         child.setPassword(password);
+        child.setNickname(name); // Nickname mặc định = tên
 
         if (listener != null) {
             listener.onChildAdded(child);

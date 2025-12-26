@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.kidsapp.R;
 import com.kidsapp.data.FakeWeekPlanRepository;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.repository.TaskAssignmentRepository;
 import com.kidsapp.databinding.FragmentWeeklyPlanBinding;
 import com.kidsapp.ui.parent.report.adapter.ReportChildSelectorAdapter;
 import com.kidsapp.ui.parent.report.model.Child;
@@ -24,6 +28,9 @@ import com.kidsapp.ui.parent.task_plan.bottomsheet.EditTaskBottomSheet;
 import com.kidsapp.ui.parent.task_plan.model.WeekDay;
 import com.kidsapp.ui.parent.task_plan.model.WeekTask;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +42,7 @@ public class WeeklyPlanFragment extends Fragment {
     private FragmentWeeklyPlanBinding binding;
     private WeekDayAdapter weekDayAdapter;
     private TaskAdapter taskAdapter;
+    private TaskAssignmentRepository taskRepository;
 
     private List<WeekDay> weekDays = new ArrayList<>();
     private List<WeekTask> allTasks = new ArrayList<>();
@@ -69,43 +77,73 @@ public class WeeklyPlanFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initDemoChildren();
-        setupChildSelector();
+        taskRepository = new TaskAssignmentRepository(requireContext());
         setupWeekDaysRecycler();
         setupTasksRecycler();
         setupListeners();
-        loadData();
         setupAppBar();
+        initDemoChildren(); // Load children từ API
     }
 
     /**
-     * Khởi tạo danh sách bé DEMO
+     * Khởi tạo danh sách bé từ API
      */
     private void initDemoChildren() {
         childList.clear();
-        childList.add(new Child("1", "Hồ Hữu Huy", 3, 1200, "👦"));
-        childList.add(new Child("2", "Linh", 2, 900, "👧"));
-        childList.add(new Child("3", "Tuấn", 4, 1500, "👦"));
         
-        // Tìm child theo childId từ arguments
-        if (childId != null && !childId.isEmpty()) {
-            for (Child child : childList) {
-                if (child.getId().equals(childId)) {
-                    selectedChild = child;
-                    childName = child.getName();
-                    childLevel = child.getLevel();
-                    break;
+        // Load children từ API
+        SharedPref sharedPref = new SharedPref(requireContext());
+        ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        apiService.getParentChildren().enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> response) {
+                if (!isAdded()) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    List<ApiService.ChildResponse> children = response.body().data;
+                    for (ApiService.ChildResponse child : children) {
+                        String avatar = child.gender != null && child.gender ? "👦" : "👧";
+                        int level = child.grade != null ? child.grade : 1;
+                        int points = child.totalPoints != null ? child.totalPoints : 0;
+                        childList.add(new Child(child.id, child.name, level, points, avatar));
+                    }
+                    
+                    // Chọn child đầu tiên nếu chưa có
+                    if (selectedChild == null && !childList.isEmpty()) {
+                        selectedChild = childList.get(0);
+                        childId = selectedChild.getId();
+                        childName = selectedChild.getName();
+                        childLevel = selectedChild.getLevel();
+                    } else if (childId != null) {
+                        // Tìm child theo childId từ arguments
+                        for (Child c : childList) {
+                            if (c.getId().equals(childId)) {
+                                selectedChild = c;
+                                childName = c.getName();
+                                childLevel = c.getLevel();
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Cập nhật UI
+                    setupChildSelector();
+                    loadData();
                 }
             }
-        }
-        
-        // Nếu không tìm thấy hoặc không có childId, chọn child đầu tiên
-        if (selectedChild == null && !childList.isEmpty()) {
-            selectedChild = childList.get(0);
-            childId = selectedChild.getId();
-            childName = selectedChild.getName();
-            childLevel = selectedChild.getLevel();
-        }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call, Throwable t) {
+                if (!isAdded()) return;
+                // Fallback to demo data
+                childList.add(new Child("1", "Bé Demo", 3, 1200, "👦"));
+                selectedChild = childList.get(0);
+                childId = selectedChild.getId();
+                setupChildSelector();
+                loadData();
+            }
+        });
     }
     private void setupAppBar() {
         // Sự kiện click nút Back - gọi onBackPressed của Activity để xử lý logic
@@ -226,22 +264,122 @@ public class WeeklyPlanFragment extends Fragment {
     }
 
     /**
-     * Load dữ liệu demo theo childId
+     * Load dữ liệu từ API
      */
     private void loadData() {
-        // Load dữ liệu demo từ FakeWeekPlanRepository theo childId
+        // Load week days (static)
         weekDays = FakeWeekPlanRepository.getWeekDays();
-        allTasks = FakeWeekPlanRepository.getDemoTasks(childId);
-
-        // Cập nhật thống kê cho các ngày
-        FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
-
-        // Hiển thị dữ liệu
         weekDayAdapter.setWeekDays(weekDays);
         weekDayAdapter.setSelectedPosition(selectedDayIndex);
+        
+        if (childId == null || childId.isEmpty()) {
+            // Fallback to demo data if no child selected
+            allTasks = FakeWeekPlanRepository.getDemoTasks(childId);
+            FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+            loadTasksForSelectedDay();
+            updateWeekSummary();
+            return;
+        }
+        
+        // Load tasks từ API
+        SharedPref sharedPref = new SharedPref(requireContext());
+        ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        
+        apiService.getTasksByChild(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> response) {
+                if (!isAdded()) return;
+                
+                allTasks.clear();
+                
+                if (response.isSuccessful() && response.body() != null && response.body().success && response.body().data != null) {
+                    // Convert API response to WeekTask
+                    for (ApiService.TaskAssignmentResponse task : response.body().data) {
+                        WeekTask weekTask = convertApiTaskToWeekTask(task);
+                        if (weekTask != null) {
+                            allTasks.add(weekTask);
+                        }
+                    }
+                }
+                
+                // Cập nhật UI
+                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                weekDayAdapter.notifyDataSetChanged();
+                loadTasksForSelectedDay();
+                updateWeekSummary();
+            }
 
-        loadTasksForSelectedDay();
-        updateWeekSummary();
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> call, Throwable t) {
+                if (!isAdded()) return;
+                // Fallback to demo data on error
+                allTasks = FakeWeekPlanRepository.getDemoTasks(childId);
+                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                loadTasksForSelectedDay();
+                updateWeekSummary();
+            }
+        });
+    }
+    
+    /**
+     * Convert API TaskAssignmentResponse to WeekTask
+     */
+    private WeekTask convertApiTaskToWeekTask(ApiService.TaskAssignmentResponse task) {
+        if (task == null) return null;
+        
+        // Determine task type for UI
+        String type = "habit";
+        if ("exercise".equals(task.taskType)) {
+            type = "quiz";
+        }
+        
+        // Calculate day index from dueDate
+        int dayIndex = calculateDayIndexFromDate(task.dueDate);
+        
+        WeekTask weekTask = new WeekTask(
+                task.id,
+                task.title != null ? task.title : "Nhiệm vụ",
+                task.description != null ? task.description : "",
+                type,
+                task.pointsReward != null ? task.pointsReward : 10,
+                task.pointsReward != null ? task.pointsReward / 2 : 5,
+                dayIndex
+        );
+        
+        // Set status
+        if ("completed".equals(task.status)) {
+            weekTask.setCompleted(true);
+        }
+        
+        if (task.priority != null) {
+            weekTask.setLevel(task.priority);
+        }
+        
+        return weekTask;
+    }
+    
+    /**
+     * Calculate day index (0=Monday, 6=Sunday) from date string
+     */
+    private int calculateDayIndexFromDate(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return 0;
+        
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+            java.util.Date date = sdf.parse(dateStr);
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(date);
+            
+            int dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK);
+            // Calendar: Sunday=1, Monday=2, ..., Saturday=7
+            // We want: Monday=0, Tuesday=1, ..., Sunday=6
+            int dayIndex = dayOfWeek - 2;
+            if (dayIndex < 0) dayIndex = 6; // Sunday
+            return dayIndex;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     /**
@@ -302,17 +440,21 @@ public class WeeklyPlanFragment extends Fragment {
     }
 
     /**
-     * Hiển thị BottomSheet thêm nhiệm vụ
+     * Hiển thị BottomSheet thêm nhiệm vụ - Truyền childId để gọi API
      */
     private void showAddTaskBottomSheet() {
-        AddTaskBottomSheet bottomSheet = AddTaskBottomSheet.newInstance(selectedDayIndex);
+        if (childId == null || childId.isEmpty()) {
+            Toast.makeText(requireContext(), "Vui lòng chọn bé trước", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        AddTaskBottomSheet bottomSheet = AddTaskBottomSheet.newInstance(selectedDayIndex, childId);
         bottomSheet.setOnTaskAddedListener(task -> {
             allTasks.add(task);
             FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
             weekDayAdapter.notifyItemChanged(selectedDayIndex);
             loadTasksForSelectedDay();
             updateWeekSummary();
-            Toast.makeText(requireContext(), "Đã thêm nhiệm vụ", Toast.LENGTH_SHORT).show();
         });
         bottomSheet.show(getChildFragmentManager(), "AddTaskBottomSheet");
     }
@@ -323,11 +465,45 @@ public class WeeklyPlanFragment extends Fragment {
     private void showEditTaskBottomSheet(WeekTask task, int position) {
         EditTaskBottomSheet bottomSheet = EditTaskBottomSheet.newInstance(task, position);
         bottomSheet.setOnTaskUpdatedListener((updatedTask, pos) -> {
-            taskAdapter.updateTask(pos, updatedTask);
-            FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
-            weekDayAdapter.notifyItemChanged(selectedDayIndex);
-            updateWeekSummary();
-            Toast.makeText(requireContext(), "Đã cập nhật nhiệm vụ", Toast.LENGTH_SHORT).show();
+            // Gọi API cập nhật task
+            if (updatedTask.getId() != null && !updatedTask.getId().isEmpty()) {
+                ApiService.UpdateTaskRequest request = new ApiService.UpdateTaskRequest();
+                request.pointsReward = updatedTask.getCoins();
+                
+                taskRepository.updateTask(updatedTask.getId(), request, new TaskAssignmentRepository.OnUpdateTaskCallback() {
+                    @Override
+                    public void onSuccess(ApiService.TaskAssignmentResponse response) {
+                        if (!isAdded()) return;
+                        requireActivity().runOnUiThread(() -> {
+                            taskAdapter.updateTask(pos, updatedTask);
+                            FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                            weekDayAdapter.notifyItemChanged(selectedDayIndex);
+                            updateWeekSummary();
+                            Toast.makeText(requireContext(), "Đã cập nhật nhiệm vụ", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        if (!isAdded()) return;
+                        requireActivity().runOnUiThread(() -> {
+                            // Vẫn cập nhật local nếu API lỗi
+                            taskAdapter.updateTask(pos, updatedTask);
+                            FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                            weekDayAdapter.notifyItemChanged(selectedDayIndex);
+                            updateWeekSummary();
+                            Toast.makeText(requireContext(), "Đã cập nhật (offline)", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            } else {
+                // Task chưa có ID (local only)
+                taskAdapter.updateTask(pos, updatedTask);
+                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                weekDayAdapter.notifyItemChanged(selectedDayIndex);
+                updateWeekSummary();
+                Toast.makeText(requireContext(), "Đã cập nhật nhiệm vụ", Toast.LENGTH_SHORT).show();
+            }
         });
         bottomSheet.show(getChildFragmentManager(), "EditTaskBottomSheet");
     }
@@ -341,13 +517,42 @@ public class WeeklyPlanFragment extends Fragment {
             List<WeekTask> dayTasks = FakeWeekPlanRepository.getTasksByDay(allTasks, selectedDayIndex);
             if (position >= 0 && position < dayTasks.size()) {
                 WeekTask taskToRemove = dayTasks.get(position);
-                allTasks.remove(taskToRemove);
-                taskAdapter.removeTask(position);
-                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
-                weekDayAdapter.notifyItemChanged(selectedDayIndex);
-                loadTasksForSelectedDay();
-                updateWeekSummary();
-                Toast.makeText(requireContext(), "Đã xóa nhiệm vụ", Toast.LENGTH_SHORT).show();
+                
+                // Gọi API xóa task nếu có ID
+                if (taskToRemove.getId() != null && !taskToRemove.getId().isEmpty()) {
+                    taskRepository.deleteTask(taskToRemove.getId(), new TaskAssignmentRepository.OnDeleteTaskCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (!isAdded()) return;
+                            requireActivity().runOnUiThread(() -> {
+                                allTasks.remove(taskToRemove);
+                                taskAdapter.removeTask(position);
+                                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                                weekDayAdapter.notifyItemChanged(selectedDayIndex);
+                                loadTasksForSelectedDay();
+                                updateWeekSummary();
+                                Toast.makeText(requireContext(), "Đã xóa nhiệm vụ", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            if (!isAdded()) return;
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(requireContext(), "Lỗi: " + message, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                } else {
+                    // Task local only
+                    allTasks.remove(taskToRemove);
+                    taskAdapter.removeTask(position);
+                    FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                    weekDayAdapter.notifyItemChanged(selectedDayIndex);
+                    loadTasksForSelectedDay();
+                    updateWeekSummary();
+                    Toast.makeText(requireContext(), "Đã xóa nhiệm vụ", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         bottomSheet.show(getChildFragmentManager(), "ConfirmDeleteBottomSheet");

@@ -31,9 +31,12 @@ public class EditChildBottomSheet extends BottomSheetDialogFragment {
         args.putString("childName", child.getName());
         args.putString("childClass", child.getClassName());
         args.putString("childAvatar", child.getAvatar());
-        args.putString("childGender", child.getGender());
+        args.putBoolean("childGender", child.getGender() != null ? child.getGender() : true);
         args.putString("username", child.getUsername());
         args.putString("password", child.getPassword());
+        args.putString("nickname", child.getNickname());
+        args.putString("school", child.getSchool());
+        args.putString("birthDate", child.getBirthDate());
         args.putInt("childLevel", child.getLevel());
         args.putInt("currentXP", child.getCurrentXP());
         args.putInt("maxXP", child.getMaxXP());
@@ -66,7 +69,7 @@ public class EditChildBottomSheet extends BottomSheetDialogFragment {
             String name = getArguments().getString("childName", "");
             String className = getArguments().getString("childClass", "");
             String avatar = getArguments().getString("childAvatar", "😊");
-            String gender = getArguments().getString("childGender", "Nam");
+            boolean gender = getArguments().getBoolean("childGender", true); // true = Nam
             String username = getArguments().getString("username", "");
 
             binding.edtChildName.setText(name);
@@ -74,14 +77,8 @@ public class EditChildBottomSheet extends BottomSheetDialogFragment {
             binding.txtAvatar.setText(avatar);
             binding.edtUsername.setText(username);
 
-            // Set spinner selection
-            String[] genders = {"Nam", "Nữ", "Khác"};
-            for (int i = 0; i < genders.length; i++) {
-                if (genders[i].equals(gender)) {
-                    binding.spinnerGender.setSelection(i);
-                    break;
-                }
-            }
+            // Set spinner selection: 0 = Nam, 1 = Nữ
+            binding.spinnerGender.setSelection(gender ? 0 : 1);
         }
     }
 
@@ -124,10 +121,15 @@ public class EditChildBottomSheet extends BottomSheetDialogFragment {
         String name = binding.edtChildName.getText().toString().trim();
         String className = binding.edtChildClass.getText().toString().trim();
         String avatar = binding.txtAvatar.getText().toString();
-        String gender = binding.spinnerGender.getSelectedItem().toString();
+        // Lấy giới tính: Nam = true, Nữ = false
+        String genderStr = binding.spinnerGender.getSelectedItem().toString();
+        Boolean gender = "Nam".equals(genderStr);
         String username = binding.edtUsername.getText().toString().trim();
         String newPassword = binding.edtPassword.getText().toString().trim();
         String oldPassword = getArguments().getString("password", "");
+        String nickname = getArguments().getString("nickname", "");
+        String school = getArguments().getString("school", "");
+        String birthDate = getArguments().getString("birthDate", null);
         int level = getArguments().getInt("childLevel", 1);
         int currentXP = getArguments().getInt("currentXP", 0);
         int maxXP = getArguments().getInt("maxXP", 100);
@@ -137,12 +139,15 @@ public class EditChildBottomSheet extends BottomSheetDialogFragment {
                 currentXP, maxXP, coins, avatar);
         updatedChild.setGender(gender);
         updatedChild.setUsername(username);
+        updatedChild.setNickname(nickname);
+        updatedChild.setSchool(school);
+        updatedChild.setBirthDate(birthDate);
         
-        // Nếu có nhập password mới thì dùng password mới, không thì giữ password cũ
+        // Nếu có nhập password mới thì dùng password mới, không thì null (không đổi)
         if (!newPassword.isEmpty()) {
             updatedChild.setPassword(newPassword);
         } else {
-            updatedChild.setPassword(oldPassword);
+            updatedChild.setPassword(null);
         }
 
         if (listener != null) {

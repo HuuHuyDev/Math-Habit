@@ -12,9 +12,13 @@ public class ChildModel {
     private int maxXP;
     private int coins;
     private String avatar;
-    private String gender;
+    private Boolean gender; // true = Nam, false = Nữ
     private String username;
     private String password;
+    private String nickname;
+    private String school;
+    private String birthDate;
+    private int totalPoints;
 
     public ChildModel(String id, String name, String className, int level,
                      int currentXP, int maxXP, int coins, String avatar) {
@@ -92,11 +96,11 @@ public class ChildModel {
         this.avatar = avatar;
     }
 
-    public String getGender() {
+    public Boolean getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Boolean gender) {
         this.gender = gender;
     }
 
@@ -114,6 +118,52 @@ public class ChildModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public int getTotalPoints() {
+        return totalPoints;
+    }
+
+    public void setTotalPoints(int totalPoints) {
+        this.totalPoints = totalPoints;
+    }
+
+    /**
+     * Lấy số lớp từ className (vd: "Lớp 3" -> 3)
+     */
+    public Integer getGradeNumber() {
+        if (className == null || className.isEmpty()) return null;
+        try {
+            // Lấy số từ className
+            String numStr = className.replaceAll("[^0-9]", "");
+            return numStr.isEmpty() ? null : Integer.parseInt(numStr);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getClassAndLevel() {

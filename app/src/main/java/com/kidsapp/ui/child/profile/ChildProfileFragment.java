@@ -67,7 +67,7 @@ public class ChildProfileFragment extends Fragment {
         // Hiển thị loading (optional)
         // binding.progressBar.setVisibility(View.VISIBLE);
         
-        childRepository.getMyProfile(new ChildRepository.ChildCallback() {
+        childRepository.getMyProfile(new ChildRepository.MyProfileCallback() {
             @Override
             public void onSuccess(Child child) {
                 if (getActivity() == null) return;

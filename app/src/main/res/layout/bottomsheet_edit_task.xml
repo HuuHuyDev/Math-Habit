@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BottomSheet Edit Task - Sửa nhiệm vụ -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- BottomSheet Edit Task - Chỉnh sửa nhiệm vụ đã giao -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -30,7 +35,7 @@
         android:layout_marginTop="@dimen/spacing_12"
         android:layout_marginBottom="@dimen/spacing_16" />
 
-    <!-- Task Type -->
+    <!-- Task Type (READ ONLY) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,162 +44,171 @@
         android:textColor="@color/text_primary"
         android:textSize="@dimen/text_size_medium" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroupTaskType"
-        android:layout_width="match_parent"
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipTaskType"
+        style="@style/Widget.Material3.Chip.Assist"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_8"
-        app:selectionRequired="true"
-        app:singleSelection="true">
+        android:clickable="false"
+        android:enabled="false"
+        android:text="Thói quen"
+        app:chipIcon="@drawable/ic_habit" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipHabit"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thói quen"
-            app:chipIcon="@drawable/ic_habit" />
+    <!-- Task Name (READ ONLY) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:fontFamily="@font/inter_semibold"
+        android:text="Tên nhiệm vụ"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_medium" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipQuiz"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bài tập"
-            app:chipIcon="@drawable/ic_quiz" />
+    <TextView
+        android:id="@+id/tvTaskName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_4"
+        android:background="@drawable/bg_card_white_pure"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/spacing_12"
+        android:text="Rửa tay trước ăn"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_medium" />
 
-    </com.google.android.material.chip.ChipGroup>
+    <!-- Task Description (READ ONLY) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:fontFamily="@font/inter_semibold"
+        android:text="Mô tả"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_medium" />
 
-    <!-- Task Name -->
+    <TextView
+        android:id="@+id/tvTaskDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_4"
+        android:background="@drawable/bg_card_white_pure"
+        android:fontFamily="@font/inter_regular"
+        android:minHeight="60dp"
+        android:padding="@dimen/spacing_12"
+        android:text="Rửa tay sạch sẽ trước khi ăn"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium" />
+
+    <!-- Due Date (EDITABLE) -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilTaskName"
+        android:id="@+id/tilDueDate"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_16"
-        android:hint="Tên nhiệm vụ"
+        android:hint="Ngày hết hạn *"
         app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
         app:boxCornerRadiusBottomStart="@dimen/radius_medium"
         app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-        app:boxCornerRadiusTopStart="@dimen/radius_medium">
+        app:boxCornerRadiusTopStart="@dimen/radius_medium"
+        app:prefixText="📅 "
+        app:startIconDrawable="@drawable/ic_calendar">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtTaskName"
+            android:id="@+id/edtDueDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
             android:fontFamily="@font/inter_regular"
-            android:inputType="text"
+            android:inputType="none"
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Task Description -->
+    <!-- Due Time (EDITABLE) -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilTaskDescription"
+        android:id="@+id/tilDueTime"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_12"
-        android:hint="Mô tả"
+        android:hint="Giờ hoàn thành (VD: 18:00)"
         app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
         app:boxCornerRadiusBottomStart="@dimen/radius_medium"
         app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-        app:boxCornerRadiusTopStart="@dimen/radius_medium">
+        app:boxCornerRadiusTopStart="@dimen/radius_medium"
+        app:prefixText="🕐 ">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtTaskDescription"
+            android:id="@+id/edtDueTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_regular"
-            android:inputType="textMultiLine"
-            android:maxLines="3" />
+            android:inputType="time"
+            android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Rewards Row -->
-    <LinearLayout
+    <!-- Points Reward (EDITABLE) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPoints"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_12"
+        android:hint="Điểm thưởng"
+        app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+        app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+        app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+        app:boxCornerRadiusTopStart="@dimen/radius_medium"
+        app:prefixText="⭐ ">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtPoints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:inputType="number"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Recurring (EDITABLE) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilCoins"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/spacing_8"
-            android:layout_weight="1"
-            android:hint="Coins"
-            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
-            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
-            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-            app:boxCornerRadiusTopStart="@dimen/radius_medium"
-            app:prefixText="🪙 ">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtCoins"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_regular"
-                android:inputType="number"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilXp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_8"
-            android:layout_weight="1"
-            android:hint="XP"
-            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
-            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
-            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-            app:boxCornerRadiusTopStart="@dimen/radius_medium"
-            app:prefixText="⭐ ">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtXp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_regular"
-                android:inputType="number"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </LinearLayout>
-
-    <!-- Level (only for Quiz) -->
-    <LinearLayout
-        android:id="@+id/layoutLevel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_12"
-        android:orientation="vertical"
-        android:visibility="gone">
-
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:fontFamily="@font/inter_semibold"
-            android:text="Độ khó"
+            android:text="Lặp lại hàng ngày"
             android:textColor="@color/text_primary"
             android:textSize="@dimen/text_size_medium" />
 
-        <com.google.android.material.slider.Slider
-            android:id="@+id/sliderLevel"
-            android:layout_width="match_parent"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchRecurring"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:stepSize="1"
-            android:valueFrom="1"
-            android:valueTo="5"
-            app:labelBehavior="withinBounds" />
+            android:checked="true" />
 
     </LinearLayout>
+
+    <!-- Loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:visibility="gone" />
+
 
     <!-- Action Buttons -->
     <LinearLayout
@@ -231,3 +245,5 @@
     </LinearLayout>
 
 </LinearLayout>
+
+</ScrollView>

@@ -1,5 +1,6 @@
 package com.kidsapp.ui.parent.child_manage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,16 +12,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.databinding.FragmentChildManageBinding;
+import com.kidsapp.ui.auth.LoginActivity;
 import com.kidsapp.ui.parent.child_manage.adapter.ChildManageAdapter;
 import com.kidsapp.ui.parent.child_manage.bottomsheet.AddChildBottomSheet;
 import com.kidsapp.ui.parent.child_manage.bottomsheet.DeleteChildBottomSheet;
 import com.kidsapp.ui.parent.child_manage.bottomsheet.EditChildBottomSheet;
 import com.kidsapp.ui.parent.child_manage.model.ChildModel;
+import com.kidsapp.viewmodel.ChildViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,7 @@ import java.util.List;
 public class ChildManageFragment extends Fragment {
     private FragmentChildManageBinding binding;
     private ChildManageAdapter adapter;
+    private ChildViewModel viewModel;
     private List<ChildModel> allChildren = new ArrayList<>();
     private List<ChildModel> filteredChildren = new ArrayList<>();
 
@@ -45,9 +52,15 @@ public class ChildManageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        viewModel = new ViewModelProvider(this).get(ChildViewModel.class);
+        
         setupRecyclerView();
         setupListeners();
-        loadDemoData();
+        observeViewModel();
+        
+        // Load data from API
+        viewModel.loadChildren();
     }
 
     private void setupRecyclerView() {
@@ -97,32 +110,81 @@ public class ChildManageFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        
+        // Swipe refresh
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            viewModel.loadChildren();
+        });
     }
 
-    private void loadDemoData() {
-        allChildren.clear();
-        
-        ChildModel child1 = new ChildModel("1", "Nguyễn Minh Linh", "3A", 12,
-                450, 600, 120, "😊");
-        child1.setUsername("minhlinhkid");
-        child1.setPassword("123456");
-        allChildren.add(child1);
-        
-        ChildModel child2 = new ChildModel("2", "Trần Bảo An", "5B", 18,
-                820, 1000, 340, "😄");
-        child2.setUsername("baoankid");
-        child2.setPassword("123456");
-        allChildren.add(child2);
-        
-        ChildModel child3 = new ChildModel("3", "Lê Minh Châu", "2C", 8,
-                280, 400, 85, "😁");
-        child3.setUsername("minhchaukid");
-        child3.setPassword("123456");
-        allChildren.add(child3);
+    private void observeViewModel() {
+        viewModel.getChildren().observe(getViewLifecycleOwner(), children -> {
+            binding.swipeRefresh.setRefreshing(false);
+            if (children != null) {
+                allChildren.clear();
+                for (ApiService.ChildResponse child : children) {
+                    allChildren.add(mapToChildModel(child));
+                }
+                filterChildren(binding.edtSearch.getText().toString());
+            }
+        });
 
-        filteredChildren.addAll(allChildren);
-        adapter.setChildren(filteredChildren);
-        updateEmptyState();
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            binding.swipeRefresh.setRefreshing(false);
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                
+                // Nếu token hết hạn, redirect về login
+                if (error.contains("Phiên đăng nhập hết hạn") || error.contains("401")) {
+                    handleSessionExpired();
+                }
+                
+                viewModel.clearMessages();
+            }
+        });
+
+        viewModel.getSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (success != null && !success.isEmpty()) {
+                Toast.makeText(requireContext(), success, Toast.LENGTH_SHORT).show();
+                viewModel.clearMessages();
+            }
+        });
+
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null) {
+                binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    private ChildModel mapToChildModel(ApiService.ChildResponse response) {
+        // Tính maxXP dựa trên level
+        int level = response.level != null ? response.level : 1;
+        int totalPoints = response.totalPoints != null ? response.totalPoints : 0;
+        int maxXP = level * 100;
+        int currentXP = totalPoints % 100; // XP trong level hiện tại
+        
+        // Tạo className từ grade
+        String className = response.grade != null ? "Lớp " + response.grade : "";
+        
+        ChildModel model = new ChildModel(
+                response.id,
+                response.name != null ? response.name : response.nickname,
+                className,
+                level,
+                currentXP,
+                maxXP,
+                response.currentStreak != null ? response.currentStreak : 0,
+                response.avatarUrl != null ? response.avatarUrl : "😊"
+        );
+        
+        model.setNickname(response.nickname);
+        model.setSchool(response.school);
+        model.setBirthDate(response.birthDate);
+        model.setTotalPoints(totalPoints);
+        model.setGender(response.gender);
+        
+        return model;
     }
 
     private void filterChildren(String query) {
@@ -154,9 +216,18 @@ public class ChildManageFragment extends Fragment {
     private void showAddBottomSheet() {
         AddChildBottomSheet bottomSheet = AddChildBottomSheet.newInstance();
         bottomSheet.setOnChildAddedListener(child -> {
-            allChildren.add(child);
-            filterChildren(binding.edtSearch.getText().toString());
-            Toast.makeText(requireContext(), "Đã thêm bé mới", Toast.LENGTH_SHORT).show();
+            // Gọi API thêm bé
+            viewModel.createChild(
+                    child.getName(),
+                    child.getNickname(),
+                    child.getBirthDate(),
+                    child.getGradeNumber(),
+                    child.getSchool(),
+                    child.getAvatar(),
+                    child.getGender(),
+                    child.getUsername(),
+                    child.getPassword()
+            );
         });
         bottomSheet.show(getChildFragmentManager(), "AddChildBottomSheet");
     }
@@ -164,22 +235,30 @@ public class ChildManageFragment extends Fragment {
     private void showEditBottomSheet(ChildModel child, int position) {
         EditChildBottomSheet bottomSheet = EditChildBottomSheet.newInstance(child);
         bottomSheet.setOnChildUpdatedListener(updatedChild -> {
-            int index = allChildren.indexOf(child);
-            if (index != -1) {
-                allChildren.set(index, updatedChild);
-                filterChildren(binding.edtSearch.getText().toString());
-                Toast.makeText(requireContext(), "Đã cập nhật thông tin", Toast.LENGTH_SHORT).show();
-            }
+            // Gọi API cập nhật
+            viewModel.updateChild(
+                    child.getId(),
+                    updatedChild.getName(),
+                    updatedChild.getNickname(),
+                    updatedChild.getBirthDate(),
+                    updatedChild.getGradeNumber(),
+                    updatedChild.getSchool(),
+                    updatedChild.getAvatar(),
+                    updatedChild.getGender(),
+                    updatedChild.getPassword() // newPassword nếu có
+            );
         });
         bottomSheet.show(getChildFragmentManager(), "EditChildBottomSheet");
     }
 
     private void showDeleteBottomSheet(ChildModel child, int position) {
+        android.util.Log.d("ChildManageFragment", "showDeleteBottomSheet: childId=" + child.getId() + ", name=" + child.getName());
+        
         DeleteChildBottomSheet bottomSheet = DeleteChildBottomSheet.newInstance(child.getName());
         bottomSheet.setOnDeleteConfirmedListener(() -> {
-            allChildren.remove(child);
-            filterChildren(binding.edtSearch.getText().toString());
-            Toast.makeText(requireContext(), "Đã xóa " + child.getName(), Toast.LENGTH_SHORT).show();
+            android.util.Log.d("ChildManageFragment", "onDeleteConfirmed: childId=" + child.getId());
+            // Gọi API xóa
+            viewModel.deleteChild(child.getId());
         });
         bottomSheet.show(getChildFragmentManager(), "DeleteChildBottomSheet");
     }
@@ -206,5 +285,21 @@ public class ChildManageFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+    
+    private void handleSessionExpired() {
+        // Clear session
+        SharedPref sharedPref = new SharedPref(requireContext());
+        sharedPref.clearAll();
+        RetrofitClient.resetInstance();
+        
+        // Redirect to login
+        Intent intent = new Intent(requireContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 }

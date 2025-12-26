@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.kidsapp.R;
 import com.kidsapp.data.model.Child;
 import com.kidsapp.ui.components.CircularProgressView;
@@ -49,9 +51,19 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
         return children != null ? children.size() : 0;
     }
 
-
+    /**
+     * Cập nhật danh sách children
+     */
+    public void updateChildren(List<Child> newChildren) {
+        this.children.clear();
+        if (newChildren != null) {
+            this.children.addAll(newChildren);
+        }
+        notifyDataSetChanged();
+    }
 
     static class ChildViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView imgChildAvatar;
         private final TextView tvChildName;
         private final TextView tvChildClass;
         private final CircularProgressView progressView;
@@ -59,6 +71,7 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
 
         ChildViewHolder(@NonNull View itemView) {
             super(itemView);
+            imgChildAvatar = itemView.findViewById(R.id.imgChildAvatar);
             tvChildName = itemView.findViewById(R.id.tvChildName);
             tvChildClass = itemView.findViewById(R.id.tvChildClass);
             progressView = itemView.findViewById(R.id.progressView);
@@ -67,10 +80,18 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
 
         void bind(Child child, OnChildClickListener listener) {
             tvChildName.setText(child.getName());
-            String grade = child.getLevel() > 0 ? "Lớp " + child.getLevel() : "Lớp 3";
-            tvChildClass.setText(grade);
+            
+            // Hiển thị lớp từ grade
+            Integer grade = child.getGrade();
+            String gradeText = (grade != null && grade > 0) ? "Lớp " + grade : "Lớp 1";
+            tvChildClass.setText(gradeText);
 
-            progressView.animateTo(calculateProgress(child));
+            // Load avatar bằng Glide
+            loadAvatar(child.getAvatarUrl());
+
+            // Hiển thị progress (% task hoàn thành trong ngày)
+            float progress = child.getDailyProgress();
+            progressView.animateTo(progress);
 
             View.OnClickListener clickListener = v -> {
                 if (listener != null) {
@@ -82,14 +103,17 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
             applyButtonScaleAnimation(btnViewDetail);
         }
 
-        private float calculateProgress(Child child) {
-            int level = child.getLevel();
-            int xp = child.getTotalPoints();
-            if (level <= 0 && xp <= 0) {
-                return 50f;
+        private void loadAvatar(String avatarUrl) {
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(avatarUrl)
+                        .transform(new CircleCrop())
+                        .placeholder(R.drawable.ic_user_default)
+                        .error(R.drawable.ic_user_default)
+                        .into(imgChildAvatar);
+            } else {
+                imgChildAvatar.setImageResource(R.drawable.ic_user_default);
             }
-            float normalized = Math.min(100f, level * 10f + xp * 0.05f);
-            return Math.max(0f, normalized);
         }
 
         private void applyButtonScaleAnimation(Button button) {

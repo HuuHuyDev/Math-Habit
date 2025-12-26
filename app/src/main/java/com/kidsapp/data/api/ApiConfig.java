@@ -22,10 +22,14 @@ public class ApiConfig {
     
     public static final String ENDPOINT_PARENT_PROFILE = "parent/profile";
     public static final String ENDPOINT_CHILDREN = "parent/children";
-    public static final String ENDPOINT_CHILD_DETAIL = "parent/child/{id}";
+    public static final String ENDPOINT_CHILD_DETAIL = "parent/children/{id}";
+    public static final String ENDPOINT_CREATE_CHILD = "parent/children";
+    public static final String ENDPOINT_UPDATE_CHILD = "parent/children/{id}";
+    public static final String ENDPOINT_DELETE_CHILD = "parent/children/{id}";
     
     public static final String ENDPOINT_TASKS = "tasks";
     public static final String ENDPOINT_TASK_DETAIL = "tasks/{id}";
+    public static final String ENDPOINT_TASKS_BY_CHILD = "tasks/child/{childId}";
     public static final String ENDPOINT_CREATE_TASK = "tasks/create";
     public static final String ENDPOINT_UPDATE_TASK = "tasks/{id}";
     public static final String ENDPOINT_DELETE_TASK = "tasks/{id}";
@@ -49,5 +53,38 @@ public class ApiConfig {
     public static final String ENDPOINT_NOTIFICATIONS_UNREAD_COUNT = "notifications/unread/count";
     public static final String ENDPOINT_NOTIFICATIONS_READ = "notifications/{id}/read";
     public static final String ENDPOINT_NOTIFICATIONS_READ_ALL = "notifications/read-all";
+    
+    // Habits
+    public static final String ENDPOINT_HABITS = "habits";
+    public static final String ENDPOINT_HABIT_DETAIL = "habits/{id}";
+    public static final String ENDPOINT_HABITS_BY_CHILD = "habits/child/{childId}";
+    public static final String ENDPOINT_HABIT_COMPLETE = "habits/{id}/complete";
+    public static final String ENDPOINT_HABIT_APPROVE = "habits/logs/{id}/approve";
+    public static final String ENDPOINT_HABIT_REJECT = "habits/logs/{id}/reject";
+    public static final String ENDPOINT_HABIT_PENDING = "habits/pending-approvals";
+    public static final String ENDPOINT_HABIT_TEMPLATES = "habits/templates";
+    
+    // Quizzes
+    public static final String ENDPOINT_QUIZZES = "quizzes";
+    public static final String ENDPOINT_QUIZ_DETAIL = "quizzes/{id}";
+    public static final String ENDPOINT_QUIZZES_BY_CHILD = "quizzes/child/{childId}";
+    public static final String ENDPOINT_QUIZZES_ASSIGNED = "quizzes/assigned";
+    public static final String ENDPOINT_QUIZ_START = "quizzes/{id}/start";
+    public static final String ENDPOINT_QUIZ_SUBMIT = "quizzes/{id}/submit";
+    public static final String ENDPOINT_QUIZ_AVAILABLE_QUESTIONS = "quizzes/available-questions";
+    public static final String ENDPOINT_QUIZ_SUGGEST_REWARD = "quizzes/suggest-reward";
+    
+    // Task Assignment (Giao bài tập/thói quen)
+    public static final String ENDPOINT_TASK_SUBJECTS = "task-assignment/subjects";
+    public static final String ENDPOINT_TASK_EXERCISES = "task-assignment/exercises";
+    public static final String ENDPOINT_TASK_EXERCISES_FOR_CHILD = "task-assignment/exercises/for-child/{childId}";
+    public static final String ENDPOINT_TASK_HABIT_CATEGORIES = "task-assignment/habit-categories";
+    public static final String ENDPOINT_TASK_HABITS = "task-assignment/habits";
+    public static final String ENDPOINT_TASK_HABITS_FOR_CHILD = "task-assignment/habits/for-child/{childId}";
+    public static final String ENDPOINT_TASK_ASSIGN = "task-assignment/assign";
+    public static final String ENDPOINT_TASK_ASSIGN_MULTIPLE = "task-assignment/assign-multiple";
+    public static final String ENDPOINT_TASK_UPDATE = "task-assignment/tasks/{taskId}";
+    public static final String ENDPOINT_TASK_DELETE = "task-assignment/tasks/{taskId}";
+    public static final String ENDPOINT_TASK_GET = "task-assignment/tasks/{taskId}";
 }
 

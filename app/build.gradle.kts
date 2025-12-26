@@ -62,6 +62,9 @@ dependencies {
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     
+    // SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    
     // Room Database (optional for local storage)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation(libs.legacy.support.v4)

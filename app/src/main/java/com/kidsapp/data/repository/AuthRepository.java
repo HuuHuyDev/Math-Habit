@@ -218,6 +218,9 @@ public class AuthRepository {
             }
         }
         sharedPref.setLoggedIn(true);
+        
+        // Reset RetrofitClient để sử dụng token mới
+        RetrofitClient.resetInstance();
     }
 
     public void logout() {

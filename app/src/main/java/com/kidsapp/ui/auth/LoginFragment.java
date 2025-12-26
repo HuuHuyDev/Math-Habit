@@ -223,17 +223,18 @@ public class LoginFragment extends Fragment {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private boolean validateInput(String email, String password) {
+    private boolean validateInput(String emailOrUsername, String password) {
         boolean isValid = true;
 
         binding.tilEmail.setError(null);
         binding.tilPassword.setError(null);
 
-        if (email.isEmpty()) {
-            binding.tilEmail.setError("Vui lòng nhập email");
+        // Cho phép đăng nhập bằng email hoặc username (không bắt buộc format email)
+        if (emailOrUsername.isEmpty()) {
+            binding.tilEmail.setError("Vui lòng nhập email hoặc tên đăng nhập");
             isValid = false;
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.setError("Email không hợp lệ");
+        } else if (emailOrUsername.length() < 2) {
+            binding.tilEmail.setError("Tên đăng nhập phải có ít nhất 2 ký tự");
             isValid = false;
         }
 
