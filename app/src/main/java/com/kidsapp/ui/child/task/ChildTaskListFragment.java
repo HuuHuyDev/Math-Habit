@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
-import com.kidsapp.data.FakeNotificationRepository;
 import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentTaskListBinding;
 import com.kidsapp.ui.child.components.ChildProfileLoader;
@@ -98,41 +97,122 @@ public class ChildTaskListFragment extends Fragment {
      * Hiển thị BottomSheet danh sách thông báo từ parent
      */
     private void showNotificationsBottomSheet() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
-        BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
-                getLayoutInflater());
+        BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
+        BottomsheetNotificationsBinding sheetBinding = BottomsheetNotificationsBinding.inflate(getLayoutInflater());
 
-        // Load dữ liệu thông báo từ parent
-        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
+        // ✅ Load thông báo từ API thay vì fake data
+        com.kidsapp.data.repository.NotificationRepository notificationRepo = 
+            new com.kidsapp.data.repository.NotificationRepository(requireContext());
+        
+        notificationRepo.getNotifications(new com.kidsapp.data.repository.NotificationRepository.NotificationListCallback() {
+            @Override
+            public void onSuccess(List<com.kidsapp.data.model.Notification> notifications) {
+                if (getActivity() == null) return;
+                
+                // Convert sang model của UI
+                List<Notification> uiNotifications = convertToUINotifications(notifications);
+                
+                NotificationAdapter adapter = new NotificationAdapter();
+                adapter.setNotifications(uiNotifications);
+                adapter.setOnNotificationClickListener((notification, position) -> {
+                    // Đánh dấu đã đọc
+                    String notifId = notifications.get(position).getId();
+                    notificationRepo.markAsRead(notifId, new com.kidsapp.data.repository.NotificationRepository.ActionCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // Reload notification count
+                            profileLoader.loadNotificationCount(binding.headerUser);
+                        }
 
-        // Setup adapter
-        NotificationAdapter adapter = new NotificationAdapter();
-        adapter.setNotifications(notifications);
-        adapter.setOnNotificationClickListener((notification, position) -> {
-            // Đánh dấu đã đọc khi click
-            Toast.makeText(requireContext(),
-                    notification.getMessage(), Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onError(String error) {
+                            // Ignore error
+                        }
+                    });
+                    
+                    // Xử lý click notification
+                    handleNotificationClick(notifications.get(position));
+                });
+
+                sheetBinding.recyclerNotifications.setAdapter(adapter);
+                
+                // Show/hide empty state
+                boolean isEmpty = notifications.isEmpty();
+                sheetBinding.layoutEmptyNotifications.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                sheetBinding.recyclerNotifications.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                
+                // Hiển thị empty state
+                sheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+                sheetBinding.recyclerNotifications.setVisibility(View.GONE);
+            }
         });
 
-        bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
+        // Đánh dấu tất cả đã đọc
+        sheetBinding.txtMarkAllRead.setOnClickListener(v -> {
+            notificationRepo.markAllAsRead(new com.kidsapp.data.repository.NotificationRepository.ActionCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
+                    // Reload notification count
+                    profileLoader.loadNotificationCount(binding.headerUser);
+                    dialog.dismiss();
+                }
 
-        // Hiển thị empty state nếu không có thông báo
-        if (notifications.isEmpty()) {
-            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
-            bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
-        } else {
-            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
-            bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
+                @Override
+                public void onError(String error) {
+                    Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        dialog.setContentView(sheetBinding.getRoot());
+        dialog.show();
+    }
+    
+    /**
+     * Convert từ API Notification sang UI Notification model
+     */
+    private List<Notification> convertToUINotifications(
+            List<com.kidsapp.data.model.Notification> apiNotifications) {
+        List<Notification> uiNotifications = new java.util.ArrayList<>();
+        
+        for (com.kidsapp.data.model.Notification apiNotif : apiNotifications) {
+            // Map API notification fields to UI notification constructor
+            // Constructor: (id, childName, childAvatar, taskTitle, taskType, time, isRead)
+            Notification uiNotif = new Notification(
+                apiNotif.getId(),
+                apiNotif.getTitle(),           // childName -> title
+                "",                             // childAvatar -> empty (không cần cho child)
+                apiNotif.getMessage(),          // taskTitle -> message
+                apiNotif.getType(),             // taskType -> type
+                apiNotif.getTimeAgo(),          // time -> timeAgo
+                apiNotif.isRead()               // isRead
+            );
+            uiNotifications.add(uiNotif);
         }
-
-        // Xử lý nút "Đánh dấu đã đọc"
-        bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
-            adapter.markAllAsRead();
-            Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
-        });
-
-        bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
-        bottomSheetDialog.show();
+        
+        return uiNotifications;
+    }
+    
+    /**
+     * Xử lý khi click vào notification
+     */
+    private void handleNotificationClick(com.kidsapp.data.model.Notification notification) {
+        // Hiển thị message
+        Toast.makeText(requireContext(), notification.getMessage(), Toast.LENGTH_SHORT).show();
+        
+        // TODO: Navigate dựa vào referenceType
+        // if ("TASK".equals(notification.getReferenceType())) {
+        //     // Navigate to task detail
+        // } else if ("CHALLENGE".equals(notification.getReferenceType())) {
+        //     // Navigate to challenge
+        // }
     }
 
     @Override

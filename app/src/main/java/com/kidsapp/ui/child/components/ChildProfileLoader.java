@@ -4,6 +4,7 @@ import android.content.Context;
 import com.kidsapp.R;
 import com.kidsapp.data.model.Child;
 import com.kidsapp.data.repository.ChildRepository;
+import com.kidsapp.data.repository.NotificationRepository;
 
 /**
  * Helper class để load child profile và fill vào header
@@ -13,6 +14,7 @@ public class ChildProfileLoader {
     
     private final Context context;
     private final ChildRepository childRepository;
+    private final NotificationRepository notificationRepository;
     private Child cachedChild;
     
     public interface ProfileLoadListener {
@@ -23,6 +25,7 @@ public class ChildProfileLoader {
     public ChildProfileLoader(Context context) {
         this.context = context;
         this.childRepository = new ChildRepository(context);
+        this.notificationRepository = new NotificationRepository(context);
     }
     
     /**
@@ -35,6 +38,8 @@ public class ChildProfileLoader {
             if (listener != null) {
                 listener.onProfileLoaded(cachedChild);
             }
+            // Vẫn load notification count
+            loadNotificationCount(headerView);
             return;
         }
         
@@ -44,6 +49,10 @@ public class ChildProfileLoader {
             public void onSuccess(Child child) {
                 cachedChild = child;
                 fillHeader(headerView, child);
+                
+                // Load notification count
+                loadNotificationCount(headerView);
+                
                 if (listener != null) {
                     listener.onProfileLoaded(child);
                 }
@@ -54,6 +63,10 @@ public class ChildProfileLoader {
                 // Fill dữ liệu mặc định
                 headerView.setUserName("Bé yêu");
                 headerView.setAvatar(R.drawable.ic_child_face);
+                
+                // Vẫn cố load notification count
+                loadNotificationCount(headerView);
+                
                 if (listener != null) {
                     listener.onProfileLoadError(error);
                 }
@@ -74,6 +87,24 @@ public class ChildProfileLoader {
         // } else {
             headerView.setAvatar(R.drawable.ic_child_face);
         // }
+    }
+    
+    /**
+     * Load số thông báo chưa đọc và hiển thị badge
+     */
+    public void loadNotificationCount(HeaderUserView headerView) {
+        notificationRepository.getUnreadCount(new NotificationRepository.UnreadCountCallback() {
+            @Override
+            public void onSuccess(long count) {
+                headerView.setNotificationCount((int) count);
+            }
+
+            @Override
+            public void onError(String error) {
+                // Không hiển thị badge nếu lỗi
+                headerView.setNotificationCount(0);
+            }
+        });
     }
     
     /**

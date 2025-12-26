@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
-import com.kidsapp.data.FakeNotificationRepository;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.ActivityLog;
 import com.kidsapp.data.model.Child;
@@ -165,14 +164,16 @@ public class ParentHomeFragment extends Fragment {
 
     /**
      * Hiển thị BottomSheet danh sách thông báo
+     * TODO: Implement real notification API for parent
      */
     private void showNotificationsBottomSheet() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
                 getLayoutInflater());
 
-        // Load dữ liệu demo
-        List<Notification> notifications = FakeNotificationRepository.getDemoNotifications();
+        // TODO: Load dữ liệu thông báo từ API
+        // Hiện tại chưa có API notification cho parent
+        List<Notification> notifications = new ArrayList<>();
 
         // Setup adapter
         NotificationAdapter adapter = new NotificationAdapter();
@@ -184,14 +185,9 @@ public class ParentHomeFragment extends Fragment {
 
         bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
 
-        // Hiển thị empty state nếu không có thông báo
-        if (notifications.isEmpty()) {
-            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
-            bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
-        } else {
-            bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
-            bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
-        }
+        // Hiển thị empty state
+        bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+        bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
 
         // Đánh dấu tất cả đã đọc
         bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {

@@ -107,6 +107,32 @@ public interface ApiService {
     @GET(ApiConfig.ENDPOINT_MY_PROFILE)
     Call<ApiResponseWrapper<Child>> getMyProfile();
     
+    // ==================== NOTIFICATION APIs ====================
+    
+    // Lấy tất cả thông báo
+    @GET(ApiConfig.ENDPOINT_NOTIFICATIONS)
+    Call<ApiResponseWrapper<List<NotificationResponse>>> getNotifications();
+    
+    // Lấy thông báo chưa đọc
+    @GET(ApiConfig.ENDPOINT_NOTIFICATIONS_UNREAD)
+    Call<ApiResponseWrapper<List<NotificationResponse>>> getUnreadNotifications();
+    
+    // Đếm số thông báo chưa đọc
+    @GET(ApiConfig.ENDPOINT_NOTIFICATIONS_UNREAD_COUNT)
+    Call<ApiResponseWrapper<Long>> getUnreadCount();
+    
+    // Đánh dấu đã đọc
+    @PUT(ApiConfig.ENDPOINT_NOTIFICATIONS_READ)
+    Call<ApiResponseWrapper<Void>> markNotificationAsRead(@Path("id") String notificationId);
+    
+    // Đánh dấu tất cả đã đọc
+    @PUT(ApiConfig.ENDPOINT_NOTIFICATIONS_READ_ALL)
+    Call<ApiResponseWrapper<Void>> markAllNotificationsAsRead();
+    
+    // Xóa thông báo
+    @DELETE("notifications/{id}")
+    Call<ApiResponseWrapper<Void>> deleteNotification(@Path("id") String notificationId);
+    
     // ==================== CHAT APIs ====================
     
     // Lấy danh sách phòng chat
@@ -241,6 +267,20 @@ public interface ApiService {
         public String avatarUrl;
         public String phone;
         public boolean isOnline;
+    }
+    
+    class NotificationResponse {
+        public String id;
+        public String type;
+        public String title;
+        public String message;
+        public boolean isRead;
+        public String readAt;
+        public String referenceId;
+        public String referenceType;
+        public String iconUrl;
+        public String createdAt;
+        public String timeAgo;
     }
 }
 
