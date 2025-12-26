@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.kidsapp.R;
 import com.kidsapp.databinding.FragmentDetailTaskBinding;
+import com.kidsapp.ui.child.components.ChildProfileLoader;
 import com.kidsapp.ui.child.practice.PracticeFragment;
 import com.kidsapp.ui.child.quizz.ExamFragment;
 
@@ -29,6 +30,7 @@ public class DetailTaskFragment extends Fragment {
     private FragmentDetailTaskBinding binding;
     private String taskId;
     private DetailTaskAdapter stepAdapter;
+    private ChildProfileLoader profileLoader;
 
     public interface OnStartTaskClickListener {
         void onStartTask(@NonNull String taskId, @NonNull TaskMode mode);
@@ -69,6 +71,9 @@ public class DetailTaskFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentDetailTaskBinding.inflate(inflater, container, false);
+        
+        profileLoader = new ChildProfileLoader(requireContext());
+        
         setupHeader();
         bindTaskInfo();
         setupStepsRecycler();
@@ -78,8 +83,9 @@ public class DetailTaskFragment extends Fragment {
     }
 
     private void setupHeader() {
-        binding.headerUser.setUserName("Hồ Hữu Huy");
-        binding.headerUser.setAvatar(R.drawable.ic_user_default);
+        // Load profile từ API và fill vào header
+        profileLoader.loadAndFillHeader(binding.headerUser, null);
+        
         binding.headerUser.setNotificationClick(v ->
                 Toast.makeText(requireContext(),
                         R.string.feature_coming_soon,

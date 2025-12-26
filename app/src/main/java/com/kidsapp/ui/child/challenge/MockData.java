@@ -27,7 +27,7 @@ public class MockData {
         child.setId(id);
         child.setName(name);
         child.setLevel(level);
-        child.setTotalXP(xp);
+        child.setTotalPoints(xp);
         return child;
     }
 }

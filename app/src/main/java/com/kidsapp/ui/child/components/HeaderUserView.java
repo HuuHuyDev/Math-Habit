@@ -49,7 +49,9 @@ public class HeaderUserView extends LinearLayout {
      * Set tên người dùng
      */
     public void setUserName(String name) {
-        txtUserName.setText(name);
+        if (name != null && !name.isEmpty()) {
+            txtUserName.setText(name);
+        }
     }
 
     /**
@@ -57,6 +59,16 @@ public class HeaderUserView extends LinearLayout {
      */
     public void setAvatar(int imgRes) {
         imgAvatar.setImageResource(imgRes);
+    }
+    
+    /**
+     * Set avatar từ URL (dùng Glide hoặc Picasso)
+     */
+    public void setAvatarUrl(String url) {
+        // TODO: Implement với Glide
+        // if (url != null && !url.isEmpty()) {
+        //     Glide.with(getContext()).load(url).into(imgAvatar);
+        // }
     }
 
     /**

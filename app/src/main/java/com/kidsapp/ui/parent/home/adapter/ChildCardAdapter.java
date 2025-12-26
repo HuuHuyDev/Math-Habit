@@ -84,7 +84,7 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
 
         private float calculateProgress(Child child) {
             int level = child.getLevel();
-            int xp = child.getTotalXP();
+            int xp = child.getTotalPoints();
             if (level <= 0 && xp <= 0) {
                 return 50f;
             }

@@ -103,5 +103,42 @@ public class SharedPref {
         editor.clear();
         editor.apply();
     }
+
+    // Generic methods for saving/getting data
+    public void saveString(String key, String value) {
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public String getString(String key, String defaultValue) {
+        return sharedPreferences.getString(key, defaultValue);
+    }
+
+    public void saveInt(String key, int value) {
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    public int getInt(String key, int defaultValue) {
+        return sharedPreferences.getInt(key, defaultValue);
+    }
+
+    public void saveBoolean(String key, boolean value) {
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return sharedPreferences.getBoolean(key, defaultValue);
+    }
+
+    public void saveLong(String key, long value) {
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
+    public long getLong(String key, long defaultValue) {
+        return sharedPreferences.getLong(key, defaultValue);
+    }
 }
 
