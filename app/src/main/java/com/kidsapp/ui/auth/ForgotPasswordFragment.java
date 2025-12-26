@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.kidsapp.R;
+import com.kidsapp.data.repository.AuthRepository;
 import com.kidsapp.databinding.FragmentForgotPasswordBinding;
 
 /**
@@ -19,6 +20,7 @@ import com.kidsapp.databinding.FragmentForgotPasswordBinding;
  */
 public class ForgotPasswordFragment extends Fragment {
     private FragmentForgotPasswordBinding binding;
+    private AuthRepository authRepository;
 
     @Nullable
     @Override
@@ -31,6 +33,7 @@ public class ForgotPasswordFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        authRepository = new AuthRepository(requireContext());
         setupClickListeners();
     }
 
@@ -56,14 +59,34 @@ public class ForgotPasswordFragment extends Fragment {
         }
 
         binding.tilForgotEmail.setError(null);
+        binding.btnSendResetLink.setEnabled(false);
+        binding.btnSendResetLink.setText("Đang gửi...");
 
-        // TODO: Call API to send OTP
-        Toast.makeText(requireContext(), "Đang gửi mã OTP...", Toast.LENGTH_SHORT).show();
+        authRepository.forgotPassword(email, new AuthRepository.SimpleCallback() {
+            @Override
+            public void onSuccess(String message) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.btnSendResetLink.setEnabled(true);
+                    binding.btnSendResetLink.setText("Gửi mã OTP");
+                    Toast.makeText(requireContext(), "Mã OTP đã được gửi đến email", Toast.LENGTH_SHORT).show();
+                    
+                    Bundle bundle = new Bundle();
+                    bundle.putString("email", email);
+                    Navigation.findNavController(requireView()).navigate(R.id.action_forgotPassword_to_verifyOtp, bundle);
+                });
+            }
 
-        // Navigate to OTP verification screen
-        Bundle bundle = new Bundle();
-        bundle.putString("email", email);
-        Navigation.findNavController(requireView()).navigate(R.id.action_forgotPassword_to_verifyOtp, bundle);
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.btnSendResetLink.setEnabled(true);
+                    binding.btnSendResetLink.setText("Gửi mã OTP");
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     @Override

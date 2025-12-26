@@ -16,6 +16,9 @@ public class ApiConfig {
     public static final String ENDPOINT_LOGOUT = "auth/tokens/{refreshToken}";
     public static final String ENDPOINT_GOOGLE_LOGIN = "auth/google";
     public static final String ENDPOINT_FACEBOOK_LOGIN = "auth/facebook";
+    public static final String ENDPOINT_FORGOT_PASSWORD = "auth/forgot-password";
+    public static final String ENDPOINT_VERIFY_OTP = "auth/verify-otp";
+    public static final String ENDPOINT_RESET_PASSWORD = "auth/reset-password";
     
     public static final String ENDPOINT_PARENT_PROFILE = "parent/profile";
     public static final String ENDPOINT_CHILDREN = "parent/children";

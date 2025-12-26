@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.kidsapp.R;
+import com.kidsapp.data.repository.AuthRepository;
 import com.kidsapp.databinding.FragmentVerifyOtpBinding;
 
 public class VerifyOtpFragment extends Fragment {
@@ -23,6 +24,7 @@ public class VerifyOtpFragment extends Fragment {
     private String email;
     private CountDownTimer countDownTimer;
     private EditText[] otpFields;
+    private AuthRepository authRepository;
 
     @Nullable
     @Override
@@ -35,6 +37,8 @@ public class VerifyOtpFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        authRepository = new AuthRepository(requireContext());
 
         if (getArguments() != null) {
             email = getArguments().getString("email", "");
@@ -95,6 +99,7 @@ public class VerifyOtpFragment extends Fragment {
     }
 
     private void startCountdownTimer() {
+        binding.tvResendOtp.setEnabled(false);
         countDownTimer = new CountDownTimer(120000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -126,24 +131,67 @@ public class VerifyOtpFragment extends Fragment {
             return;
         }
 
-        // TODO: Call API to verify OTP
-        // For now, navigate to reset password screen
-        Bundle bundle = new Bundle();
-        bundle.putString("email", email);
-        bundle.putString("otp", otp);
-        Navigation.findNavController(requireView()).navigate(R.id.action_verifyOtp_to_resetPassword, bundle);
+        binding.btnVerifyOtp.setEnabled(false);
+        binding.btnVerifyOtp.setText("Đang xác thực...");
+
+        authRepository.verifyOtp(email, otp, new AuthRepository.SimpleCallback() {
+            @Override
+            public void onSuccess(String message) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.btnVerifyOtp.setEnabled(true);
+                    binding.btnVerifyOtp.setText("Xác nhận");
+                    
+                    Bundle bundle = new Bundle();
+                    bundle.putString("email", email);
+                    bundle.putString("otp", otp);
+                    Navigation.findNavController(requireView()).navigate(R.id.action_verifyOtp_to_resetPassword, bundle);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.btnVerifyOtp.setEnabled(true);
+                    binding.btnVerifyOtp.setText("Xác nhận");
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void resendOtp() {
-        // TODO: Call API to resend OTP
-        Toast.makeText(requireContext(), "Đã gửi lại mã OTP", Toast.LENGTH_SHORT).show();
+        binding.tvResendOtp.setEnabled(false);
         
-        for (EditText field : otpFields) {
-            field.setText("");
-        }
-        otpFields[0].requestFocus();
-        
-        startCountdownTimer();
+        authRepository.forgotPassword(email, new AuthRepository.SimpleCallback() {
+            @Override
+            public void onSuccess(String message) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Đã gửi lại mã OTP", Toast.LENGTH_SHORT).show();
+                    
+                    for (EditText field : otpFields) {
+                        field.setText("");
+                    }
+                    otpFields[0].requestFocus();
+                    
+                    if (countDownTimer != null) {
+                        countDownTimer.cancel();
+                    }
+                    startCountdownTimer();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.tvResendOtp.setEnabled(true);
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     @Override

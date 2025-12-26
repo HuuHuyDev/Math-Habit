@@ -15,12 +15,14 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.kidsapp.R;
+import com.kidsapp.data.repository.AuthRepository;
 import com.kidsapp.databinding.FragmentResetPasswordBinding;
 
 public class ResetPasswordFragment extends Fragment {
     private FragmentResetPasswordBinding binding;
     private String email;
     private String otp;
+    private AuthRepository authRepository;
 
     @Nullable
     @Override
@@ -33,6 +35,8 @@ public class ResetPasswordFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        authRepository = new AuthRepository(requireContext());
 
         if (getArguments() != null) {
             email = getArguments().getString("email", "");
@@ -151,9 +155,31 @@ public class ResetPasswordFragment extends Fragment {
             return;
         }
 
-        // TODO: Call API to reset password
-        Toast.makeText(requireContext(), "Đặt lại mật khẩu thành công!", Toast.LENGTH_SHORT).show();
-        Navigation.findNavController(requireView()).navigate(R.id.action_resetPassword_to_login);
+        binding.btnResetPassword.setEnabled(false);
+        binding.btnResetPassword.setText("Đang xử lý...");
+
+        authRepository.resetPassword(email, otp, newPassword, new AuthRepository.SimpleCallback() {
+            @Override
+            public void onSuccess(String message) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.btnResetPassword.setEnabled(true);
+                    binding.btnResetPassword.setText("Đặt lại mật khẩu");
+                    Toast.makeText(requireContext(), "Đặt lại mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(requireView()).navigate(R.id.action_resetPassword_to_login);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                getActivity().runOnUiThread(() -> {
+                    binding.btnResetPassword.setEnabled(true);
+                    binding.btnResetPassword.setText("Đặt lại mật khẩu");
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     @Override

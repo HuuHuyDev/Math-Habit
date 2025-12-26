@@ -45,6 +45,15 @@ public interface ApiService {
     @DELETE(ApiConfig.ENDPOINT_LOGOUT)
     Call<Void> logout(@Path("refreshToken") String refreshToken);
     
+    @POST(ApiConfig.ENDPOINT_FORGOT_PASSWORD)
+    Call<ApiResponseWrapper<Void>> forgotPassword(@Body ForgotPasswordRequest request);
+    
+    @POST(ApiConfig.ENDPOINT_VERIFY_OTP)
+    Call<ApiResponseWrapper<Boolean>> verifyOtp(@Body VerifyOtpRequest request);
+    
+    @POST(ApiConfig.ENDPOINT_RESET_PASSWORD)
+    Call<ApiResponseWrapper<Void>> resetPassword(@Body ResetPasswordRequest request);
+    
     // Parent APIs
     @GET(ApiConfig.ENDPOINT_PARENT_PROFILE)
     Call<Parent> getParentProfile();
@@ -196,6 +205,36 @@ public interface ApiService {
         public SocialLoginRequest(String accessToken, String role) {
             this.accessToken = accessToken;
             this.role = role;
+        }
+    }
+    
+    class ForgotPasswordRequest {
+        public String email;
+        
+        public ForgotPasswordRequest(String email) {
+            this.email = email;
+        }
+    }
+    
+    class VerifyOtpRequest {
+        public String email;
+        public String otp;
+        
+        public VerifyOtpRequest(String email, String otp) {
+            this.email = email;
+            this.otp = otp;
+        }
+    }
+    
+    class ResetPasswordRequest {
+        public String email;
+        public String otp;
+        public String newPassword;
+        
+        public ResetPasswordRequest(String email, String otp, String newPassword) {
+            this.email = email;
+            this.otp = otp;
+            this.newPassword = newPassword;
         }
     }
     

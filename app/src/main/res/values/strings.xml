@@ -20,10 +20,10 @@
     <!-- Google Sign-In - Web Client ID -->
     <string name="default_web_client_id">445939716162-1r58hk7jucccp0e3rlgv239t7bfk7rht.apps.googleusercontent.com</string>
     
-    <!-- Facebook Login - Thay bằng App ID và Client Token từ Facebook Developer Console -->
-    <string name="facebook_app_id">YOUR_FACEBOOK_APP_ID</string>
-    <string name="facebook_client_token">YOUR_FACEBOOK_CLIENT_TOKEN</string>
-    <string name="fb_login_protocol_scheme">fbYOUR_FACEBOOK_APP_ID</string>
+    <!-- Facebook Login -->
+    <string name="facebook_app_id">860919466580668</string>
+    <string name="facebook_client_token">8787ae6831025262a84f3a3e03f8a66e</string>
+    <string name="fb_login_protocol_scheme">fb860919466580668</string>
 
     <!-- Parent -->
     <string name="parent_home">Trang chủ</string>

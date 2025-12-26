@@ -262,4 +262,110 @@ public class AuthRepository {
     public interface LogoutCallback {
         void onSuccess();
     }
+    
+    // ==================== FORGOT PASSWORD ====================
+    
+    public void forgotPassword(String email, SimpleCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo");
+            return;
+        }
+        
+        ApiService.ForgotPasswordRequest request = new ApiService.ForgotPasswordRequest(email);
+        apiService.forgotPassword(request).enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call,
+                    Response<ApiService.ApiResponseWrapper<Void>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.ApiResponseWrapper<Void> wrapper = response.body();
+                    if (wrapper.success) {
+                        callback.onSuccess(wrapper.message);
+                    } else {
+                        callback.onError(wrapper.message != null ? wrapper.message : "Gửi OTP thất bại");
+                    }
+                } else {
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
+                        if (errorBody.contains("không tồn tại")) {
+                            callback.onError("Email không tồn tại trong hệ thống");
+                        } else {
+                            callback.onError("Gửi OTP thất bại");
+                        }
+                    } catch (Exception e) {
+                        callback.onError("Gửi OTP thất bại");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+    
+    public void verifyOtp(String email, String otp, SimpleCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo");
+            return;
+        }
+        
+        ApiService.VerifyOtpRequest request = new ApiService.VerifyOtpRequest(email, otp);
+        apiService.verifyOtp(request).enqueue(new Callback<ApiService.ApiResponseWrapper<Boolean>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Boolean>> call,
+                    Response<ApiService.ApiResponseWrapper<Boolean>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.ApiResponseWrapper<Boolean> wrapper = response.body();
+                    if (wrapper.success) {
+                        callback.onSuccess("OTP hợp lệ");
+                    } else {
+                        callback.onError(wrapper.message != null ? wrapper.message : "OTP không hợp lệ");
+                    }
+                } else {
+                    callback.onError("OTP không hợp lệ hoặc đã hết hạn");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<Boolean>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+    
+    public void resetPassword(String email, String otp, String newPassword, SimpleCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo");
+            return;
+        }
+        
+        ApiService.ResetPasswordRequest request = new ApiService.ResetPasswordRequest(email, otp, newPassword);
+        apiService.resetPassword(request).enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call,
+                    Response<ApiService.ApiResponseWrapper<Void>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.ApiResponseWrapper<Void> wrapper = response.body();
+                    if (wrapper.success) {
+                        callback.onSuccess("Đặt lại mật khẩu thành công");
+                    } else {
+                        callback.onError(wrapper.message != null ? wrapper.message : "Đặt lại mật khẩu thất bại");
+                    }
+                } else {
+                    callback.onError("Đặt lại mật khẩu thất bại");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+    
+    public interface SimpleCallback {
+        void onSuccess(String message);
+        void onError(String error);
+    }
 }
