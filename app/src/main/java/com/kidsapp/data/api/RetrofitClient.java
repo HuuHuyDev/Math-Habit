@@ -21,8 +21,10 @@ public class RetrofitClient {
         this.sharedPref = sharedPref;
         
         try {
+            
             // Create logging interceptor
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+            });
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             
             // Create OkHttpClient with interceptors
@@ -42,7 +44,9 @@ public class RetrofitClient {
                     .build();
             
             apiService = retrofit.create(ApiService.class);
+            android.util.Log.d("RetrofitClient", "Retrofit created successfully!");
         } catch (Exception e) {
+            android.util.Log.e("RetrofitClient", "Error creating Retrofit", e);
             e.printStackTrace();
             // Tạo Retrofit đơn giản không có interceptor nếu có lỗi
             retrofit = new Retrofit.Builder()

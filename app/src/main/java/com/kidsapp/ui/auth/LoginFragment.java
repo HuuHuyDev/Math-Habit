@@ -124,11 +124,24 @@ public class LoginFragment extends Fragment {
     private void setupClickListeners() {
         // Login button
         binding.btnLogin.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Button clicked!", Toast.LENGTH_SHORT).show();
+            
             String email = binding.etEmail.getText().toString().trim();
             String password = binding.etPassword.getText().toString().trim();
 
+            Log.d(TAG, "=== LOGIN BUTTON CLICKED ===");
+            Log.d(TAG, "Email: " + email);
+            Log.d(TAG, "Password length: " + password.length());
+            
+            Toast.makeText(getContext(), "Email: " + email, Toast.LENGTH_SHORT).show();
+
             if (validateInput(email, password)) {
+                Log.d(TAG, "Validation passed, calling authViewModel.login()");
+                Toast.makeText(getContext(), "Calling API...", Toast.LENGTH_SHORT).show();
                 authViewModel.login(email, password);
+            } else {
+                Log.d(TAG, "Validation FAILED");
+                Toast.makeText(getContext(), "Validation failed", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -237,6 +250,11 @@ public class LoginFragment extends Fragment {
 
     private void observeViewModel() {
         authViewModel.getAuthResponse().observe(getViewLifecycleOwner(), response -> {
+            Log.d(TAG, "=== AUTH RESPONSE RECEIVED ===");
+            Log.d(TAG, "Response: " + (response != null ? "not null" : "null"));
+            if (response != null) {
+                Log.d(TAG, "User: " + (response.user != null ? response.user.email : "null"));
+            }
             if (response != null && response.user != null) {
                 Toast.makeText(getContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                 navigateByRole(response.user.role);
@@ -244,12 +262,15 @@ public class LoginFragment extends Fragment {
         });
 
         authViewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            Log.d(TAG, "=== AUTH ERROR RECEIVED ===");
+            Log.d(TAG, "Error: " + error);
             if (error != null) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
 
         authViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            Log.d(TAG, "=== LOADING STATE: " + isLoading + " ===");
             binding.btnLogin.setEnabled(!isLoading);
             binding.btnLoginGoogle.setEnabled(!isLoading);
             binding.btnLoginFacebook.setEnabled(!isLoading);

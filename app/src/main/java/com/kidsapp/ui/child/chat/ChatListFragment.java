@@ -40,7 +40,7 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     private static final String TAG = "ChatListFragment";
     private static final String ARG_TYPE = "type";
     public static final int TYPE_PARENT = 0;
-    public static final int TYPE_FRIENDS = 1;
+    public static final int TYPE_SIBLINGS = 1; // Đổi từ TYPE_FRIENDS sang TYPE_SIBLINGS
 
     private FragmentChatListBinding binding;
     private ConversationAdapter adapter;
@@ -93,32 +93,8 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
     }
 
     private void setupSearch() {
-        // Chỉ hiện thanh tìm kiếm cho tab Bạn bè
-        if (type == TYPE_FRIENDS) {
-            binding.searchContainer.setVisibility(View.VISIBLE);
-            
-            binding.edtSearch.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // Cancel previous search
-                    if (searchRunnable != null) {
-                        searchHandler.removeCallbacks(searchRunnable);
-                    }
-                    
-                    // Schedule new search
-                    searchRunnable = () -> searchFriends(s.toString());
-                    searchHandler.postDelayed(searchRunnable, SEARCH_DELAY);
-                }
-                
-                @Override
-                public void afterTextChanged(Editable s) {}
-            });
-        } else {
-            binding.searchContainer.setVisibility(View.GONE);
-        }
+        // Ẩn thanh tìm kiếm - không cần tìm kiếm anh chị em
+        binding.searchContainer.setVisibility(View.GONE);
     }
 
     private void searchFriends(String keyword) {
@@ -200,8 +176,8 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
             // Load danh sách phụ huynh từ API
             loadParents();
         } else {
-            // Load danh sách bạn bè từ chat rooms
-            loadFriendChatRooms();
+            // Load danh sách anh chị em từ API
+            loadSiblings();
         }
     }
 
@@ -209,6 +185,9 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
      * Load danh sách phụ huynh của child
      */
     private void loadParents() {
+        Log.d(TAG, "=== LOADING PARENTS ===");
+        Log.d(TAG, "Calling API: getMyParents()");
+        
         apiService.getMyParents()
                 .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>>() {
                     @Override
@@ -216,11 +195,18 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
                                            @NonNull Response<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>> response) {
                         showLoading(false);
                         
+                        Log.d(TAG, "=== API RESPONSE ===");
+                        Log.d(TAG, "Response code: " + response.code());
+                        Log.d(TAG, "Request URL: " + call.request().url());
+                        
                         if (response.isSuccessful() && response.body() != null && response.body().data != null) {
                             List<ApiService.ParentInfoResponse> parents = response.body().data;
+                            Log.d(TAG, "Parents count: " + parents.size());
+                            
                             List<Conversation> conversations = new ArrayList<>();
                             
                             for (ApiService.ParentInfoResponse parent : parents) {
+                                Log.d(TAG, "Parent: " + parent.name + ", userId: " + parent.userId);
                                 // Sử dụng userId để chat
                                 String chatUserId = parent.userId != null ? parent.userId : parent.id;
                                 conversations.add(new Conversation(
@@ -241,6 +227,12 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
                             adapter.setConversations(conversations);
                         } else {
                             Log.e(TAG, "Load parents failed: " + response.code());
+                            try {
+                                String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                                Log.e(TAG, "Error body: " + errorBody);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Cannot read error body");
+                            }
                             showEmptyMessage("Không thể tải danh sách phụ huynh");
                             adapter.setConversations(new ArrayList<>());
                         }
@@ -251,7 +243,75 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
                     public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<ApiService.ParentInfoResponse>>> call,
                                           @NonNull Throwable t) {
                         showLoading(false);
-                        Log.e(TAG, "Load parents error: " + t.getMessage());
+                        Log.e(TAG, "Load parents error: " + t.getMessage(), t);
+                        Log.e(TAG, "Request URL: " + call.request().url());
+                        showEmptyMessage("Lỗi kết nối: " + t.getMessage());
+                        adapter.setConversations(new ArrayList<>());
+                        updateEmptyState();
+                    }
+                });
+    }
+
+    /**
+     * Load danh sách anh chị em (các con cùng phụ huynh)
+     */
+    private void loadSiblings() {
+        Log.d(TAG, "=== LOADING SIBLINGS ===");
+        Log.d(TAG, "Calling API: getMySiblings()");
+        
+        apiService.getMySiblings()
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> call,
+                                           @NonNull Response<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> response) {
+                        showLoading(false);
+                        
+                        Log.d(TAG, "=== API RESPONSE ===");
+                        Log.d(TAG, "Response code: " + response.code());
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<ChildSearchResponse> siblings = response.body().data;
+                            Log.d(TAG, "Siblings count: " + siblings.size());
+                            
+                            List<Conversation> conversations = new ArrayList<>();
+                            
+                            for (ChildSearchResponse sibling : siblings) {
+                                Log.d(TAG, "Sibling: " + sibling.getDisplayName() + ", id: " + sibling.getId());
+                                conversations.add(new Conversation(
+                                        sibling.getId(), // userId để chat
+                                        sibling.getDisplayName(),
+                                        sibling.getAvatarUrl(),
+                                        "Nhấn để bắt đầu chat",
+                                        "",
+                                        0,
+                                        sibling.isOnline(),
+                                        Conversation.TYPE_FRIEND // Vẫn dùng TYPE_FRIEND cho anh chị em
+                                ));
+                            }
+                            
+                            if (conversations.isEmpty()) {
+                                showEmptyMessage("Chưa có anh chị em trong gia đình");
+                            }
+                            adapter.setConversations(conversations);
+                        } else {
+                            Log.e(TAG, "Load siblings failed: " + response.code());
+                            try {
+                                String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                                Log.e(TAG, "Error body: " + errorBody);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Cannot read error body");
+                            }
+                            showEmptyMessage("Không thể tải danh sách anh chị em");
+                            adapter.setConversations(new ArrayList<>());
+                        }
+                        updateEmptyState();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> call,
+                                          @NonNull Throwable t) {
+                        showLoading(false);
+                        Log.e(TAG, "Load siblings error: " + t.getMessage(), t);
                         showEmptyMessage("Lỗi kết nối: " + t.getMessage());
                         adapter.setConversations(new ArrayList<>());
                         updateEmptyState();
@@ -343,8 +403,8 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
                 binding.txtEmptyTitle.setText("Chưa có phụ huynh");
                 binding.txtEmptyMessage.setText("Liên kết với phụ huynh để bắt đầu chat");
             } else {
-                binding.txtEmptyTitle.setText("Chưa có bạn bè");
-                binding.txtEmptyMessage.setText("Tìm kiếm bạn bè để bắt đầu chat");
+                binding.txtEmptyTitle.setText("Chưa có anh chị em");
+                binding.txtEmptyMessage.setText("Chưa có anh chị em trong gia đình");
             }
         }
     }

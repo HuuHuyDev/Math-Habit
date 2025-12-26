@@ -48,7 +48,7 @@ public class ChatHubFragment extends Fragment {
                     tab.setText("👨‍👩‍👧 Phụ huynh");
                     break;
                 case 1:
-                    tab.setText("👫 Bạn bè");
+                    tab.setText("👶 Anh chị em");
                     break;
                 case 2:
                     tab.setText("🤖 Trợ lý AI");
@@ -92,7 +92,7 @@ public class ChatHubFragment extends Fragment {
                 case 0:
                     return ChatListFragment.newInstance(ChatListFragment.TYPE_PARENT);
                 case 1:
-                    return ChatListFragment.newInstance(ChatListFragment.TYPE_FRIENDS);
+                    return ChatListFragment.newInstance(ChatListFragment.TYPE_SIBLINGS);
                 case 2:
                     return ChatWithAiFragment.newInstance("CHILD");
                 default:

@@ -99,6 +99,10 @@ public interface ApiService {
     @GET(ApiConfig.ENDPOINT_MY_PARENTS)
     Call<ApiResponseWrapper<List<ParentInfoResponse>>> getMyParents();
     
+    // Lấy danh sách anh chị em (các con cùng phụ huynh)
+    @GET(ApiConfig.ENDPOINT_MY_SIBLINGS)
+    Call<ApiResponseWrapper<List<ChildSearchResponse>>> getMySiblings();
+    
     // ==================== CHAT APIs ====================
     
     // Lấy danh sách phòng chat

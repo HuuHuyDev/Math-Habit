@@ -1,6 +1,8 @@
 package com.kidsapp.data.repository;
 
 import android.content.Context;
+
+import com.kidsapp.data.api.ApiConfig;
 import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
@@ -32,15 +34,22 @@ public class AuthRepository {
         }
         
         try {
+            
             ApiService.LoginRequest request = new ApiService.LoginRequest(email, password);
             Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call = apiService.login(request);
+            
             
             call.enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.AuthResponse>>() {
                 @Override
                 public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, 
                         Response<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> response) {
+                    
                     if (response.isSuccessful() && response.body() != null) {
                         ApiService.ApiResponseWrapper<ApiService.AuthResponse> wrapper = response.body();
+                        android.util.Log.d("AuthRepository", "wrapper.success: " + wrapper.success);
+                        android.util.Log.d("AuthRepository", "wrapper.message: " + wrapper.message);
+                        android.util.Log.d("AuthRepository", "wrapper.data: " + (wrapper.data != null ? "not null" : "null"));
+                        
                         if (wrapper.success && wrapper.data != null) {
                             saveAuthData(wrapper.data);
                             callback.onSuccess(wrapper.data);
@@ -48,16 +57,26 @@ public class AuthRepository {
                             callback.onError(wrapper.message != null ? wrapper.message : "Đăng nhập thất bại");
                         }
                     } else {
+                        // Log error body
+                        try {
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                            android.util.Log.e("AuthRepository", "Error body: " + errorBody);
+                        } catch (Exception e) {
+                            android.util.Log.e("AuthRepository", "Cannot read error body");
+                        }
                         callback.onError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.AuthResponse>> call, Throwable t) {
+                    android.util.Log.e("AuthRepository", "Login failed", t);
+                    android.util.Log.e("AuthRepository", "Request URL: " + call.request().url());
                     callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Không thể kết nối đến server"));
                 }
             });
         } catch (Exception e) {
+            android.util.Log.e("AuthRepository", "Login exception", e);
             callback.onError("Lỗi: " + e.getMessage());
         }
     }
