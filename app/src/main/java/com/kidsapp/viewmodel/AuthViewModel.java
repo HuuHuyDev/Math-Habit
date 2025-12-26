@@ -28,6 +28,7 @@ public class AuthViewModel extends AndroidViewModel {
     public void login(String email, String password) {
         isLoadingLiveData.setValue(true);
         errorLiveData.setValue(null);
+        authResponseLiveData.setValue(null); // Clear previous response
         
         authRepository.login(email, password, new AuthRepository.AuthCallback() {
             @Override
@@ -107,6 +108,12 @@ public class AuthViewModel extends AndroidViewModel {
 
     public void clearError() {
         errorLiveData.setValue(null);
+    }
+
+    public void clearState() {
+        authResponseLiveData.setValue(null);
+        errorLiveData.setValue(null);
+        isLoadingLiveData.setValue(false);
     }
 
     public LiveData<ApiService.AuthResponse> getAuthResponse() {

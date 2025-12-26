@@ -11,6 +11,18 @@ import java.io.IOException;
  */
 public class AuthInterceptor implements Interceptor {
     private SharedPref sharedPref;
+    
+    // Các endpoint không cần token
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/auth/token",
+            "/auth/register",
+            "/auth/google",
+            "/auth/facebook",
+            "/auth/forgot-password",
+            "/auth/verify-otp",
+            "/auth/reset-password",
+            "/auth/token/refresh"
+    };
 
     public AuthInterceptor(SharedPref sharedPref) {
         this.sharedPref = sharedPref;
@@ -19,6 +31,12 @@ public class AuthInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
+        String path = originalRequest.url().encodedPath();
+        
+        // Không thêm token cho các endpoint public
+        if (isPublicEndpoint(path)) {
+            return chain.proceed(originalRequest);
+        }
         
         // Get token from SharedPreferences
         String token = sharedPref.getAuthToken();
@@ -33,6 +51,15 @@ public class AuthInterceptor implements Interceptor {
         }
         
         return chain.proceed(originalRequest);
+    }
+    
+    private boolean isPublicEndpoint(String path) {
+        for (String endpoint : PUBLIC_ENDPOINTS) {
+            if (path.contains(endpoint)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

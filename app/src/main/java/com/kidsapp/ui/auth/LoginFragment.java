@@ -249,6 +249,9 @@ public class LoginFragment extends Fragment {
     }
 
     private void observeViewModel() {
+        // Clear previous state when fragment starts
+        authViewModel.clearState();
+        
         authViewModel.getAuthResponse().observe(getViewLifecycleOwner(), response -> {
             Log.d(TAG, "=== AUTH RESPONSE RECEIVED ===");
             Log.d(TAG, "Response: " + (response != null ? "not null" : "null"));
@@ -264,17 +267,21 @@ public class LoginFragment extends Fragment {
         authViewModel.getError().observe(getViewLifecycleOwner(), error -> {
             Log.d(TAG, "=== AUTH ERROR RECEIVED ===");
             Log.d(TAG, "Error: " + error);
-            if (error != null) {
+            if (error != null && !error.isEmpty()) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                // Clear error after showing
+                authViewModel.clearError();
             }
         });
 
         authViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             Log.d(TAG, "=== LOADING STATE: " + isLoading + " ===");
-            binding.btnLogin.setEnabled(!isLoading);
-            binding.btnLoginGoogle.setEnabled(!isLoading);
-            binding.btnLoginFacebook.setEnabled(!isLoading);
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            if (isLoading != null) {
+                binding.btnLogin.setEnabled(!isLoading);
+                binding.btnLoginGoogle.setEnabled(!isLoading);
+                binding.btnLoginFacebook.setEnabled(!isLoading);
+                binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
         });
     }
 

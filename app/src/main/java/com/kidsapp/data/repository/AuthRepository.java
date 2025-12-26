@@ -230,6 +230,9 @@ public class AuthRepository {
         // Clear local data first
         sharedPref.clearAll();
         
+        // Reset RetrofitClient để tạo mới khi đăng nhập lại
+        RetrofitClient.resetInstance();
+        
         if (apiService != null && refreshToken != null && !refreshToken.isEmpty()) {
             apiService.logout(refreshToken).enqueue(new Callback<Void>() {
                 @Override

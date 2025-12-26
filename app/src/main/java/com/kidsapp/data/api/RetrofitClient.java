@@ -24,6 +24,7 @@ public class RetrofitClient {
             
             // Create logging interceptor
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+                android.util.Log.d("OkHttp", message);
             });
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             
@@ -62,6 +63,13 @@ public class RetrofitClient {
             instance = new RetrofitClient(sharedPref);
         }
         return instance;
+    }
+    
+    /**
+     * Reset instance - call this when user logs out
+     */
+    public static synchronized void resetInstance() {
+        instance = null;
     }
 
     public ApiService getApiService() {
