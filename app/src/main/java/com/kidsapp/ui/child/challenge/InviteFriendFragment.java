@@ -84,15 +84,11 @@ public class InviteFriendFragment extends Fragment implements InviteFriendAdapte
             public void onError(String error) {
                 showLoading(false);
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
-                loadMockData();
             }
         });
     }
 
-    private void loadMockData() {
-        adapter.setFriends(MockData.getFriends());
-        updateEmptyState();
-    }
+
 
     private void showLoading(boolean show) {
         binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);

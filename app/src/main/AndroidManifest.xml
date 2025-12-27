@@ -90,10 +90,6 @@
             android:name=".ui.challenge.QuickMatchActivity"
             android:exported="false" />
 
-        <!-- Invite Friends Activity -->
-        <activity
-            android:name=".ui.challenge.InviteFriendsActivity"
-            android:exported="false" />
 
         <!-- FileProvider for camera/gallery -->
         <provider

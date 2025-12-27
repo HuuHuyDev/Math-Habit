@@ -95,5 +95,11 @@ public class ApiConfig {
     public static final String ENDPOINT_TASK_UPDATE = "task-assignment/tasks/{taskId}";
     public static final String ENDPOINT_TASK_DELETE = "task-assignment/tasks/{taskId}";
     public static final String ENDPOINT_TASK_GET = "task-assignment/tasks/{taskId}";
+    
+    // Challenge Queue (Quick Match)
+    public static final String ENDPOINT_CHALLENGE_CATEGORIES = "exercise-categories";
+    public static final String ENDPOINT_CHALLENGE_QUEUE_JOIN = "challenge-queue/join";
+    public static final String ENDPOINT_CHALLENGE_QUEUE_STATUS = "challenge-queue/status/{childId}";
+    public static final String ENDPOINT_CHALLENGE_QUEUE_LEAVE = "challenge-queue/leave/{childId}";
 }
 
