@@ -869,4 +869,42 @@ public interface ApiService {
         public Integer usageCount;
         public Double completionRate;
     }
+    
+    // ==================== CHALLENGE QUEUE APIs (Quick Match) ====================
+    
+    /**
+     * Lấy danh sách category cho Challenge
+     * GET /api/exercise-categories?type=CHALLENGE
+     */
+    @GET(ApiConfig.ENDPOINT_CHALLENGE_CATEGORIES)
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.Category>>> getChallengeCategories(
+            @Query("type") String type
+    );
+    
+    /**
+     * Tham gia hàng đợi thách đấu nhanh
+     * POST /api/challenge-queue/join
+     */
+    @POST(ApiConfig.ENDPOINT_CHALLENGE_QUEUE_JOIN)
+    Call<ApiResponseWrapper<com.kidsapp.data.response.MatchFoundResponse>> joinQuickMatch(
+            @Body com.kidsapp.data.request.JoinQueueRequest request
+    );
+    
+    /**
+     * Lấy trạng thái hàng đợi (polling)
+     * GET /api/challenge-queue/status/{childId}
+     */
+    @GET(ApiConfig.ENDPOINT_CHALLENGE_QUEUE_STATUS)
+    Call<ApiResponseWrapper<com.kidsapp.data.response.QueueResponse>> getQueueStatus(
+            @Path("childId") String childId
+    );
+    
+    /**
+     * Rời khỏi hàng đợi
+     * DELETE /api/challenge-queue/leave/{childId}
+     */
+    @DELETE(ApiConfig.ENDPOINT_CHALLENGE_QUEUE_LEAVE)
+    Call<ApiResponseWrapper<String>> leaveQueue(
+            @Path("childId") String childId
+    );
 }

@@ -28,6 +28,122 @@ public class ChallengeRepository {
     }
 
     /**
+     * Lấy danh sách Category cho Challenge
+     */
+    public void getChallengeCategories(ResultCallback<List<com.kidsapp.data.model.Category>> callback) {
+        android.util.Log.d("ChallengeRepository", "Calling getChallengeCategories API with type=CHALLENGE");
+        
+        apiService.getChallengeCategories("CHALLENGE").enqueue(new Callback<ApiService.ApiResponseWrapper<List<com.kidsapp.data.model.Category>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.model.Category>>> call, 
+                                 Response<ApiService.ApiResponseWrapper<List<com.kidsapp.data.model.Category>>> response) {
+                android.util.Log.d("ChallengeRepository", "Response code: " + response.code());
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    android.util.Log.d("ChallengeRepository", "Response body: " + response.body());
+                    
+                    if (response.body().data != null) {
+                        android.util.Log.d("ChallengeRepository", "Categories count: " + response.body().data.size());
+                        callback.onSuccess(response.body().data);
+                    } else {
+                        android.util.Log.e("ChallengeRepository", "Response data is null");
+                        callback.onError("Không có dữ liệu chủ đề");
+                    }
+                } else {
+                    String errorMsg = "HTTP " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg += ": " + response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("ChallengeRepository", "Error reading error body", e);
+                    }
+                    android.util.Log.e("ChallengeRepository", "API Error: " + errorMsg);
+                    callback.onError("Không thể tải danh sách chủ đề");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.model.Category>>> call, Throwable t) {
+                android.util.Log.e("ChallengeRepository", "API call failed", t);
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Tham gia hàng đợi thách đấu nhanh
+     */
+    public void joinQuickMatch(String childId, String categoryId, int difficultyLevel, 
+                              ResultCallback<com.kidsapp.data.response.MatchFoundResponse> callback) {
+        com.kidsapp.data.request.JoinQueueRequest request = new com.kidsapp.data.request.JoinQueueRequest();
+        request.setChildId(childId);
+        request.setCategoryId(categoryId);
+        request.setDifficultyLevel(difficultyLevel);
+        
+        apiService.joinQuickMatch(request).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.MatchFoundResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.MatchFoundResponse>> call, 
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.MatchFoundResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tham gia hàng đợi");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.MatchFoundResponse>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Lấy trạng thái hàng đợi (polling)
+     */
+    public void getQueueStatus(String childId, ResultCallback<com.kidsapp.data.response.QueueResponse> callback) {
+        apiService.getQueueStatus(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.QueueResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.QueueResponse>> call, 
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.QueueResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể lấy trạng thái hàng đợi");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.QueueResponse>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Rời khỏi hàng đợi
+     */
+    public void leaveQueue(String childId, ResultCallback<Void> callback) {
+        apiService.leaveQueue(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<String>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<String>> call, 
+                                 Response<ApiService.ApiResponseWrapper<String>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    callback.onError("Không thể rời khỏi hàng đợi");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<String>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+
+    /**
      * Lấy danh sách bạn bè có thể mời thách đấu
      */
     public void getFriendsList(ResultCallback<List<Child>> callback) {

@@ -53,6 +53,9 @@ public class WeeklyPlanFragment extends Fragment {
     private List<WeekDay> weekDays = new ArrayList<>();
     private List<WeekTask> allTasks = new ArrayList<>();
     private int selectedDayIndex = 0;
+    
+    // Loading state
+    private boolean isLoading = false;
 
     // Child info
     private List<Child> childList = new ArrayList<>();
@@ -267,7 +270,7 @@ public class WeeklyPlanFragment extends Fragment {
     }
 
     /**
-     * Load dữ liệu từ API
+     * Load dữ liệu từ API - Tích hợp 3 luồng: Tasks, Habits, Quizzes
      */
     private void loadData() {
         // Load week days với thông tin isPast, isToday
@@ -280,48 +283,71 @@ public class WeeklyPlanFragment extends Fragment {
             return;
         }
         
-        // Load tasks từ API
+        // Show loading state
+        isLoading = true;
+        
+        // Clear existing tasks
+        allTasks.clear();
+        
+        // Load từ 3 API song song
         SharedPref sharedPref = new SharedPref(requireContext());
         ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
         
-        // Sử dụng API mới với 4 params (status, taskType, date đều null để lấy tất cả)
-        apiService.getTasksByChild(childId, null, null, null).enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
+        apiService.getTasksByChild(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>>() {
             @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call,
-                                   Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> response) {
                 if (!isAdded()) return;
                 
-                allTasks.clear();
-                
                 if (response.isSuccessful() && response.body() != null && response.body().success && response.body().data != null) {
-                    String weekStart = WeekPlanHelper.getWeekStartDate();
-                    String weekEnd = WeekPlanHelper.getWeekEndDate();
-                    
-                    for (Task task : response.body().data) {
-                        // Chỉ lấy tasks trong tuần hiện tại
-                        if (isTaskInCurrentWeek(task.getDueDate(), weekStart, weekEnd)) {
-                            WeekTask weekTask = convertTaskToWeekTask(task);
-                            if (weekTask != null) {
-                                allTasks.add(weekTask);
-                            }
+                    for (ApiService.HabitResponse habit : response.body().data) {
+                        WeekTask weekTask = convertHabitToWeekTask(habit);
+                        if (weekTask != null) {
+                            allTasks.add(weekTask);
                         }
                     }
                 }
                 
-                WeekPlanHelper.updateWeekDaysStats(weekDays, allTasks);
-                weekDayAdapter.notifyDataSetChanged();
-                loadTasksForSelectedDay();
-                updateWeekSummary();
-                hideLoading();
+                checkAndUpdateUI(++completedCalls[0], totalCalls);
             }
 
             @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.HabitResponse>>> call, Throwable t) {
                 if (!isAdded()) return;
-                hideLoading();
-                Toast.makeText(requireContext(), "Không thể tải nhiệm vụ", Toast.LENGTH_SHORT).show();
-                allTasks.clear();
-                WeekPlanHelper.updateWeekDaysStats(weekDays, allTasks);
+                checkAndUpdateUI(++completedCalls[0], totalCalls);
+            }
+        });
+        
+        // 3. Load Quizzes
+        apiService.getQuizzesByChild(childId, null).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.QuizResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.QuizResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.QuizResponse>>> response) {
+                if (!isAdded()) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().success && response.body().data != null) {
+                    // Convert API response to WeekTask
+                    for (ApiService.TaskAssignmentResponse task : response.body().data) {
+                        WeekTask weekTask = convertApiTaskToWeekTask(task);
+                        if (weekTask != null) {
+                            allTasks.add(weekTask);
+                        }
+                    }
+                }
+                
+                // Cập nhật UI
+                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
+                weekDayAdapter.notifyDataSetChanged();
+                loadTasksForSelectedDay();
+                updateWeekSummary();
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> call, Throwable t) {
+                if (!isAdded()) return;
+                // Fallback to demo data on error
+                allTasks = FakeWeekPlanRepository.getDemoTasks(childId);
+                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
                 loadTasksForSelectedDay();
                 updateWeekSummary();
             }
@@ -329,37 +355,38 @@ public class WeeklyPlanFragment extends Fragment {
     }
     
     /**
-     * Kiểm tra task có trong tuần hiện tại không
+     * Convert API TaskAssignmentResponse to WeekTask
      */
-    private boolean isTaskInCurrentWeek(String dueDate, String weekStart, String weekEnd) {
-        if (dueDate == null || dueDate.isEmpty()) return false;
-        return dueDate.compareTo(weekStart) >= 0 && dueDate.compareTo(weekEnd) <= 0;
-    }
-    
-    private WeekTask convertTaskToWeekTask(Task task) {
+    private WeekTask convertApiTaskToWeekTask(ApiService.TaskAssignmentResponse task) {
         if (task == null) return null;
         
-        String type = "EXERCISE".equalsIgnoreCase(task.getTaskType()) ? "quiz" : "habit";
-        int dayIndex = calculateDayIndexFromDate(task.getDueDate());
+        // Determine task type for UI
+        String type = "habit";
+        if ("exercise".equals(task.taskType)) {
+            type = "quiz";
+        }
         
-        int points = task.getPointsReward() > 0 ? task.getPointsReward() : 10;
-        int xp = points / 2;
+        // Calculate day index from dueDate
+        int dayIndex = calculateDayIndexFromDate(task.dueDate);
         
         WeekTask weekTask = new WeekTask(
                 task.getId(),
                 task.getTitle() != null ? task.getTitle() : "Nhiệm vụ",
                 task.getDescription() != null ? task.getDescription() : "",
                 type,
-                points,
-                xp,
+                task.pointsReward != null ? task.pointsReward : 10,
+                task.pointsReward != null ? task.pointsReward / 2 : 5,
                 dayIndex
         );
         
-        if ("COMPLETED".equalsIgnoreCase(task.getStatus())) {
+        // Set status
+        if ("completed".equals(task.status)) {
             weekTask.setCompleted(true);
         }
         
-        weekTask.setLevel(task.getPriority() > 0 ? task.getPriority() : 1);
+        if (task.priority != null) {
+            weekTask.setLevel(task.priority);
+        }
         
         return weekTask;
     }
