@@ -907,4 +907,64 @@ public interface ApiService {
     Call<ApiResponseWrapper<String>> leaveQueue(
             @Path("childId") String childId
     );
+    
+    // ==================== CHALLENGE INVITE APIs (Invite Friend) ====================
+    
+    /**
+     * Tạo Challenge mới và mời bạn
+     * POST /api/challenges/create
+     */
+    @POST("challenges/create")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> createChallenge(
+            @Body com.kidsapp.data.request.CreateChallengeRequest request
+    );
+    
+    /**
+     * Mời child tham gia challenge
+     * POST /api/challenges/{challengeId}/invite?creatorId={creatorId}
+     */
+    @POST("challenges/{challengeId}/invite")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> inviteChild(
+            @Path("challengeId") String challengeId,
+            @Query("creatorId") String creatorId,
+            @Body com.kidsapp.data.request.InviteChildRequest request
+    );
+    
+    /**
+     * Lấy danh sách bạn bè để mời
+     * GET /api/challenges/friends?childId={childId}
+     */
+    @GET("challenges/friends")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.response.FriendResponse>>> getFriends(
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy danh sách lời mời của tôi
+     * GET /api/challenges/invites/my-invites?childId={childId}
+     */
+    @GET("challenges/invites/my-invites")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeInviteResponse>>> getMyInvites(
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Chấp nhận lời mời
+     * POST /api/challenges/invites/{inviteId}/accept?childId={childId}
+     */
+    @POST("challenges/invites/{inviteId}/accept")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> acceptInvite(
+            @Path("inviteId") String inviteId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Từ chối lời mời
+     * POST /api/challenges/invites/{inviteId}/decline?childId={childId}
+     */
+    @POST("challenges/invites/{inviteId}/decline")
+    Call<ApiResponseWrapper<String>> declineInvite(
+            @Path("inviteId") String inviteId,
+            @Query("childId") String childId
+    );
 }

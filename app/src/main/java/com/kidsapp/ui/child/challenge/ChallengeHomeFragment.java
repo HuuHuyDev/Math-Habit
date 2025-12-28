@@ -81,7 +81,7 @@ public class ChallengeHomeFragment extends Fragment {
 
         // Invite Friend - Mời bạn
         binding.cardInviteFriend.setOnClickListener(v -> {
-            // Navigate to SelectChallengeConfigFragment first
+            // Navigate to SelectChallengeConfigFragment first (chọn chế độ trước)
             SelectChallengeConfigFragment fragment = SelectChallengeConfigFragment.newInstance("invite_friend");
             navigateToFragment(fragment);
         });

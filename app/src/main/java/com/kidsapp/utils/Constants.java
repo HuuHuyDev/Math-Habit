@@ -7,17 +7,16 @@ public class Constants {
     // API Base URL
     // Thiết bị thật: dùng IP máy tính (cùng WiFi với điện thoại)
     // Emulator: đổi thành http://10.0.2.2:8080/api/
-    // IP nhà: 192.168.1.35 | IP hiện tại: 192.168.53.4
+    // IP cũ: 192.168.56.9 | IP mới (FPT): 192.168.1.35
 
     // EMULATOR: Uncomment dòng này nếu dùng emulator
     // public static final String BASE_URL = "http://10.0.2.2:8080/api/";
     
-    // THIẾT BỊ THẬT: IP WiFi hiện tại
-    
-    public static final String BASE_URL = "http://192.168.56.9:8080/api/";
+    // THIẾT BỊ THẬT: IP WiFi hiện tại (FPT - 192.168.1.35)
+    public static final String BASE_URL = "http://192.168.1.35:8080/api/";
     
     // WebSocket URL
-    public static final String WS_URL = "ws://192.168.56.9:8080/api/ws";
+    public static final String WS_URL = "ws://192.168.1.35:8080/api/ws";
  
     
     // SharedPreferences Keys

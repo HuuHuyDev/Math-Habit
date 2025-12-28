@@ -189,38 +189,76 @@ public class SelectChallengeConfigFragment extends Fragment
     public void onCategoryClick(Category category) {
         selectedCategory = category;
         categoryAdapter.setSelectedCategory(category.getId());
-        updateStartButton();
+        
+        // Chuyển thẳng sang bước tiếp theo (bỏ chọn difficulty)
+        if ("invite_friend".equals(mode)) {
+            // Chuyển thẳng sang InviteFriendFragment
+            navigateToInviteFriend();
+        } else {
+            // Vẫn cần chọn difficulty cho Quick Match
+            updateStartButton();
+        }
     }
 
     private void onStartClick() {
-        if (selectedCategory == null) {
-            Toast.makeText(requireContext(), "Vui lòng chọn chủ đề", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        if ("quick_match".equals(mode)) {
-            // Navigate to QuickMatchFragment with config
-            navigateToQuickMatch();
-        } else {
-            // Navigate to InviteFriendFragment with config
-            navigateToInviteFriend();
+        try {
+            android.util.Log.d("SelectChallengeConfig", "=== onStartClick START ===");
+            android.util.Log.d("SelectChallengeConfig", "mode: " + mode);
+            android.util.Log.d("SelectChallengeConfig", "selectedCategory: " + (selectedCategory != null ? selectedCategory.getName() : "NULL"));
+            
+            if (selectedCategory == null) {
+                android.util.Log.w("SelectChallengeConfig", "selectedCategory is NULL");
+                Toast.makeText(requireContext(), "Vui lòng chọn chủ đề", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            if ("quick_match".equals(mode)) {
+                android.util.Log.d("SelectChallengeConfig", "Navigating to QuickMatch...");
+                // Navigate to QuickMatchFragment with config
+                navigateToQuickMatch();
+            } else {
+                android.util.Log.d("SelectChallengeConfig", "Navigating to InviteFriend...");
+                // Navigate to InviteFriendFragment with config
+                navigateToInviteFriend();
+            }
+        } catch (Exception e) {
+            android.util.Log.e("SelectChallengeConfig", "EXCEPTION in onStartClick", e);
+            new android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Lỗi")
+                .setMessage("Lỗi khi click nút: " + e.getMessage())
+                .setPositiveButton("OK", null)
+                .show();
         }
     }
 
     private void navigateToQuickMatch() {
         try {
-            android.util.Log.d("SelectChallengeConfig", "Navigating to QuickMatchFragment...");
-            android.util.Log.d("SelectChallengeConfig", "Category: " + selectedCategory.getName() + ", Difficulty: " + selectedDifficulty);
+            android.util.Log.d("SelectChallengeConfig", "=== navigateToQuickMatch START ===");
+            android.util.Log.d("SelectChallengeConfig", "Category: " + (selectedCategory != null ? selectedCategory.getName() : "NULL"));
+            android.util.Log.d("SelectChallengeConfig", "CategoryId: " + (selectedCategory != null ? selectedCategory.getId() : "NULL"));
+            android.util.Log.d("SelectChallengeConfig", "Difficulty: " + selectedDifficulty);
+            
+            if (selectedCategory == null) {
+                android.util.Log.e("SelectChallengeConfig", "selectedCategory is NULL!");
+                Toast.makeText(requireContext(), "Lỗi: Chưa chọn chủ đề", Toast.LENGTH_SHORT).show();
+                return;
+            }
             
             Bundle args = new Bundle();
             args.putString("category_id", selectedCategory.getId());
             args.putString("category_name", selectedCategory.getName());
             args.putInt("difficulty_level", selectedDifficulty);
             
+            android.util.Log.d("SelectChallengeConfig", "Creating QuickMatchFragment...");
             QuickMatchFragment fragment = new QuickMatchFragment();
             fragment.setArguments(args);
             
-            android.util.Log.d("SelectChallengeConfig", "Fragment created, starting transaction...");
+            android.util.Log.d("SelectChallengeConfig", "Starting fragment transaction...");
+            
+            if (getActivity() == null) {
+                android.util.Log.e("SelectChallengeConfig", "Activity is NULL!");
+                return;
+            }
             
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
@@ -234,33 +272,48 @@ public class SelectChallengeConfigFragment extends Fragment
                     .addToBackStack(null)
                     .commit();
             
-            android.util.Log.d("SelectChallengeConfig", "Transaction committed successfully");
+            android.util.Log.d("SelectChallengeConfig", "Transaction committed successfully!");
+            
         } catch (Exception e) {
-            android.util.Log.e("SelectChallengeConfig", "Error navigating to QuickMatchFragment", e);
+            android.util.Log.e("SelectChallengeConfig", "EXCEPTION in navigateToQuickMatch", e);
             Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void navigateToInviteFriend() {
-        Bundle args = new Bundle();
-        args.putString("category_id", selectedCategory.getId());
-        args.putString("category_name", selectedCategory.getName());
-        args.putInt("difficulty_level", selectedDifficulty);
-        
-        InviteFriendFragment fragment = new InviteFriendFragment();
-        fragment.setArguments(args);
-        
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(
-                        R.anim.slide_in_right,
-                        R.anim.slide_out_left,
-                        R.anim.slide_in_left,
-                        R.anim.slide_out_right
-                )
-                .replace(R.id.childHomeHost, fragment)
-                .addToBackStack(null)
-                .commit();
+        try {
+            android.util.Log.d("SelectChallengeConfig", "=== navigateToInviteFriend START ===");
+            
+            if (selectedCategory == null) {
+                android.util.Log.e("SelectChallengeConfig", "selectedCategory is NULL!");
+                Toast.makeText(requireContext(), "Chưa chọn chủ đề", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            Bundle args = new Bundle();
+            args.putString("category_id", selectedCategory.getId());
+            args.putString("category_name", selectedCategory.getName());
+            // Không cần difficulty_level nữa
+            
+            InviteFriendFragment fragment = new InviteFriendFragment();
+            fragment.setArguments(args);
+            
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                    )
+                    .replace(R.id.childHomeHost, fragment)
+                    .addToBackStack(null)
+                    .commit();
+            
+        } catch (Exception e) {
+            android.util.Log.e("SelectChallengeConfig", "EXCEPTION in navigateToInviteFriend", e);
+            Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
