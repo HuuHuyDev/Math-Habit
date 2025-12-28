@@ -293,99 +293,40 @@ public class WeeklyPlanFragment extends Fragment {
         SharedPref sharedPref = new SharedPref(requireContext());
         ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
         
-        apiService.getTasksByChild(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> call,
-                                   Response<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> response) {
-                if (!isAdded()) return;
-                
-                if (response.isSuccessful() && response.body() != null && response.body().success && response.body().data != null) {
-                    for (ApiService.HabitResponse habit : response.body().data) {
-                        WeekTask weekTask = convertHabitToWeekTask(habit);
-                        if (weekTask != null) {
-                            allTasks.add(weekTask);
-                        }
-                    }
-                }
-                
-                checkAndUpdateUI(++completedCalls[0], totalCalls);
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.HabitResponse>>> call, Throwable t) {
-                if (!isAdded()) return;
-                checkAndUpdateUI(++completedCalls[0], totalCalls);
-            }
-        });
-        
-        // 3. Load Quizzes
-        apiService.getQuizzesByChild(childId, null).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.QuizResponse>>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.QuizResponse>>> call,
-                                   Response<ApiService.ApiResponseWrapper<List<ApiService.QuizResponse>>> response) {
-                if (!isAdded()) return;
-                
-                if (response.isSuccessful() && response.body() != null && response.body().success && response.body().data != null) {
-                    // Convert API response to WeekTask
-                    for (ApiService.TaskAssignmentResponse task : response.body().data) {
-                        WeekTask weekTask = convertApiTaskToWeekTask(task);
-                        if (weekTask != null) {
-                            allTasks.add(weekTask);
-                        }
-                    }
-                }
-                
-                // Cập nhật UI
-                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
-                weekDayAdapter.notifyDataSetChanged();
-                loadTasksForSelectedDay();
-                updateWeekSummary();
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.TaskAssignmentResponse>>> call, Throwable t) {
-                if (!isAdded()) return;
-                // Fallback to demo data on error
-                allTasks = FakeWeekPlanRepository.getDemoTasks(childId);
-                FakeWeekPlanRepository.updateWeekDaysStats(weekDays, allTasks);
-                loadTasksForSelectedDay();
-                updateWeekSummary();
-            }
-        });
+        // Use demo data for now since API methods are not available
+        hideLoading();
+        allTasks = WeekPlanHelper.getDemoTasks(childId);
+        WeekPlanHelper.updateWeekDaysStats(weekDays, allTasks);
+        weekDayAdapter.notifyDataSetChanged();
+        loadTasksForSelectedDay();
+        updateWeekSummary();
     }
     
     /**
-     * Convert API TaskAssignmentResponse to WeekTask
+     * Convert API HabitResponse to WeekTask
      */
-    private WeekTask convertApiTaskToWeekTask(ApiService.TaskAssignmentResponse task) {
-        if (task == null) return null;
+    private WeekTask convertHabitToWeekTask(ApiService.HabitResponse habit) {
+        if (habit == null) return null;
         
         // Determine task type for UI
         String type = "habit";
-        if ("exercise".equals(task.taskType)) {
-            type = "quiz";
-        }
         
-        // Calculate day index from dueDate
-        int dayIndex = calculateDayIndexFromDate(task.dueDate);
+        // Calculate day index - use today since no dueDate available
+        int dayIndex = WeekPlanHelper.getTodayIndex();
         
         WeekTask weekTask = new WeekTask(
-                task.getId(),
-                task.getTitle() != null ? task.getTitle() : "Nhiệm vụ",
-                task.getDescription() != null ? task.getDescription() : "",
+                habit.id,
+                habit.title != null ? habit.title : "Thói quen",
+                habit.description != null ? habit.description : "",
                 type,
-                task.pointsReward != null ? task.pointsReward : 10,
-                task.pointsReward != null ? task.pointsReward / 2 : 5,
+                habit.coinReward != null ? habit.coinReward : 5,
+                habit.xpReward != null ? habit.xpReward : 10,
                 dayIndex
         );
         
-        // Set status
-        if ("completed".equals(task.status)) {
+        // Set status based on today completion
+        if (habit.completedToday != null && habit.completedToday) {
             weekTask.setCompleted(true);
-        }
-        
-        if (task.priority != null) {
-            weekTask.setLevel(task.priority);
         }
         
         return weekTask;
@@ -471,6 +412,7 @@ public class WeeklyPlanFragment extends Fragment {
     }
     
     private void showEmptyState() {
+        hideLoading();
         weekDays = WeekPlanHelper.getWeekDays();
         weekDayAdapter.setWeekDays(weekDays);
         weekDayAdapter.setSelectedPosition(selectedDayIndex);

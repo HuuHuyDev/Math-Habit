@@ -1,16 +1,21 @@
 package com.kidsapp.ui.child.task.tabs;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.Task;
 import com.kidsapp.data.repository.TaskRepository;
 import com.kidsapp.databinding.FragmentWorkTabBinding;
@@ -63,6 +68,43 @@ public class WorkTabFragment extends Fragment {
         
         setupActivityLaunchers();
         setupRecyclerView();
+    }
+    
+    /**
+     * Setup activity result launchers
+     */
+    private void setupActivityLaunchers() {
+        // Camera launcher
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // Handle camera result
+                }
+        );
+        
+        // Gallery launcher
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // Handle gallery result
+                }
+        );
+        
+        // Camera permission launcher
+        cameraPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    // Handle camera permission result
+                }
+        );
+        
+        // Storage permission launcher
+        storagePermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    // Handle storage permission result
+                }
+        );
     }
     
     /**
