@@ -1,13 +1,8 @@
 package com.kidsapp.ui.child.task.tabs;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +12,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -30,13 +22,14 @@ import com.kidsapp.data.repository.TaskRepository;
 import com.kidsapp.databinding.FragmentWorkTabBinding;
 import com.kidsapp.ui.child.task.adapter.WorkTaskAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Tab Công việc - Hiển thị tất cả công việc (Việc nhà + Cá nhân)
  * Gộp housework, habit, và custom tasks
+ * 
+ * NOTE: API logic đã bị xóa, chỉ giữ lại UI với mock data
  */
 public class WorkTabFragment extends Fragment {
     
@@ -76,20 +69,17 @@ public class WorkTabFragment extends Fragment {
         
         setupActivityLaunchers();
         setupRecyclerView();
-        loadTasks();
     }
     
     /**
-     * Setup Activity Result Launchers cho camera/gallery
+     * Setup activity result launchers
      */
     private void setupActivityLaunchers() {
         // Camera launcher
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && photoUri != null) {
-                        uploadProof(photoUri, currentTask);
-                    }
+                    // Handle camera result
                 }
         );
         
@@ -97,12 +87,7 @@ public class WorkTabFragment extends Fragment {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri uri = result.getData().getData();
-                        if (uri != null) {
-                            uploadProof(uri, currentTask);
-                        }
-                    }
+                    // Handle gallery result
                 }
         );
         
@@ -124,7 +109,7 @@ public class WorkTabFragment extends Fragment {
                 }
         );
         
-        // Storage permission launcher (for Android 13+)
+        // Storage permission launcher
         storagePermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 permissions -> {
@@ -163,7 +148,12 @@ public class WorkTabFragment extends Fragment {
 
             @Override
             public void onCompleteClick(Task task) {
-                onTaskComplete(task);
+                Toast.makeText(requireContext(), "Hoàn thành: " + task.getTitle(), Toast.LENGTH_SHORT).show();
+                // Remove task from list
+                adapter.removeTask(task);
+                if (adapter.getItemCount() == 0) {
+                    showEmptyState();
+                }
             }
         });
         

@@ -67,8 +67,8 @@ public class ApiConfig {
     // Task Templates
     public static final String ENDPOINT_TASK_HABIT_TEMPLATES = "tasks/habit-templates";
     public static final String ENDPOINT_TASK_HABIT_TEMPLATES_FOR_CHILD = "tasks/habit-templates/for-child/{childId}";
-    public static final String ENDPOINT_TASK_EXERCISES = "tasks/exercises";
-    public static final String ENDPOINT_TASK_EXERCISES_FOR_CHILD = "tasks/exercises/for-child/{childId}";
+    public static final String ENDPOINT_TASK_EXERCISE_TEMPLATES = "tasks/exercises";
+    public static final String ENDPOINT_TASK_EXERCISE_TEMPLATES_FOR_CHILD = "tasks/exercises/for-child/{childId}";
     
     // ==================== REPORT ====================
     public static final String ENDPOINT_WEEKLY_PROGRESS = "reports/weekly";
@@ -101,4 +101,22 @@ public class ApiConfig {
     
     // ==================== AI CHAT ====================
     public static final String ENDPOINT_AI_CHAT = "chat";
+    // Task Assignment (Giao bài tập/thói quen)
+    public static final String ENDPOINT_TASK_SUBJECTS = "task-assignment/subjects";
+    public static final String ENDPOINT_TASK_ASSIGNMENT_EXERCISES = "task-assignment/exercises";
+    public static final String ENDPOINT_TASK_ASSIGNMENT_EXERCISES_FOR_CHILD = "task-assignment/exercises/for-child/{childId}";
+    public static final String ENDPOINT_TASK_HABIT_CATEGORIES = "task-assignment/habit-categories";
+    public static final String ENDPOINT_TASK_ASSIGNMENT_HABITS = "task-assignment/habits";
+    public static final String ENDPOINT_TASK_ASSIGNMENT_HABITS_FOR_CHILD = "task-assignment/habits/for-child/{childId}";
+    public static final String ENDPOINT_TASK_ASSIGN = "task-assignment/assign";
+    public static final String ENDPOINT_TASK_ASSIGN_MULTIPLE = "task-assignment/assign-multiple";
+    public static final String ENDPOINT_TASK_UPDATE = "task-assignment/tasks/{taskId}";
+    public static final String ENDPOINT_TASK_DELETE = "task-assignment/tasks/{taskId}";
+    public static final String ENDPOINT_TASK_GET = "task-assignment/tasks/{taskId}";
+    
+    // Challenge Queue (Quick Match)
+    public static final String ENDPOINT_CHALLENGE_CATEGORIES = "exercise-categories";
+    public static final String ENDPOINT_CHALLENGE_QUEUE_JOIN = "challenge-queue/join";
+    public static final String ENDPOINT_CHALLENGE_QUEUE_STATUS = "challenge-queue/status/{childId}";
+    public static final String ENDPOINT_CHALLENGE_QUEUE_LEAVE = "challenge-queue/leave/{childId}";
 }

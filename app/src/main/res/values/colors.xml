@@ -116,4 +116,7 @@
     <!-- Task Colors -->
     <color name="exercise_color">#FF9800</color>
     <color name="warning_color">#FF9800</color>
+    <!-- Challenge Config Colors -->
+    <color name="info_background">#E3F2FD</color>
+    <color name="gray_light">#E0E0E0</color>
 </resources>

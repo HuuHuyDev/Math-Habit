@@ -150,4 +150,18 @@ public class WeekPlanHelper {
         }
         return false;
     }
+    
+    /**
+     * Tạo demo tasks cho testing
+     */
+    public static List<WeekTask> getDemoTasks(String childId) {
+        List<WeekTask> demoTasks = new ArrayList<>();
+        
+        // Thêm một vài demo tasks
+        demoTasks.add(new WeekTask("demo1", "Làm bài tập toán", "Hoàn thành 10 bài tập", "quiz", 20, 10, 0));
+        demoTasks.add(new WeekTask("demo2", "Đọc sách", "Đọc 30 phút", "habit", 15, 8, 1));
+        demoTasks.add(new WeekTask("demo3", "Tập thể dục", "Chạy bộ 15 phút", "habit", 10, 5, 2));
+        
+        return demoTasks;
+    }
 }
