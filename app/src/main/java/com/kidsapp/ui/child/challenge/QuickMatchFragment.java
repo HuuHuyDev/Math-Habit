@@ -64,27 +64,44 @@ public class QuickMatchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        repository = new ChallengeRepository(requireContext());
-        sharedPref = new SharedPref(requireContext());
+        android.util.Log.d("QuickMatchFragment", "=== onViewCreated START ===");
         
-        // Get data from arguments
-        Bundle args = getArguments();
-        if (args != null) {
-            categoryId = args.getString("category_id");
-            categoryName = args.getString("category_name");
-            difficultyLevel = args.getInt("difficulty_level", 3);
+        try {
+            repository = new ChallengeRepository(requireContext());
+            sharedPref = new SharedPref(requireContext());
+            android.util.Log.d("QuickMatchFragment", "Repository and SharedPref initialized");
             
-            android.util.Log.d("QuickMatchFragment", "Category: " + categoryName + ", Difficulty: " + difficultyLevel);
+            // Get data from arguments
+            Bundle args = getArguments();
+            if (args != null) {
+                categoryId = args.getString("category_id");
+                categoryName = args.getString("category_name");
+                difficultyLevel = args.getInt("difficulty_level", 3);
+                
+                android.util.Log.d("QuickMatchFragment", "Arguments received:");
+                android.util.Log.d("QuickMatchFragment", "  - categoryId: " + categoryId);
+                android.util.Log.d("QuickMatchFragment", "  - categoryName: " + categoryName);
+                android.util.Log.d("QuickMatchFragment", "  - difficultyLevel: " + difficultyLevel);
+            } else {
+                android.util.Log.e("QuickMatchFragment", "Arguments is NULL!");
+            }
+            
+            showRandomTip();
+            
+            binding.btnCancel.setOnClickListener(v -> {
+                android.util.Log.d("QuickMatchFragment", "Cancel button clicked");
+                cancelMatchmaking();
+            });
+            
+            // Bắt đầu join queue
+            android.util.Log.d("QuickMatchFragment", "Starting joinQueue...");
+            joinQueue();
+            
+        } catch (Exception e) {
+            android.util.Log.e("QuickMatchFragment", "EXCEPTION in onViewCreated", e);
+            Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            requireActivity().onBackPressed();
         }
-        
-        showRandomTip();
-        
-        binding.btnCancel.setOnClickListener(v -> {
-            cancelMatchmaking();
-        });
-        
-        // Bắt đầu join queue
-        joinQueue();
     }
 
     /**
@@ -100,48 +117,72 @@ public class QuickMatchFragment extends Fragment {
      * Tham gia hàng đợi
      */
     private void joinQueue() {
-        String childId = sharedPref.getChildId();
-        
-        android.util.Log.d("QuickMatchFragment", "joinQueue - childId: " + childId + ", categoryId: " + categoryId);
-        
-        if (childId == null || childId.isEmpty()) {
-            android.util.Log.e("QuickMatchFragment", "childId is null or empty!");
-            Toast.makeText(requireContext(), "Chưa đăng nhập. Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
-            return;
-        }
-        
-        if (categoryId == null || categoryId.isEmpty()) {
-            android.util.Log.e("QuickMatchFragment", "categoryId is null or empty!");
-            Toast.makeText(requireContext(), "Thiếu thông tin chủ đề. Vui lòng thử lại", Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
-            return;
-        }
-        
-        android.util.Log.d("QuickMatchFragment", "Calling joinQuickMatch API...");
-        
-        repository.joinQuickMatch(childId, categoryId, difficultyLevel, 
-            new ChallengeRepository.ResultCallback<MatchFoundResponse>() {
-                @Override
-                public void onSuccess(MatchFoundResponse response) {
-                    android.util.Log.d("QuickMatchFragment", "joinQuickMatch success - matched: " + response.isMatched());
-                    
-                    if (response.isMatched()) {
-                        // Đã tìm thấy đối thủ ngay
-                        onMatchFound(response);
-                    } else {
-                        // Chưa tìm thấy, bắt đầu polling
-                        startPolling();
+        try {
+            String childId = sharedPref.getChildId();
+            
+            android.util.Log.d("QuickMatchFragment", "=== joinQueue START ===");
+            android.util.Log.d("QuickMatchFragment", "childId: " + (childId != null ? childId : "NULL"));
+            android.util.Log.d("QuickMatchFragment", "categoryId: " + (categoryId != null ? categoryId : "NULL"));
+            android.util.Log.d("QuickMatchFragment", "categoryName: " + (categoryName != null ? categoryName : "NULL"));
+            android.util.Log.d("QuickMatchFragment", "difficultyLevel: " + difficultyLevel);
+            
+            if (childId == null || childId.isEmpty()) {
+                android.util.Log.e("QuickMatchFragment", "childId is null or empty!");
+                Toast.makeText(requireContext(), "Chưa đăng nhập. Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
+                return;
+            }
+            
+            if (categoryId == null || categoryId.isEmpty()) {
+                android.util.Log.e("QuickMatchFragment", "categoryId is null or empty!");
+                Toast.makeText(requireContext(), "Thiếu thông tin chủ đề. Vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
+                return;
+            }
+            
+            android.util.Log.d("QuickMatchFragment", "Calling repository.joinQuickMatch...");
+            
+            repository.joinQuickMatch(childId, categoryId, difficultyLevel, 
+                new ChallengeRepository.ResultCallback<MatchFoundResponse>() {
+                    @Override
+                    public void onSuccess(MatchFoundResponse response) {
+                        android.util.Log.d("QuickMatchFragment", "=== joinQuickMatch SUCCESS ===");
+                        android.util.Log.d("QuickMatchFragment", "Response: " + (response != null ? response.toString() : "NULL"));
+                        
+                        if (response == null) {
+                            android.util.Log.e("QuickMatchFragment", "Response is NULL!");
+                            Toast.makeText(requireContext(), "Lỗi: Không nhận được phản hồi từ server", Toast.LENGTH_SHORT).show();
+                            requireActivity().onBackPressed();
+                            return;
+                        }
+                        
+                        android.util.Log.d("QuickMatchFragment", "isMatched: " + response.isMatched());
+                        
+                        if (response.isMatched()) {
+                            // Đã tìm thấy đối thủ ngay
+                            android.util.Log.d("QuickMatchFragment", "Match found immediately!");
+                            onMatchFound(response);
+                        } else {
+                            // Chưa tìm thấy, bắt đầu polling
+                            android.util.Log.d("QuickMatchFragment", "Not matched yet, starting polling...");
+                            startPolling();
+                        }
                     }
-                }
 
-                @Override
-                public void onError(String error) {
-                    android.util.Log.e("QuickMatchFragment", "joinQuickMatch error: " + error);
-                    Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed();
-                }
-            });
+                    @Override
+                    public void onError(String error) {
+                        android.util.Log.e("QuickMatchFragment", "=== joinQuickMatch ERROR ===");
+                        android.util.Log.e("QuickMatchFragment", "Error: " + error);
+                        Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                        requireActivity().onBackPressed();
+                    }
+                });
+                
+        } catch (Exception e) {
+            android.util.Log.e("QuickMatchFragment", "EXCEPTION in joinQueue", e);
+            Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            requireActivity().onBackPressed();
+        }
     }
     
     /**
@@ -241,41 +282,69 @@ public class QuickMatchFragment extends Fragment {
      * Khi tìm thấy đối thủ
      */
     private void onMatchFound(MatchFoundResponse response) {
-        Toast.makeText(requireContext(), 
-            "Đã tìm thấy đối thủ: " + response.getOpponentName() + " 🎉", 
-            Toast.LENGTH_SHORT).show();
-        
-        // Navigate to QuizBattleFragment after short delay
-        handler.postDelayed(() -> {
-            if (getActivity() != null) {
-                // Create QuizBattleFragment
-                QuizBattleFragment battleFragment = new QuizBattleFragment();
-                
-                // Pass data to battle fragment
-                Bundle args = new Bundle();
-                args.putString("challenge_id", response.getChallengeId());
-                args.putString("opponent_name", response.getOpponentName());
-                args.putString("opponent_id", response.getOpponentId());
-                args.putString("category_name", response.getCategoryName());
-                args.putInt("difficulty_level", response.getDifficultyLevel());
-                args.putInt("total_questions", response.getTotalQuestions());
-                args.putInt("time_limit_minutes", response.getTimeLimitMinutes());
-                battleFragment.setArguments(args);
-                
-                // Navigate to QuizBattleFragment - use childHomeHost
-                getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(
-                        R.anim.slide_in_right,
-                        R.anim.slide_out_left,
-                        R.anim.slide_in_left,
-                        R.anim.slide_out_right
-                    )
-                    .replace(R.id.childHomeHost, battleFragment)
-                    .addToBackStack(null)
-                    .commit();
-            }
-        }, 1500);
+        try {
+            android.util.Log.d("QuickMatchFragment", "=== onMatchFound START ===");
+            android.util.Log.d("QuickMatchFragment", "Response: " + response);
+            android.util.Log.d("QuickMatchFragment", "ChallengeId: " + response.getChallengeId());
+            android.util.Log.d("QuickMatchFragment", "OpponentName: " + response.getOpponentName());
+            android.util.Log.d("QuickMatchFragment", "OpponentId: " + response.getOpponentId());
+            
+            Toast.makeText(requireContext(), 
+                "Đã tìm thấy đối thủ: " + response.getOpponentName() + " 🎉", 
+                Toast.LENGTH_SHORT).show();
+            
+            // Navigate to QuizBattleFragment after short delay
+            handler.postDelayed(() -> {
+                try {
+                    if (getActivity() == null) {
+                        android.util.Log.e("QuickMatchFragment", "Activity is NULL, cannot navigate!");
+                        return;
+                    }
+                    
+                    android.util.Log.d("QuickMatchFragment", "Creating QuizBattleFragment...");
+                    
+                    // Create QuizBattleFragment
+                    QuizBattleFragment battleFragment = new QuizBattleFragment();
+                    
+                    // Pass data to battle fragment
+                    Bundle args = new Bundle();
+                    args.putString("challenge_id", response.getChallengeId());
+                    args.putString("opponent_name", response.getOpponentName());
+                    args.putString("opponent_id", response.getOpponentId());
+                    args.putString("category_name", response.getCategoryName());
+                    args.putInt("difficulty_level", response.getDifficultyLevel());
+                    args.putInt("total_questions", response.getTotalQuestions());
+                    args.putInt("time_limit_minutes", response.getTimeLimitMinutes());
+                    battleFragment.setArguments(args);
+                    
+                    android.util.Log.d("QuickMatchFragment", "Navigating to QuizBattleFragment...");
+                    
+                    // Navigate to QuizBattleFragment - use childHomeHost
+                    getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                        )
+                        .replace(R.id.childHomeHost, battleFragment)
+                        .addToBackStack(null)
+                        .commit();
+                    
+                    android.util.Log.d("QuickMatchFragment", "Navigation completed!");
+                    
+                } catch (Exception e) {
+                    android.util.Log.e("QuickMatchFragment", "EXCEPTION in navigation", e);
+                    Toast.makeText(requireContext(), "Lỗi khi chuyển màn hình: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }, 1500);
+            
+        } catch (Exception e) {
+            android.util.Log.e("QuickMatchFragment", "EXCEPTION in onMatchFound", e);
+            Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            requireActivity().onBackPressed();
+        }
     }
 
     @Override
