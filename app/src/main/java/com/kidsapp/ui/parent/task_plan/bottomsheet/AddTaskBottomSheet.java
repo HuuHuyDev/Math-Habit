@@ -1,5 +1,6 @@
 package com.kidsapp.ui.parent.task_plan.bottomsheet;
 
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.textfield.TextInputEditText;
 import com.kidsapp.R;
 import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.model.ExerciseContent;
@@ -110,8 +112,40 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
+        // Time pickers
+        binding.edtDueTime.setOnClickListener(v -> showTimePicker(binding.edtDueTime));
+        binding.edtReminderTime.setOnClickListener(v -> showTimePicker(binding.edtReminderTime));
+
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> assignTask());
+    }
+    
+    private void showTimePicker(TextInputEditText editText) {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        
+        // Parse current time if available
+        String currentTime = editText.getText().toString();
+        if (!currentTime.isEmpty()) {
+            try {
+                String[] parts = currentTime.split(":");
+                hour = Integer.parseInt(parts[0]);
+                minute = Integer.parseInt(parts[1]);
+            } catch (Exception ignored) {}
+        }
+        
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                requireContext(),
+                (view, hourOfDay, minuteOfHour) -> {
+                    String time = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minuteOfHour);
+                    editText.setText(time);
+                },
+                hour,
+                minute,
+                true
+        );
+        timePickerDialog.show();
     }
 
     private void assignTask() {
@@ -121,7 +155,8 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
         }
 
         String dueDate = calculateDueDate(dayIndex);
-        String dueTime = binding.edtTime.getText().toString().trim();
+        String dueTime = binding.edtDueTime.getText().toString().trim();
+        String reminderTime = binding.edtReminderTime.getText().toString().trim();
         String parentNote = binding.edtParentNote.getText().toString().trim();
         int priority = (int) binding.sliderPriority.getValue();
         boolean isMandatory = binding.switchMandatory.isChecked();
@@ -156,6 +191,9 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
         request.setDueDate(dueDate);
         if (!dueTime.isEmpty()) {
             request.setDueTime(dueTime);
+        }
+        if (!reminderTime.isEmpty()) {
+            request.setReminderTime(reminderTime);
         }
         if (!parentNote.isEmpty()) {
             request.setParentNote(parentNote);

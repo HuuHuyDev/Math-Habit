@@ -17,11 +17,8 @@ import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.Task;
 import com.kidsapp.databinding.FragmentExerciseTabBinding;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,23 +67,29 @@ public class ExerciseTabFragment extends Fragment {
         binding.recyclerExercise.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerExercise.setAdapter(adapter);
         
-        int padding = (int) (16 * getResources().getDisplayMetrics().density);
-        binding.recyclerExercise.setPadding(padding, padding, padding, padding);
+        // Chỉ padding top/bottom, không padding horizontal để item full width
+        int paddingVertical = (int) (8 * getResources().getDisplayMetrics().density);
+        binding.recyclerExercise.setPadding(0, paddingVertical, 0, paddingVertical);
         binding.recyclerExercise.setClipToPadding(false);
     }
 
     private void loadExerciseTasks() {
         if (childId == null || childId.isEmpty()) {
+            android.util.Log.e("ExerciseTabFragment", "childId is null or empty");
             showEmptyState();
             return;
         }
 
+        android.util.Log.d("ExerciseTabFragment", "Loading EXERCISE tasks for childId: " + childId);
+
         SharedPref sharedPref = new SharedPref(requireContext());
         ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
         
-        // Lấy ngày hiện tại
-        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        // Lấy ngày hôm nay để filter
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                .format(new java.util.Date());
         
+        // Load EXERCISE tasks của ngày hôm nay
         apiService.getTasksByChild(childId, null, "EXERCISE", today)
                 .enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
                     @Override
@@ -94,10 +97,14 @@ public class ExerciseTabFragment extends Fragment {
                                            Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
                         if (!isAdded()) return;
                         
+                        android.util.Log.d("ExerciseTabFragment", "Response code: " + response.code());
+                        
                         if (response.isSuccessful() && response.body() != null && response.body().data != null) {
                             List<Task> tasks = response.body().data;
+                            android.util.Log.d("ExerciseTabFragment", "Loaded " + tasks.size() + " tasks");
                             updateUI(tasks);
                         } else {
+                            android.util.Log.e("ExerciseTabFragment", "Response failed or empty");
                             showEmptyState();
                         }
                     }

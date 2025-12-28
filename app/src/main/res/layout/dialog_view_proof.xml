@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/surface"
+    android:padding="@dimen/spacing_16">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/spacing_16">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Minh chứng thói quen"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Đóng"
+            app:tint="@color/text_secondary" />
+
+    </LinearLayout>
+
+    <!-- Task name -->
+    <TextView
+        android:id="@+id/tvTaskName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đánh răng buổi sáng"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_size_medium"
+        android:layout_marginBottom="@dimen/spacing_12"
+        tools:text="Đánh răng buổi sáng" />
+
+    <!-- Image/Video container -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginBottom="@dimen/spacing_16"
+        android:background="@drawable/bg_rounded_8">
+
+        <!-- Image view -->
+        <ImageView
+            android:id="@+id/imgProof"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="Minh chứng" />
+
+        <!-- Video play button overlay -->
+        <FrameLayout
+            android:id="@+id/layoutVideoOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_circle"
+                android:contentDescription="Phát video"
+                app:tint="@color/white" />
+
+        </FrameLayout>
+
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/progressLoading"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Action buttons -->
+    <LinearLayout
+        android:id="@+id/layoutActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReject"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Từ chối"
+            android:textColor="@color/status_error"
+            app:strokeColor="@color/status_error"
+            app:icon="@drawable/ic_close"
+            app:iconTint="@color/status_error" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApprove"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:text="Duyệt"
+            android:backgroundTint="@color/status_success"
+            app:icon="@drawable/ic_check" />
+
+    </LinearLayout>
+
+</LinearLayout>

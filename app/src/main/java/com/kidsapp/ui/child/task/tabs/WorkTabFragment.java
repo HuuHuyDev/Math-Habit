@@ -23,6 +23,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.kidsapp.R;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.Task;
 import com.kidsapp.data.repository.TaskRepository;
@@ -111,13 +112,9 @@ public class WorkTabFragment extends Fragment {
                 isGranted -> {
                     if (isGranted) {
                         if (isOpeningCamera) {
-                            String taskType = currentTask.getTaskType();
-                            boolean isHousework = "housework".equals(taskType);
-                            if (isHousework) {
-                                openCamera();
-                            } else {
-                                openVideoCamera();
-                            }
+                            // HABIT tasks: mở camera hoặc video tùy user chọn
+                            // Mặc định mở camera ảnh
+                            openCamera();
                         }
                     } else {
                         Toast.makeText(requireContext(), 
@@ -140,9 +137,8 @@ public class WorkTabFragment extends Fragment {
                     }
                     
                     if (allGranted) {
-                        String taskType = currentTask.getTaskType();
-                        boolean isHousework = "housework".equals(taskType);
-                        openGallery(isHousework);
+                        // HABIT: cho phép chọn cả ảnh và video
+                        openGallery(true);
                     } else {
                         Toast.makeText(requireContext(), 
                                 "Cần cấp quyền truy cập ảnh/video để chọn từ thư viện", 
@@ -162,8 +158,7 @@ public class WorkTabFragment extends Fragment {
         adapter.setOnTaskActionListener(new WorkTaskAdapter.OnTaskActionListener() {
             @Override
             public void onTaskClick(Task task) {
-                // TODO: Navigate to task detail
-                Toast.makeText(requireContext(), "Chi tiết: " + task.getTitle(), Toast.LENGTH_SHORT).show();
+                showTaskDetail(task);
             }
 
             @Override
@@ -173,41 +168,99 @@ public class WorkTabFragment extends Fragment {
         });
         
         binding.recyclerTasks.setAdapter(adapter);
+        
+        // Setup SwipeRefreshLayout
+        binding.swipeRefresh.setColorSchemeResources(R.color.primary);
+        binding.swipeRefresh.setOnRefreshListener(this::loadTasks);
+    }
+    
+    /**
+     * Hiển thị chi tiết task
+     */
+    private void showTaskDetail(Task task) {
+        String status = task.getStatus();
+        String statusText;
+        
+        if ("PENDING".equalsIgnoreCase(status)) {
+            statusText = "⏳ Chưa hoàn thành";
+        } else if ("SUBMITTED".equalsIgnoreCase(status)) {
+            statusText = "📤 Đã nộp - Chờ duyệt";
+        } else if ("REJECTED".equalsIgnoreCase(status)) {
+            statusText = "❌ Bị từ chối - Cần làm lại";
+        } else if ("COMPLETED".equalsIgnoreCase(status)) {
+            statusText = "✅ Đã hoàn thành";
+        } else {
+            statusText = status;
+        }
+        
+        String message = "📝 " + task.getDescription() + 
+                "\n\n⭐ Điểm thưởng: " + task.getPointsReward() +
+                "\n📊 Trạng thái: " + statusText;
+        
+        if (task.getDueTime() != null && !task.getDueTime().isEmpty()) {
+            message += "\n⏰ Hạn: " + task.getDueTime();
+        }
+        
+        new AlertDialog.Builder(requireContext())
+                .setTitle(task.getTitle())
+                .setMessage(message)
+                .setPositiveButton("Đóng", null)
+                .show();
     }
     
     /**
      * Load danh sách công việc từ API
+     * Chỉ load HABIT tasks (EXERCISE được xử lý ở tab riêng)
      */
     private void loadTasks() {
         showLoading();
         
+        // Ưu tiên childId, fallback sang userId nếu chưa có
         String childId = sharedPref.getChildId();
         if (childId == null || childId.isEmpty()) {
-            Log.e(TAG, "Child ID not found");
-            showError("Không tìm thấy thông tin tài khoản");
+            childId = sharedPref.getUserId();
+        }
+        
+        if (childId == null || childId.isEmpty()) {
+            Log.e(TAG, "Child ID and User ID not found");
+            showError("Không tìm thấy thông tin tài khoản. Vui lòng đăng nhập lại.");
             return;
         }
         
-        Log.d(TAG, "Loading tasks for child: " + childId);
+        Log.d(TAG, "Loading HABIT tasks for child: " + childId);
         
-        taskRepository.getTasksByChild(childId, new TaskRepository.TasksCallback() {
+        // Lấy ngày hôm nay để filter
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                .format(new java.util.Date());
+        
+        // Load HABIT tasks của ngày hôm nay
+        taskRepository.getTasksByChild(childId, null, "HABIT", today, new TaskRepository.TasksCallback() {
             @Override
             public void onSuccess(List<Task> allTasks) {
-                Log.d(TAG, "Loaded " + allTasks.size() + " tasks");
+                if (!isAdded()) return;
                 
-                // Filter housework, habit, custom với status = pending
+                Log.d(TAG, "Loaded " + allTasks.size() + " HABIT tasks");
+                
+                // Filter tasks cần hiển thị:
+                // - PENDING: chưa làm
+                // - SUBMITTED: đã nộp, chờ duyệt
+                // - REJECTED: bị từ chối, cần làm lại
+                // - COMPLETED: đã hoàn thành
                 List<Task> workTasks = new ArrayList<>();
                 for (Task task : allTasks) {
-                    String type = task.getTaskType();
                     String status = task.getStatus();
+                    if (status == null) continue;
                     
-                    if (("housework".equals(type) || "habit".equals(type) || "custom".equals(type))
-                            && "pending".equals(status)) {
+                    status = status.toUpperCase();
+                    if ("PENDING".equals(status) || 
+                        "SUBMITTED".equals(status) || 
+                        "REJECTED".equals(status) ||
+                        "COMPLETED".equals(status)) {
                         workTasks.add(task);
                     }
                 }
                 
-                Log.d(TAG, "Filtered " + workTasks.size() + " work tasks");
+                Log.d(TAG, "Filtered " + workTasks.size() + " active HABIT tasks");
                 
                 if (workTasks.isEmpty()) {
                     showEmptyState();
@@ -218,6 +271,7 @@ public class WorkTabFragment extends Fragment {
 
             @Override
             public void onError(String error) {
+                if (!isAdded()) return;
                 Log.e(TAG, "Error loading tasks: " + error);
                 showError(error);
             }
@@ -227,57 +281,87 @@ public class WorkTabFragment extends Fragment {
     private void showLoading() {
         binding.layoutEmpty.setVisibility(View.GONE);
         binding.recyclerTasks.setVisibility(View.GONE);
+        binding.progressLoading.setVisibility(View.VISIBLE);
     }
     
     private void showTasks(List<Task> tasks) {
+        binding.progressLoading.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
         binding.layoutEmpty.setVisibility(View.GONE);
         binding.recyclerTasks.setVisibility(View.VISIBLE);
         adapter.setTasks(tasks);
     }
     
     private void showEmptyState() {
+        binding.progressLoading.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
         binding.layoutEmpty.setVisibility(View.VISIBLE);
         binding.recyclerTasks.setVisibility(View.GONE);
     }
     
     private void showError(String message) {
+        binding.progressLoading.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
         showEmptyState();
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
     
     /**
      * Xử lý khi user click hoàn thành công việc
+     * HABIT: Cần chụp ảnh/quay video minh chứng
      */
     private void onTaskComplete(Task task) {
+        // Kiểm tra status
+        String status = task.getStatus();
+        if ("SUBMITTED".equalsIgnoreCase(status)) {
+            // Đã nộp, đang chờ duyệt
+            Toast.makeText(requireContext(), 
+                    "Đang chờ phụ huynh duyệt minh chứng", 
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         currentTask = task;
-        showProofOptions(task);
+        
+        // Nếu bị từ chối, hiển thị lý do
+        if ("REJECTED".equalsIgnoreCase(status)) {
+            String reason = "";
+            if (task.getActiveProof() != null && task.getActiveProof().getRejectionReason() != null) {
+                reason = task.getActiveProof().getRejectionReason();
+            }
+            
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("⚠️ Minh chứng bị từ chối")
+                    .setMessage("Lý do: " + (reason.isEmpty() ? "Không đạt yêu cầu" : reason) + 
+                            "\n\nBạn cần nộp lại minh chứng mới.")
+                    .setPositiveButton("Nộp lại", (dialog, which) -> showHabitProofOptions(task))
+                    .setNegativeButton("Để sau", null)
+                    .show();
+        } else {
+            // PENDING - cho phép nộp bình thường
+            showHabitProofOptions(task);
+        }
     }
     
     /**
-     * Hiển thị dialog chọn camera hoặc gallery
+     * Hiển thị dialog chọn camera hoặc gallery cho HABIT task
      */
-    private void showProofOptions(Task task) {
-        String taskType = task.getTaskType();
-        boolean isHousework = "housework".equals(taskType);
-        
-        String title = isHousework ? "Chụp ảnh minh chứng" : "Quay video minh chứng";
-        String[] options = isHousework 
-                ? new String[]{"Chụp ảnh", "Chọn từ thư viện"}
-                : new String[]{"Quay video", "Chọn từ thư viện"};
+    private void showHabitProofOptions(Task task) {
+        String[] options = new String[]{
+            "📷 Chụp ảnh", 
+            "🎥 Quay video", 
+            "🖼️ Chọn từ thư viện"
+        };
         
         new AlertDialog.Builder(requireContext())
-                .setTitle(title)
+                .setTitle("Nộp minh chứng thói quen")
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) {
-                        // Camera
-                        if (isHousework) {
-                            openCamera();
-                        } else {
-                            openVideoCamera();
-                        }
+                        openCamera();
+                    } else if (which == 1) {
+                        openVideoCamera();
                     } else {
-                        // Gallery
-                        openGallery(isHousework);
+                        openGallery(true); // Allow both image and video
                     }
                 })
                 .setNegativeButton("Hủy", null)
@@ -373,24 +457,36 @@ public class WorkTabFragment extends Fragment {
     }
     
     /**
-     * Upload minh chứng lên server - Sử dụng API mới (upload trực tiếp)
+     * Upload minh chứng HABIT lên server - Sử dụng API mới submitHabitProof
      */
     private void uploadProof(Uri uri, Task task) {
-        // Show loading
-        Toast.makeText(requireContext(), "Đang upload...", Toast.LENGTH_SHORT).show();
+        // Show loading dialog
+        com.kidsapp.ui.components.LoadingDialog loadingDialog = new com.kidsapp.ui.components.LoadingDialog(requireContext());
+        loadingDialog.show("Đang gửi minh chứng...");
         
-        // Submit proof với file upload trực tiếp
-        taskRepository.submitTaskProofWithFile(task.getId(), uri, "", 
-                new TaskRepository.TaskProofCallback() {
+        // Submit HABIT proof với API mới
+        taskRepository.submitHabitProof(task.getId(), uri, "", 
+                new TaskRepository.SimpleCallback() {
             @Override
-            public void onSuccess(com.kidsapp.data.api.ApiService.TaskProofResponse proof) {
-                Toast.makeText(requireContext(), "Đã gửi minh chứng thành công!", Toast.LENGTH_SHORT).show();
+            public void onSuccess() {
+                if (!isAdded()) return;
+                loadingDialog.dismiss();
+                
+                // Show success dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("🎉 Thành công!")
+                        .setMessage("Đã gửi minh chứng cho thói quen \"" + task.getTitle() + "\".\n\nChờ phụ huynh duyệt nhé!")
+                        .setPositiveButton("OK", null)
+                        .show();
+                
                 // Reload tasks
                 loadTasks();
             }
 
             @Override
             public void onError(String error) {
+                if (!isAdded()) return;
+                loadingDialog.dismiss();
                 Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
             }
         });

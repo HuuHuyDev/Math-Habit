@@ -39,6 +39,9 @@ public class TaskResponse {
     @SerializedName("dueTime")
     private String dueTime;
     
+    @SerializedName("reminderTime")
+    private String reminderTime;
+    
     @SerializedName("status")
     private String status;
     
@@ -75,6 +78,9 @@ public class TaskResponse {
     @SerializedName("coinsEarned")
     private Integer coinsEarned;
     
+    @SerializedName("score")
+    private Integer score; // Điểm số cho EXERCISE (0-100)
+    
     @SerializedName("createdAt")
     private String createdAt;
     
@@ -95,6 +101,7 @@ public class TaskResponse {
     public String getHabitTemplateId() { return habitTemplateId; }
     public String getDueDate() { return dueDate; }
     public String getDueTime() { return dueTime; }
+    public String getReminderTime() { return reminderTime; }
     public String getStatus() { return status; }
     public Integer getPointsReward() { return pointsReward; }
     public Integer getCoinsReward() { return coinsReward; }
@@ -107,6 +114,7 @@ public class TaskResponse {
     public String getCompletedAt() { return completedAt; }
     public Integer getXpEarned() { return xpEarned; }
     public Integer getCoinsEarned() { return coinsEarned; }
+    public Integer getScore() { return score; }
     public String getCreatedAt() { return createdAt; }
     public String getUpdatedAt() { return updatedAt; }
     public Task.TaskProof getActiveProof() { return activeProof; }

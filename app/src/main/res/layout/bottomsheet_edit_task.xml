@@ -145,8 +145,10 @@
             android:id="@+id/edtDueTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
             android:fontFamily="@font/inter_regular"
-            android:inputType="time"
+            android:inputType="none"
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -169,8 +171,10 @@
             android:id="@+id/edtReminderTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
             android:fontFamily="@font/inter_regular"
-            android:inputType="time"
+            android:inputType="none"
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>

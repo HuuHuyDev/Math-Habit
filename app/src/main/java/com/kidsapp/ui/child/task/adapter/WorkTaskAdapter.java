@@ -3,9 +3,11 @@ package com.kidsapp.ui.child.task.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
@@ -17,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adapter cho danh sách công việc (housework, habit, custom)
+ * Adapter cho danh sách công việc (HABIT tasks)
+ * Hiển thị các task cần hoàn thành với giao diện đẹp
  */
 public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskViewHolder> {
     
@@ -58,18 +61,22 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
     }
     
     class TaskViewHolder extends RecyclerView.ViewHolder {
-        private MaterialCardView cardTask;
-        private TextView tvTitle;
-        private TextView tvDescription;
-        private TextView tvType;
-        private TextView tvPoints;
-        private TextView tvDueTime;
-        private TextView tvPriority;
-        private MaterialButton btnComplete;
+        private final MaterialCardView cardTask;
+        private final ImageView ivTaskIcon;
+        private final TextView tvStatusBadge;
+        private final TextView tvTitle;
+        private final TextView tvDescription;
+        private final TextView tvType;
+        private final TextView tvPoints;
+        private final TextView tvDueTime;
+        private final TextView tvPriority;
+        private final MaterialButton btnComplete;
         
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             cardTask = itemView.findViewById(R.id.cardTask);
+            ivTaskIcon = itemView.findViewById(R.id.ivTaskIcon);
+            tvStatusBadge = itemView.findViewById(R.id.tvStatusBadge);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvType = itemView.findViewById(R.id.tvType);
@@ -80,28 +87,33 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
         }
         
         public void bind(Task task) {
-            tvTitle.setText(task.getTitle());
-            tvDescription.setText(task.getDescription());
-            tvPoints.setText("+" + task.getPointsReward() + " điểm");
+            // Title và Description
+            tvTitle.setText(task.getTitle() != null ? task.getTitle() : "");
+            tvDescription.setText(task.getDescription() != null ? task.getDescription() : "");
             
-            // Hiển thị loại công việc
-            String typeText = getTaskTypeText(task.getTaskType());
-            tvType.setText(typeText);
+            // Points reward
+            int points = task.getPointsReward();
+            tvPoints.setText("+" + points + " ⭐");
             
-            // Hiển thị thời gian
-            if (task.getDueTime() != null) {
-                tvDueTime.setText("⏰ " + task.getDueTime());
-                tvDueTime.setVisibility(View.VISIBLE);
-            } else {
-                tvDueTime.setVisibility(View.GONE);
-            }
+            // Task type badge
+            setupTaskType(task);
             
-            // Hiển thị độ ưu tiên
-            String priorityText = getPriorityText(task.getPriority());
-            tvPriority.setText(priorityText);
-            setPriorityColor(task.getPriority());
+            // Due time
+            setupDueTime(task);
             
-            // Xử lý click
+            // Priority indicator
+            setupPriority(task);
+            
+            // Status badge (nếu đã submit chờ duyệt)
+            setupStatusBadge(task);
+            
+            // Icon theo loại task
+            setupTaskIcon(task);
+            
+            // Button state
+            setupButton(task);
+            
+            // Click listeners
             cardTask.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onTaskClick(task);
@@ -115,46 +127,102 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
             });
         }
         
-        private String getTaskTypeText(String type) {
-            switch (type) {
-                case "housework":
-                    return "🏠 Việc nhà";
-                case "habit":
-                    return "⭐ Thói quen";
-                case "custom":
-                    return "✨ Tùy chỉnh";
-                default:
-                    return "📝 Công việc";
+        private void setupTaskType(Task task) {
+            String type = task.getTaskType();
+            if ("HABIT".equalsIgnoreCase(type)) {
+                tvType.setText("Thói quen");
+                tvType.setBackgroundResource(R.drawable.bg_tag_primary);
+                tvType.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.primary));
+            } else if ("EXERCISE".equalsIgnoreCase(type)) {
+                tvType.setText("Bài tập");
+                tvType.setBackgroundResource(R.drawable.bg_tag_exercise);
+                tvType.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.exercise_color));
+            } else {
+                tvType.setText("Công việc");
+                tvType.setBackgroundResource(R.drawable.bg_tag_primary);
+                tvType.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.primary));
             }
         }
         
-        private String getPriorityText(int priority) {
-            switch (priority) {
-                case 3:
-                    return "🔴 Cao";
-                case 2:
-                    return "🟡 Trung bình";
-                case 1:
-                default:
-                    return "🟢 Thấp";
+        private void setupDueTime(Task task) {
+            String dueTime = task.getDueTime();
+            if (dueTime != null && !dueTime.isEmpty()) {
+                tvDueTime.setText("⏰ " + dueTime);
+                tvDueTime.setVisibility(View.VISIBLE);
+            } else {
+                tvDueTime.setVisibility(View.GONE);
             }
         }
         
-        private void setPriorityColor(int priority) {
-            int colorRes;
+        private void setupPriority(Task task) {
+            int priority = task.getPriority();
             switch (priority) {
                 case 3:
-                    colorRes = R.color.priority_high;
+                    tvPriority.setText("🔴");
                     break;
                 case 2:
-                    colorRes = R.color.priority_medium;
+                    tvPriority.setText("🟡");
                     break;
                 case 1:
                 default:
-                    colorRes = R.color.priority_low;
+                    tvPriority.setText("🟢");
                     break;
             }
-            tvPriority.setTextColor(itemView.getContext().getColor(colorRes));
+        }
+        
+        private void setupStatusBadge(Task task) {
+            String status = task.getStatus();
+            if ("SUBMITTED".equalsIgnoreCase(status)) {
+                // Đã nộp, chờ duyệt
+                tvStatusBadge.setVisibility(View.VISIBLE);
+                tvStatusBadge.setText("⏳");
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_pending);
+            } else if ("REJECTED".equalsIgnoreCase(status)) {
+                // Bị từ chối
+                tvStatusBadge.setVisibility(View.VISIBLE);
+                tvStatusBadge.setText("!");
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_rejected);
+            } else {
+                tvStatusBadge.setVisibility(View.GONE);
+            }
+        }
+        
+        private void setupTaskIcon(Task task) {
+            String type = task.getTaskType();
+            if ("HABIT".equalsIgnoreCase(type)) {
+                ivTaskIcon.setImageResource(R.drawable.ic_task_habit);
+                ivTaskIcon.setBackgroundResource(R.drawable.bg_icon_habit);
+            } else if ("EXERCISE".equalsIgnoreCase(type)) {
+                ivTaskIcon.setImageResource(R.drawable.ic_task_exercise);
+                ivTaskIcon.setBackgroundResource(R.drawable.bg_icon_exercise);
+            } else {
+                ivTaskIcon.setImageResource(R.drawable.ic_task_habit);
+                ivTaskIcon.setBackgroundResource(R.drawable.bg_icon_circle);
+            }
+        }
+        
+        private void setupButton(Task task) {
+            String status = task.getStatus();
+            if ("SUBMITTED".equalsIgnoreCase(status)) {
+                // Đã nộp, chờ duyệt - disable button
+                btnComplete.setEnabled(false);
+                btnComplete.setAlpha(0.5f);
+                btnComplete.setIconResource(R.drawable.ic_check);
+            } else if ("REJECTED".equalsIgnoreCase(status)) {
+                // Bị từ chối - cho phép nộp lại
+                btnComplete.setEnabled(true);
+                btnComplete.setAlpha(1f);
+                btnComplete.setIconResource(R.drawable.ic_refresh);
+                btnComplete.setBackgroundTintList(ContextCompat.getColorStateList(
+                        itemView.getContext(), R.color.warning_color));
+            } else {
+                // PENDING - cho phép nộp
+                btnComplete.setEnabled(true);
+                btnComplete.setAlpha(1f);
+                btnComplete.setIconResource(R.drawable.ic_camera);
+                btnComplete.setBackgroundTintList(ContextCompat.getColorStateList(
+                        itemView.getContext(), R.color.primary));
+            }
         }
     }
 }

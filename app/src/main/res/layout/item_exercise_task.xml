@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardTask"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="14dp"
+        android:gravity="center_vertical">
+
+        <!-- Icon bên trái -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp">
+            
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_task_exercise"
+                android:background="@drawable/bg_icon_exercise"
+                android:padding="10dp"
+                android:contentDescription="Exercise icon" />
+            
+            <!-- Badge hoàn thành -->
+            <ImageView
+                android:id="@+id/ivCompleted"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/ic_check_circle"
+                android:visibility="gone"
+                app:tint="@color/status_success"
+                android:contentDescription="Completed" />
+        </FrameLayout>
+
+        <!-- Nội dung chính -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bài tập toán"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="Bài 1: Luyện phép cộng" />
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Mô tả bài tập"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Hoàn thành 10 câu hỏi về phép cộng" />
+
+            <!-- Footer: Time và Points -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Due time -->
+                <TextView
+                    android:id="@+id/tvDueTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⏰ 18:00"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_hint"
+                    tools:text="⏰ 18:00" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- Points reward -->
+                <TextView
+                    android:id="@+id/tvPoints"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+20 ⭐"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/reward_gold"
+                    tools:text="+20 ⭐" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Button làm bài -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStart"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:text="Làm bài"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            app:cornerRadius="18dp"
+            android:paddingHorizontal="16dp"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            app:backgroundTint="@color/exercise_color" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

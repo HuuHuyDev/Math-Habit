@@ -10,8 +10,8 @@ import com.kidsapp.ui.child.task.tabs.HistoryTabFragment;
 
 /**
  * Adapter cho ViewPager2 với 3 tabs
- * - Tab 0: Công việc (Việc nhà + Cá nhân)
- * - Tab 1: Bài tập
+ * - Tab 0: Công việc (HABIT)
+ * - Tab 1: Bài tập (EXERCISE)
  * - Tab 2: Lịch sử
  */
 public class TaskPagerAdapter extends FragmentStateAdapter {
@@ -25,9 +25,9 @@ public class TaskPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 0: // Công việc (housework + habit + custom)
+            case 0: // Công việc (HABIT)
                 return new WorkTabFragment();
-            case 1: // Bài tập (exercise)
+            case 1: // Bài tập (EXERCISE)
                 return ExerciseTabFragment.newInstance("", "");
             case 2: // Lịch sử
                 return HistoryTabFragment.newInstance("", "");

@@ -112,4 +112,8 @@
     
     <!-- Reward Colors -->
     <color name="reward_gold">#FBBF24</color>
+    
+    <!-- Task Colors -->
+    <color name="exercise_color">#FF9800</color>
+    <color name="warning_color">#FF9800</color>
 </resources>

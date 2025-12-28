@@ -1,6 +1,7 @@
 package com.kidsapp.ui.parent.task_plan.bottomsheet;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,10 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.model.Task;
 import com.kidsapp.data.repository.TaskAssignmentRepository;
 import com.kidsapp.data.request.UpdateTaskRequest;
 import com.kidsapp.data.response.TaskResponse;
@@ -19,6 +24,10 @@ import com.kidsapp.databinding.BottomsheetEditTaskBinding;
 import com.kidsapp.ui.parent.task_plan.model.WeekTask;
 
 import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * BottomSheet để chỉnh sửa nhiệm vụ đã giao
@@ -29,9 +38,13 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
     private BottomsheetEditTaskBinding binding;
     private OnTaskUpdatedListener listener;
     private TaskAssignmentRepository repository;
+    private ApiService apiService;
     private WeekTask task;
     private int position;
     private String taskId;
+    
+    // Lưu dữ liệu task từ API
+    private Task taskDetail;
 
     public interface OnTaskUpdatedListener {
         void onTaskUpdated(WeekTask task, int position);
@@ -54,6 +67,8 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
             position = getArguments().getInt("position", 0);
         }
         repository = new TaskAssignmentRepository(requireContext());
+        SharedPref sharedPref = new SharedPref(requireContext());
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
     }
 
 
@@ -68,8 +83,74 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadTaskData();
         setupListeners();
+        
+        // Load task detail từ API
+        if (task != null && task.getId() != null) {
+            taskId = task.getId();
+            loadTaskDetail();
+        } else {
+            loadTaskData();
+        }
+    }
+    
+    /**
+     * Load chi tiết task từ API để fill đúng dữ liệu
+     */
+    private void loadTaskDetail() {
+        setLoading(true);
+        
+        apiService.getTaskDetail(taskId).enqueue(new Callback<ApiService.ApiResponseWrapper<Task>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Task>> call,
+                                   Response<ApiService.ApiResponseWrapper<Task>> response) {
+                if (!isAdded()) return;
+                setLoading(false);
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    taskDetail = response.body().data;
+                    fillTaskData(taskDetail);
+                } else {
+                    // Fallback to local data
+                    loadTaskData();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<Task>> call, Throwable t) {
+                if (!isAdded()) return;
+                setLoading(false);
+                // Fallback to local data
+                loadTaskData();
+            }
+        });
+    }
+    
+    /**
+     * Fill dữ liệu từ API response
+     */
+    private void fillTaskData(Task taskData) {
+        // Task Type (READ ONLY)
+        if ("HABIT".equalsIgnoreCase(taskData.getTaskType())) {
+            binding.chipTaskType.setText("Thói quen");
+            binding.chipTaskType.setChipIconResource(R.drawable.ic_habit);
+        } else {
+            binding.chipTaskType.setText("Bài tập");
+            binding.chipTaskType.setChipIconResource(R.drawable.ic_quiz);
+        }
+
+        // Task Name & Description (READ ONLY)
+        binding.tvTaskName.setText(taskData.getTitle() != null ? taskData.getTitle() : "");
+        binding.tvTaskDescription.setText(taskData.getDescription() != null ? taskData.getDescription() : "");
+
+        // Editable fields - fill với dữ liệu hiện tại
+        binding.edtDueDate.setText(taskData.getDueDate() != null ? taskData.getDueDate() : getCurrentDueDate());
+        binding.edtDueTime.setText(taskData.getDueTime() != null ? taskData.getDueTime() : "");
+        binding.edtReminderTime.setText(taskData.getReminderTime() != null ? taskData.getReminderTime() : "");
+        binding.edtParentNote.setText(taskData.getParentNote() != null ? taskData.getParentNote() : "");
+        binding.sliderPriority.setValue(taskData.getPriority() > 0 ? taskData.getPriority() : 1);
+        binding.switchMandatory.setChecked(taskData.isMandatory());
+        binding.switchRecurring.setChecked(taskData.isRecurring());
     }
 
     private void loadTaskData() {
@@ -118,12 +199,24 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
 
     private void setupListeners() {
         binding.edtDueDate.setOnClickListener(v -> showDatePicker());
+        binding.edtDueTime.setOnClickListener(v -> showTimePicker(binding.edtDueTime));
+        binding.edtReminderTime.setOnClickListener(v -> showTimePicker(binding.edtReminderTime));
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnUpdate.setOnClickListener(v -> updateTask());
     }
 
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
+        
+        // Parse current date if available
+        String currentDate = binding.edtDueDate.getText().toString();
+        if (!currentDate.isEmpty()) {
+            try {
+                String[] parts = currentDate.split("-");
+                calendar.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+            } catch (Exception ignored) {}
+        }
+        
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 requireContext(),
                 (view, year, month, dayOfMonth) -> {
@@ -135,6 +228,34 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
         datePickerDialog.show();
+    }
+    
+    private void showTimePicker(com.google.android.material.textfield.TextInputEditText editText) {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        
+        // Parse current time if available
+        String currentTime = editText.getText().toString();
+        if (!currentTime.isEmpty()) {
+            try {
+                String[] parts = currentTime.split(":");
+                hour = Integer.parseInt(parts[0]);
+                minute = Integer.parseInt(parts[1]);
+            } catch (Exception ignored) {}
+        }
+        
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                requireContext(),
+                (view, hourOfDay, minuteOfHour) -> {
+                    String time = String.format("%02d:%02d", hourOfDay, minuteOfHour);
+                    editText.setText(time);
+                },
+                hour,
+                minute,
+                true
+        );
+        timePickerDialog.show();
     }
 
     private void updateTask() {

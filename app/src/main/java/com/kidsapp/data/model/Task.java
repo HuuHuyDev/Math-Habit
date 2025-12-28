@@ -36,6 +36,9 @@ public class Task {
     @SerializedName("dueTime")
     private String dueTime;
     
+    @SerializedName("reminderTime")
+    private String reminderTime;
+    
     @SerializedName("status")
     private String status; // PENDING, SUBMITTED, COMPLETED
     
@@ -74,6 +77,9 @@ public class Task {
     
     @SerializedName("coinsEarned")
     private Integer coinsEarned;
+    
+    @SerializedName("score")
+    private Integer score; // Điểm số cho EXERCISE (0-100)
     
     @SerializedName("createdAt")
     private String createdAt;
@@ -179,6 +185,9 @@ public class Task {
     public String getDueTime() { return dueTime; }
     public void setDueTime(String dueTime) { this.dueTime = dueTime; }
 
+    public String getReminderTime() { return reminderTime; }
+    public void setReminderTime(String reminderTime) { this.reminderTime = reminderTime; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
@@ -217,6 +226,9 @@ public class Task {
 
     public Integer getCoinsEarned() { return coinsEarned; }
     public void setCoinsEarned(Integer coinsEarned) { this.coinsEarned = coinsEarned; }
+    
+    public Integer getScore() { return score; }
+    public void setScore(Integer score) { this.score = score; }
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
@@ -236,6 +248,22 @@ public class Task {
      */
     public boolean isHabit() {
         return "HABIT".equalsIgnoreCase(taskType);
+    }
+    
+    /**
+     * Check if task needs Parent approval
+     * HABIT: needs approval when status = SUBMITTED
+     * EXERCISE: never needs approval (auto-complete)
+     */
+    public boolean needsApproval() {
+        return isHabit() && "SUBMITTED".equalsIgnoreCase(status);
+    }
+    
+    /**
+     * Get proof URL from activeProof
+     */
+    public String getProofUrl() {
+        return activeProof != null ? activeProof.getProofUrl() : null;
     }
 }
 

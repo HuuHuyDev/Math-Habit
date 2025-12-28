@@ -90,7 +90,8 @@ public class InviteFriendFragment extends Fragment implements InviteFriendAdapte
     }
 
     private void loadMockData() {
-        adapter.setFriends(MockData.getFriends());
+        // Không dùng mock data nữa - hiển thị empty state
+        adapter.setFriends(new java.util.ArrayList<>());
         updateEmptyState();
     }
 

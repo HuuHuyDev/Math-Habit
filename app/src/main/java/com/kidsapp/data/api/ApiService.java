@@ -110,9 +110,9 @@ public interface ApiService {
     
     /**
      * Lấy danh sách câu hỏi
-     * GET /exercises/{exerciseId}/questions
+     * GET /tasks/exercises/{exerciseId}/questions
      */
-    @GET("exercises/{exerciseId}/questions")
+    @GET("tasks/exercises/{exerciseId}/questions")
     Call<ApiResponseWrapper<List<com.kidsapp.data.model.QuestionResponse>>> getExerciseQuestions(
             @Path("exerciseId") String exerciseId
     );
@@ -217,6 +217,50 @@ public interface ApiService {
     
     @POST(ApiConfig.ENDPOINT_TASK_REJECT)
     Call<ApiResponseWrapper<TaskResponse>> rejectTask(
+            @Path("id") String taskId,
+            @Body String reason
+    );
+    
+    // ==================== NEW TASK ACTIONS (HABIT/EXERCISE specific) ====================
+    
+    /**
+     * Nộp minh chứng cho HABIT task (ảnh/video)
+     * POST /tasks/{id}/submit-habit
+     */
+    @Multipart
+    @POST(ApiConfig.ENDPOINT_TASK_SUBMIT_HABIT)
+    Call<ApiResponseWrapper<String>> submitHabitProof(
+            @Path("id") String taskId,
+            @Part MultipartBody.Part file,
+            @Part("note") okhttp3.RequestBody note
+    );
+    
+    /**
+     * Hoàn thành EXERCISE task (sau khi làm bài xong)
+     * POST /tasks/{id}/complete-exercise
+     * Tự động complete, không cần Parent duyệt
+     */
+    @POST(ApiConfig.ENDPOINT_TASK_COMPLETE_EXERCISE)
+    Call<ApiResponseWrapper<TaskResponse>> completeExercise(
+            @Path("id") String taskId,
+            @Query("score") Integer score,
+            @Query("correctAnswers") Integer correctAnswers,
+            @Query("totalAnswers") Integer totalAnswers
+    );
+    
+    /**
+     * Parent duyệt HABIT task
+     * POST /tasks/{id}/approve-habit
+     */
+    @POST(ApiConfig.ENDPOINT_TASK_APPROVE_HABIT)
+    Call<ApiResponseWrapper<TaskResponse>> approveHabit(@Path("id") String taskId);
+    
+    /**
+     * Parent từ chối HABIT task
+     * POST /tasks/{id}/reject-habit
+     */
+    @POST(ApiConfig.ENDPOINT_TASK_REJECT_HABIT)
+    Call<ApiResponseWrapper<TaskResponse>> rejectHabit(
             @Path("id") String taskId,
             @Body String reason
     );

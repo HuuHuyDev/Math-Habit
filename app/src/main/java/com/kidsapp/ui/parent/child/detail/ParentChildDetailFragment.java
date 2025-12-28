@@ -386,6 +386,22 @@ public class ParentChildDetailFragment extends Fragment {
         // Setup ViewPager2 với adapter - truyền childId
         ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(requireActivity(), childId);
         binding.viewPager.setAdapter(pagerAdapter);
+        
+        // Giữ tất cả 3 tabs trong memory để tránh reload khi chuyển tab
+        binding.viewPager.setOffscreenPageLimit(3);
+        
+        // Điều chỉnh chiều cao ViewPager2 khi page thay đổi
+        binding.viewPager.registerOnPageChangeCallback(new androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                // Delay để fragment kịp render
+                binding.viewPager.post(() -> updateViewPagerHeight());
+            }
+        });
+        
+        // Cập nhật chiều cao ban đầu sau khi layout xong
+        binding.viewPager.post(() -> updateViewPagerHeight());
 
         // Kết nối TabLayout với ViewPager2 và set custom view cho từng tab
         new TabLayoutMediator(
@@ -515,6 +531,32 @@ public class ParentChildDetailFragment extends Fragment {
      */
     private String formatNumber(int number) {
         return String.format("%,d", number);
+    }
+    
+    /**
+     * Cập nhật chiều cao ViewPager2 dựa trên nội dung của fragment hiện tại
+     */
+    private void updateViewPagerHeight() {
+        if (binding == null || binding.viewPager == null) return;
+        
+        View currentView = binding.viewPager.getChildAt(0);
+        if (currentView != null) {
+            currentView.measure(
+                View.MeasureSpec.makeMeasureSpec(binding.viewPager.getWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
+            int measuredHeight = currentView.getMeasuredHeight();
+            
+            // Đặt chiều cao tối thiểu 300dp
+            int minHeight = (int) (300 * getResources().getDisplayMetrics().density);
+            int finalHeight = Math.max(measuredHeight, minHeight);
+            
+            ViewGroup.LayoutParams params = binding.viewPager.getLayoutParams();
+            if (params.height != finalHeight) {
+                params.height = finalHeight;
+                binding.viewPager.setLayoutParams(params);
+            }
+        }
     }
 
     /**

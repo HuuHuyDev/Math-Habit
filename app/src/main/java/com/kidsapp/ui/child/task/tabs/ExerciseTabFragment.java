@@ -1,57 +1,212 @@
 package com.kidsapp.ui.child.task.tabs;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import com.kidsapp.R;
-import com.kidsapp.ui.child.detailTask.DetailTaskFragment;
-import com.kidsapp.ui.child.task.exercise.ExerciseContentFragment;
-import com.kidsapp.ui.child.task.Task;
-import com.kidsapp.ui.child.task.TaskListAdapter;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.model.Task;
+import com.kidsapp.data.repository.TaskRepository;
+import com.kidsapp.databinding.FragmentExerciseTabBinding;
+import com.kidsapp.ui.child.task.adapter.ExerciseTaskAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tab Bài tập - Hiển thị các EXERCISE tasks được giao
+ * Load từ API: GET /tasks/child/{childId}?taskType=EXERCISE
+ */
 public class ExerciseTabFragment extends Fragment {
-    private RecyclerView recyclerViewTasks;
-    private TaskListAdapter adapter;
+    
+    private static final String TAG = "ExerciseTabFragment";
+    
+    private FragmentExerciseTabBinding binding;
+    private ExerciseTaskAdapter adapter;
+    private TaskRepository taskRepository;
+    private SharedPref sharedPref;
 
-    public ExerciseTabFragment() {
-        // Required empty public constructor
-    }
+    public ExerciseTabFragment() {}
 
     public static ExerciseTabFragment newInstance(String param1, String param2) {
         return new ExerciseTabFragment();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_exercise_tab, container, false);
+        binding = FragmentExerciseTabBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerViewTasks = view.findViewById(R.id.recyclerExercise);
+        
+        // Init repository
+        sharedPref = new SharedPref(requireContext());
+        taskRepository = new TaskRepository(requireContext());
+        
         setupRecyclerView();
+        setupSwipeRefresh();
+        loadTasks();
+        
+        // Lắng nghe kết quả từ PracticeFragment để refresh danh sách
+        // Dùng activity's fragment manager vì PracticeFragment được add vào activity
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("exercise_completed", 
+            getViewLifecycleOwner(), (requestKey, result) -> {
+                Log.d(TAG, "Exercise completed, refreshing list...");
+                loadTasks();
+            });
     }
+    
     private void setupRecyclerView() {
-        List<Task> tasks = createSampleTasks();
-        adapter = new TaskListAdapter(tasks);
-        adapter.setOnTaskClickListener(task -> openDetail(task));
-        recyclerViewTasks.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerViewTasks.setAdapter(adapter);
+        binding.recyclerExercise.setLayoutManager(new LinearLayoutManager(requireContext()));
+        
+        adapter = new ExerciseTaskAdapter();
+        adapter.setOnTaskClickListener(this::openExerciseDetail);
+        binding.recyclerExercise.setAdapter(adapter);
     }
-    private void openDetail(Task task) {
-        // Chuyển sang màn hình chọn nội dung bài tập
-        ExerciseContentFragment fragment = ExerciseContentFragment.newInstance(task.getTitle());
+    
+    private void setupSwipeRefresh() {
+        binding.swipeRefresh.setColorSchemeResources(R.color.primary);
+        binding.swipeRefresh.setOnRefreshListener(this::loadTasks);
+    }
+    
+    /**
+     * Load EXERCISE tasks từ API
+     */
+    private void loadTasks() {
+        showLoading();
+        
+        // Ưu tiên childId, fallback sang userId nếu chưa có
+        String childId = sharedPref.getChildId();
+        if (childId == null || childId.isEmpty()) {
+            childId = sharedPref.getUserId();
+        }
+        
+        if (childId == null || childId.isEmpty()) {
+            Log.e(TAG, "Child ID and User ID not found");
+            showError("Không tìm thấy thông tin tài khoản. Vui lòng đăng nhập lại.");
+            return;
+        }
+        
+        Log.d(TAG, "Loading EXERCISE tasks for child: " + childId);
+        
+        final String finalChildId = childId;
+        
+        // Lấy ngày hôm nay để filter
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                .format(new java.util.Date());
+        
+        // Load EXERCISE tasks của ngày hôm nay
+        taskRepository.getTasksByChild(childId, null, "EXERCISE", today, 
+                new TaskRepository.TasksCallback() {
+            @Override
+            public void onSuccess(List<Task> allTasks) {
+                if (!isAdded()) return;
+                
+                Log.d(TAG, "Loaded " + allTasks.size() + " EXERCISE tasks");
+                
+                // Filter tasks cần hiển thị:
+                // - PENDING: chưa làm
+                // - COMPLETED: đã hoàn thành
+                List<Task> exerciseTasks = new ArrayList<>();
+                for (Task task : allTasks) {
+                    String status = task.getStatus();
+                    if (status == null) continue;
+                    
+                    // Hiển thị PENDING và COMPLETED
+                    if ("PENDING".equalsIgnoreCase(status) || "COMPLETED".equalsIgnoreCase(status)) {
+                        exerciseTasks.add(task);
+                    }
+                }
+                
+                Log.d(TAG, "Filtered " + exerciseTasks.size() + " EXERCISE tasks (pending + completed)");
+                
+                if (exerciseTasks.isEmpty()) {
+                    showEmptyState();
+                } else {
+                    showTasks(exerciseTasks);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                if (!isAdded()) return;
+                Log.e(TAG, "Error loading tasks: " + error);
+                showError(error);
+            }
+        });
+    }
+    
+    private void showLoading() {
+        binding.layoutEmpty.setVisibility(View.GONE);
+        binding.recyclerExercise.setVisibility(View.GONE);
+        binding.progressLoading.setVisibility(View.VISIBLE);
+    }
+    
+    private void showTasks(List<Task> tasks) {
+        binding.progressLoading.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
+        binding.layoutEmpty.setVisibility(View.GONE);
+        binding.recyclerExercise.setVisibility(View.VISIBLE);
+        adapter.setTasks(tasks);
+    }
+    
+    private void showEmptyState() {
+        binding.progressLoading.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
+        binding.layoutEmpty.setVisibility(View.VISIBLE);
+        binding.recyclerExercise.setVisibility(View.GONE);
+    }
+    
+    private void showError(String message) {
+        binding.progressLoading.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
+        showEmptyState();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+    
+    /**
+     * Mở màn hình làm bài tập
+     * Chuyển thẳng sang PracticeFragment với exerciseId từ Task
+     */
+    private void openExerciseDetail(Task task) {
+        String exerciseId = task.getExerciseId();
+        String taskId = task.getId();
+        String title = task.getTitle();
+        
+        if (exerciseId == null || exerciseId.isEmpty()) {
+            Toast.makeText(requireContext(), "Bài tập chưa được cấu hình", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Kiểm tra trạng thái task
+        if ("COMPLETED".equalsIgnoreCase(task.getStatus())) {
+            Toast.makeText(requireContext(), "Bạn đã hoàn thành bài tập này!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Mở trực tiếp màn hình làm bài với exerciseId và taskId
+        com.kidsapp.ui.child.practice.PracticeFragment fragment = 
+            com.kidsapp.ui.child.practice.PracticeFragment.newInstance(exerciseId, title);
+        
+        // Truyền thêm taskId để complete task sau khi làm xong
+        Bundle args = fragment.getArguments();
+        if (args == null) args = new Bundle();
+        args.putString("taskId", taskId);
+        args.putInt("pointsReward", task.getPointsReward());
+        fragment.setArguments(args);
     
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -59,14 +214,14 @@ public class ExerciseTabFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
-
-    private List<Task> createSampleTasks() {
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(new Task("Bài 1: luyện phép cộng", 10, 15, 4.8f, R.drawable.ic_launcher_foreground, Task.TYPE_EXERCISE));
-        tasks.add(new Task("Bài 2: luyện phép trừ", 12, 20, 4.5f, R.drawable.ic_launcher_foreground, Task.TYPE_EXERCISE));
-        tasks.add(new Task("Bài 3: luyện phép nhân", 8, 12, 4.7f, R.drawable.ic_launcher_foreground, Task.TYPE_EXERCISE));
-        tasks.add(new Task("Bài 4: luyện phép chia", 15, 25, 4.6f, R.drawable.ic_launcher_foreground, Task.TYPE_EXERCISE));
-        tasks.add(new Task("Bài 5: bài tập tổng hợp", 9, 18, 4.9f, R.drawable.ic_launcher_foreground, Task.TYPE_EXERCISE));
-        return tasks;
+    
+    public void refresh() {
+        loadTasks();
+    }
+    
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

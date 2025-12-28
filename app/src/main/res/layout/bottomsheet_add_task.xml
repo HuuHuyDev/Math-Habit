@@ -185,37 +185,13 @@
 
             </LinearLayout>
 
-            <!-- Điểm thưởng -->
+            <!-- Giờ hoàn thành (Due Time) -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPoints"
+                android:id="@+id/tilDueTime"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_16"
-                android:hint="Điểm thưởng (để trống = mặc định)"
-                app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
-                app:boxCornerRadiusBottomStart="@dimen/radius_medium"
-                app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-                app:boxCornerRadiusTopStart="@dimen/radius_medium"
-                app:prefixText="⭐ ">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtPoints"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter_regular"
-                    android:inputType="number"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Thời gian -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilTime"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_12"
                 android:hint="Giờ hoàn thành (VD: 18:00)"
                 app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
                 app:boxCornerRadiusBottomStart="@dimen/radius_medium"
@@ -224,11 +200,39 @@
                 app:prefixText="🕐 ">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtTime"
+                    android:id="@+id/edtDueTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
                     android:fontFamily="@font/inter_regular"
-                    android:inputType="time"
+                    android:inputType="none"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Giờ nhắc nhở (Reminder Time) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilReminderTime"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:hint="Giờ nhắc nhở (VD: 17:30)"
+                app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+                app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+                app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+                app:boxCornerRadiusTopStart="@dimen/radius_medium"
+                app:prefixText="🔔 ">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtReminderTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:fontFamily="@font/inter_regular"
+                    android:inputType="none"
                     android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>

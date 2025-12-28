@@ -199,4 +199,124 @@ public class TaskAssignmentRepository {
             }
         });
     }
+    
+    // ==================== HABIT TASK ACTIONS ====================
+    
+    public interface OnTaskActionCallback {
+        void onSuccess(TaskResponse task);
+        void onError(String message);
+    }
+    
+    public interface OnSimpleCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+    
+    /**
+     * Nộp minh chứng cho HABIT task (ảnh/video)
+     * Chỉ dùng cho HABIT, EXERCISE sẽ throw exception từ BE
+     */
+    public void submitHabitProof(String taskId, okhttp3.MultipartBody.Part file, String note, OnSimpleCallback callback) {
+        okhttp3.RequestBody noteBody = note != null 
+                ? okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), note)
+                : okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), "");
+        
+        apiService.submitHabitProof(taskId, file, noteBody).enqueue(
+                new Callback<ApiService.ApiResponseWrapper<String>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<String>> call,
+                                   Response<ApiService.ApiResponseWrapper<String>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    callback.onSuccess();
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể nộp minh chứng";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<String>> call, Throwable t) {
+                Log.e(TAG, "submitHabitProof error", t);
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Parent duyệt HABIT task
+     */
+    public void approveHabit(String taskId, OnTaskActionCallback callback) {
+        apiService.approveHabit(taskId).enqueue(
+                new Callback<ApiService.ApiResponseWrapper<TaskResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<TaskResponse>> call,
+                                   Response<ApiService.ApiResponseWrapper<TaskResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể duyệt nhiệm vụ";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<TaskResponse>> call, Throwable t) {
+                Log.e(TAG, "approveHabit error", t);
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Parent từ chối HABIT task
+     */
+    public void rejectHabit(String taskId, String reason, OnTaskActionCallback callback) {
+        apiService.rejectHabit(taskId, reason).enqueue(
+                new Callback<ApiService.ApiResponseWrapper<TaskResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<TaskResponse>> call,
+                                   Response<ApiService.ApiResponseWrapper<TaskResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể từ chối nhiệm vụ";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<TaskResponse>> call, Throwable t) {
+                Log.e(TAG, "rejectHabit error", t);
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+    
+    // ==================== EXERCISE TASK ACTIONS ====================
+    
+    /**
+     * Hoàn thành EXERCISE task (sau khi làm bài xong)
+     * Tự động complete, không cần Parent duyệt
+     */
+    public void completeExercise(String taskId, Integer score, Integer correctAnswers, Integer totalAnswers, OnTaskActionCallback callback) {
+        apiService.completeExercise(taskId, score, correctAnswers, totalAnswers).enqueue(
+                new Callback<ApiService.ApiResponseWrapper<TaskResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<TaskResponse>> call,
+                                   Response<ApiService.ApiResponseWrapper<TaskResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể hoàn thành bài tập";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<TaskResponse>> call, Throwable t) {
+                Log.e(TAG, "completeExercise error", t);
+                callback.onError(t.getMessage());
+            }
+        });
+    }
 }

@@ -240,6 +240,168 @@ public class TaskRepository {
 
     // NOTE: createTask() method removed - use TaskAssignmentRepository.assignTask() instead
 
+    // ==================== NEW HABIT/EXERCISE METHODS ====================
+    
+    /**
+     * Nộp minh chứng cho HABIT task (ảnh/video)
+     * Chỉ dùng cho HABIT, EXERCISE sẽ throw exception từ BE
+     */
+    public void submitHabitProof(String taskId, Uri fileUri, String note, SimpleCallback callback) {
+        try {
+            Log.d(TAG, "submitHabitProof: taskId=" + taskId + ", fileUri=" + fileUri);
+            
+            File file = uriToFile(fileUri);
+            if (file == null) {
+                Log.e(TAG, "submitHabitProof: Cannot convert Uri to File");
+                callback.onError("Không thể đọc file");
+                return;
+            }
+            
+            Log.d(TAG, "submitHabitProof: file=" + file.getAbsolutePath() + ", size=" + file.length());
+            
+            String mimeType = context.getContentResolver().getType(fileUri);
+            Log.d(TAG, "submitHabitProof: mimeType=" + mimeType);
+            
+            MediaType mediaType = MediaType.parse(mimeType != null ? mimeType : "application/octet-stream");
+            
+            RequestBody fileBody = RequestBody.create(mediaType, file);
+            MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
+            RequestBody noteBody = RequestBody.create(MediaType.parse("text/plain"), note != null ? note : "");
+            
+            Call<ApiService.ApiResponseWrapper<String>> call = 
+                    apiService.submitHabitProof(taskId, filePart, noteBody);
+            
+            Log.d(TAG, "submitHabitProof: calling API...");
+            
+            call.enqueue(new Callback<ApiService.ApiResponseWrapper<String>>() {
+                @Override
+                public void onResponse(Call<ApiService.ApiResponseWrapper<String>> call,
+                                     Response<ApiService.ApiResponseWrapper<String>> response) {
+                    file.delete();
+                    
+                    Log.d(TAG, "submitHabitProof: response code=" + response.code());
+                    
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.d(TAG, "submitHabitProof: success=" + response.body().success + ", message=" + response.body().message);
+                        if (response.body().success) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError(response.body().message != null ? response.body().message : "Không thể gửi minh chứng");
+                        }
+                    } else {
+                        // Log error body
+                        try {
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                            Log.e(TAG, "submitHabitProof: error body=" + errorBody);
+                        } catch (Exception e) {
+                            Log.e(TAG, "submitHabitProof: cannot read error body");
+                        }
+                        callback.onError("Không thể gửi minh chứng (code: " + response.code() + ")");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiService.ApiResponseWrapper<String>> call, Throwable t) {
+                    file.delete();
+                    Log.e(TAG, "submitHabitProof: onFailure", t);
+                    callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "submitHabitProof: exception", e);
+            callback.onError("Lỗi: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Hoàn thành EXERCISE task (sau khi làm bài xong)
+     * Tự động complete, không cần Parent duyệt
+     */
+    public void completeExercise(String taskId, Integer score, Integer correctAnswers, Integer totalAnswers, TaskCallback callback) {
+        Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call = 
+                apiService.completeExercise(taskId, score, correctAnswers, totalAnswers);
+        
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    // Convert TaskResponse to Task
+                    Task task = new Task();
+                    task.setId(response.body().data.getId());
+                    task.setStatus(response.body().data.getStatus());
+                    callback.onSuccess(task);
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể hoàn thành bài tập";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Parent duyệt HABIT task
+     */
+    public void approveHabit(String taskId, TaskCallback callback) {
+        Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call = 
+                apiService.approveHabit(taskId);
+        
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    Task task = new Task();
+                    task.setId(response.body().data.getId());
+                    task.setStatus(response.body().data.getStatus());
+                    callback.onSuccess(task);
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể duyệt nhiệm vụ";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Parent từ chối HABIT task
+     */
+    public void rejectHabit(String taskId, String reason, TaskCallback callback) {
+        Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call = 
+                apiService.rejectHabit(taskId, reason);
+        
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    Task task = new Task();
+                    task.setId(response.body().data.getId());
+                    task.setStatus(response.body().data.getStatus());
+                    callback.onSuccess(task);
+                } else {
+                    String msg = response.body() != null ? response.body().message : "Không thể từ chối nhiệm vụ";
+                    callback.onError(msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+
     public interface TasksCallback {
         void onSuccess(List<Task> tasks);
         void onError(String error);
@@ -252,6 +414,11 @@ public class TaskRepository {
     
     public interface TaskProofCallback {
         void onSuccess(ApiService.TaskProofResponse proof);
+        void onError(String error);
+    }
+    
+    public interface SimpleCallback {
+        void onSuccess();
         void onError(String error);
     }
 }

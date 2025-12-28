@@ -1,6 +1,7 @@
 package com.kidsapp.ui.child.task.tabs;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,32 +12,42 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
-import com.google.android.material.tabs.TabLayout;
 import com.kidsapp.R;
+import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.HistoryTask;
+import com.kidsapp.data.model.Task;
+import com.kidsapp.data.repository.TaskRepository;
 import com.kidsapp.databinding.FragmentHistoryTabBinding;
 import com.kidsapp.ui.child.task.history.HistoryDetailFragment;
 import com.kidsapp.ui.child.task.history.TaskHistoryAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Fragment hiển thị lịch sử nhiệm vụ đã hoàn thành
+ * Load từ API: GET /tasks/child/{childId}?status=COMPLETED
  */
 public class HistoryTabFragment extends Fragment {
+    
+    private static final String TAG = "HistoryTabFragment";
+    
     private FragmentHistoryTabBinding binding;
     private TaskHistoryAdapter adapter;
+    private TaskRepository taskRepository;
+    private SharedPref sharedPref;
+    
     private List<HistoryTask> allHistoryTasks = new ArrayList<>();
     private List<HistoryTask> filteredTasks = new ArrayList<>();
     private int selectedFilterIndex = 0; // 0: Tất cả, 1: Hôm nay, 2: Tuần này, 3: Tháng này
 
-    public HistoryTabFragment() {
-        // Required empty public constructor
-    }
+    public HistoryTabFragment() {}
 
     public static HistoryTabFragment newInstance(String param1, String param2) {
         return new HistoryTabFragment();
@@ -52,15 +63,17 @@ public class HistoryTabFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        // Init
+        sharedPref = new SharedPref(requireContext());
+        taskRepository = new TaskRepository(requireContext());
+        
         setupFilterChips();
         setupRecyclerView();
-        loadSampleData();
+        loadHistory();
     }
 
-
-
     private void setupFilterChips() {
-        // Xử lý click vào các chip filter
         binding.chipAll.setOnClickListener(v -> {
             selectedFilterIndex = 0;
             updateFilterChipStyles();
@@ -85,12 +98,10 @@ public class HistoryTabFragment extends Fragment {
             filterTasks();
         });
 
-        // Mặc định chọn "Tất cả"
         updateFilterChipStyles();
     }
 
     private void updateFilterChipStyles() {
-        // Reset tất cả chips về unselected
         binding.chipAll.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
         binding.chipAll.setTextColor(ContextCompat.getColor(requireContext(), R.color.history_primary));
         binding.chipToday.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
@@ -100,21 +111,12 @@ public class HistoryTabFragment extends Fragment {
         binding.chipThisMonth.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
         binding.chipThisMonth.setTextColor(ContextCompat.getColor(requireContext(), R.color.history_primary));
 
-        // Set selected chip
         Chip selectedChip = null;
         switch (selectedFilterIndex) {
-            case 0:
-                selectedChip = binding.chipAll;
-                break;
-            case 1:
-                selectedChip = binding.chipToday;
-                break;
-            case 2:
-                selectedChip = binding.chipThisWeek;
-                break;
-            case 3:
-                selectedChip = binding.chipThisMonth;
-                break;
+            case 0: selectedChip = binding.chipAll; break;
+            case 1: selectedChip = binding.chipToday; break;
+            case 2: selectedChip = binding.chipThisWeek; break;
+            case 3: selectedChip = binding.chipThisMonth; break;
         }
 
         if (selectedChip != null) {
@@ -124,30 +126,87 @@ public class HistoryTabFragment extends Fragment {
     }
 
     private void filterTasks() {
-        // TODO: Implement logic filter theo thời gian thực tế
-        // Hiện tại chỉ hiển thị tất cả
         filteredTasks.clear();
-        filteredTasks.addAll(allHistoryTasks);
+        
+        if (selectedFilterIndex == 0) {
+            // Tất cả
+            filteredTasks.addAll(allHistoryTasks);
+        } else {
+            // Filter theo thời gian
+            Calendar cal = Calendar.getInstance();
+            Date now = new Date();
+            
+            for (HistoryTask task : allHistoryTasks) {
+                Date taskDate = parseDate(task.getCompletionTime());
+                if (taskDate == null) continue;
+                
+                boolean include = false;
+                switch (selectedFilterIndex) {
+                    case 1: // Hôm nay
+                        include = isSameDay(taskDate, now);
+                        break;
+                    case 2: // Tuần này
+                        include = isSameWeek(taskDate, now);
+                        break;
+                    case 3: // Tháng này
+                        include = isSameMonth(taskDate, now);
+                        break;
+                }
+                
+                if (include) {
+                    filteredTasks.add(task);
+                }
+            }
+        }
+        
         adapter.updateList(filteredTasks);
+        updateEmptyState();
+    }
+    
+    private Date parseDate(String dateStr) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
+            return sdf.parse(dateStr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    private boolean isSameDay(Date d1, Date d2) {
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(d1);
+        c2.setTime(d2);
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+               c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
+    
+    private boolean isSameWeek(Date d1, Date d2) {
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(d1);
+        c2.setTime(d2);
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+               c1.get(Calendar.WEEK_OF_YEAR) == c2.get(Calendar.WEEK_OF_YEAR);
+    }
+    
+    private boolean isSameMonth(Date d1, Date d2) {
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(d1);
+        c2.setTime(d2);
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+               c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH);
     }
 
     private void setupRecyclerView() {
         adapter = new TaskHistoryAdapter(new ArrayList<>());
-        
-        // Xử lý click vào nút "Xem chi tiết"
-        adapter.setOnHistoryClickListener(history -> {
-            // Chuyển sang trang chi tiết
-            navigateToHistoryDetail(history);
-        });
-        
+        adapter.setOnHistoryClickListener(this::navigateToHistoryDetail);
         binding.recyclerViewHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerViewHistory.setAdapter(adapter);
     }
     
-    /**
-     * Chuyển sang trang chi tiết lịch sử
-     */
-    private void navigateToHistoryDetail(com.kidsapp.data.model.HistoryTask history) {
+    private void navigateToHistoryDetail(HistoryTask history) {
         if (getActivity() != null) {
             HistoryDetailFragment detailFragment = HistoryDetailFragment.newInstance(
                     history.getTitle(),
@@ -166,65 +225,92 @@ public class HistoryTabFragment extends Fragment {
         }
     }
 
-    private void loadSampleData() {
-        allHistoryTasks.clear();
+    /**
+     * Load lịch sử từ API - tasks đã COMPLETED
+     */
+    private void loadHistory() {
+        // Ưu tiên childId, fallback sang userId nếu chưa có
+        String childId = sharedPref.getChildId();
+        if (childId == null || childId.isEmpty()) {
+            childId = sharedPref.getUserId();
+        }
         
-        // Sample data theo hình mẫu
-        allHistoryTasks.add(new HistoryTask(
-                "Bài 1: Luyện phép cộng",
-                "12/11/2025 - 15:30",
-                50,
-                100,
-                5.0f,
-                R.drawable.ic_launcher_foreground
-        ));
+        if (childId == null || childId.isEmpty()) {
+            Log.e(TAG, "Child ID and User ID not found");
+            updateEmptyState();
+            return;
+        }
         
-        allHistoryTasks.add(new HistoryTask(
-                "Quét nhà phòng khách",
-                "12/11/2025 - 14:00",
-                30,
-                60,
-                0f,
-                R.drawable.ic_launcher_foreground
-        ));
+        Log.d(TAG, "Loading history for child: " + childId);
         
-        allHistoryTasks.add(new HistoryTask(
-                "Nấu ăn cùng ba mẹ",
-                "11/11/2025 - 18:15",
-                40,
-                80,
-                0f,
-                R.drawable.ic_launcher_foreground
-        ));
-        
-        allHistoryTasks.add(new HistoryTask(
-                "Dọn và sắp xếp phòng",
-                "11/11/2025 - 16:45",
-                35,
-                70,
-                0f,
-                R.drawable.ic_launcher_foreground
-        ));
-        
-        allHistoryTasks.add(new HistoryTask(
-                "Học từ vựng tiếng Anh",
-                "10/11/2025 - 10:20",
-                45,
-                90,
-                4.5f,
-                R.drawable.ic_launcher_foreground
-        ));
-        
-        allHistoryTasks.add(new HistoryTask(
-                "Tưới cây trong vườn",
-                "09/11/2025 - 09:00",
-                25,
-                50,
-                0f,
-                R.drawable.ic_launcher_foreground
-        ));
+        // Load tất cả tasks với status COMPLETED
+        taskRepository.getTasksByChild(childId, "COMPLETED", null, null, 
+                new TaskRepository.TasksCallback() {
+            @Override
+            public void onSuccess(List<Task> tasks) {
+                if (!isAdded()) return;
+                
+                Log.d(TAG, "Loaded " + tasks.size() + " completed tasks");
+                
+                // Convert Task to HistoryTask
+                allHistoryTasks.clear();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
+                
+                for (Task task : tasks) {
+                    String completionTime = task.getCompletedAt();
+                    if (completionTime == null) {
+                        completionTime = sdf.format(new Date());
+                    }
+                    
+                    // Xác định icon dựa vào loại task
+                    int iconRes = R.drawable.ic_task_habit;
+                    if ("EXERCISE".equalsIgnoreCase(task.getTaskType())) {
+                        iconRes = R.drawable.ic_task_exercise;
+                    }
+                    
+                    // Rating cho exercise (từ score)
+                    float rating = 0f;
+                    if (task.getScore() != null) {
+                        rating = task.getScore() / 20f; // Convert 0-100 to 0-5
+                    }
+                    
+                    HistoryTask historyTask = new HistoryTask(
+                            task.getTitle(),
+                            completionTime,
+                            task.getCoinsReward(),
+                            task.getPointsReward(),
+                            rating,
+                            iconRes
+                    );
+                    allHistoryTasks.add(historyTask);
+                }
+                
+                filterTasks();
+            }
 
-        filterTasks();
+            @Override
+            public void onError(String error) {
+                if (!isAdded()) return;
+                Log.e(TAG, "Error loading history: " + error);
+                Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                updateEmptyState();
+            }
+        });
+    }
+    
+    private void updateEmptyState() {
+        if (binding == null) return;
+        
+        if (filteredTasks.isEmpty()) {
+            binding.recyclerViewHistory.setVisibility(View.GONE);
+            // TODO: Show empty state view if exists
+        } else {
+            binding.recyclerViewHistory.setVisibility(View.VISIBLE);
+        }
+    }
+    
+    public void refresh() {
+        loadHistory();
     }
 
     @Override

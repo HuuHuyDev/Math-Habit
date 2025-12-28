@@ -137,6 +137,16 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- LOADING INDICATOR -->
+            <ProgressBar
+                android:id="@+id/progressLoading"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:visibility="gone"
+                android:indeterminateTint="@color/primary" />
+
             <!-- ANSWER OPTIONS -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerAnswers"

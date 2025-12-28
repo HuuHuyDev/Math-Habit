@@ -14,6 +14,8 @@
     <dimen name="spacing_32">32dp</dimen>
     <dimen name="spacing_40">40dp</dimen>
     <dimen name="spacing_48">48dp</dimen>
+    <dimen name="spacing_56">56dp</dimen>
+    <dimen name="spacing_64">64dp</dimen>
     <dimen name="spacing_96">96dp</dimen>
 
     <!-- Parent Header -->
@@ -27,14 +29,19 @@
     <dimen name="bottom_nav_height">80dp</dimen>
 
     <!-- Text Size -->
+    <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
+    <dimen name="text_size_24">24sp</dimen>
     <dimen name="text_size_xsmall">12sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
-    <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
-    <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_large">18sp</dimen>
     <dimen name="text_size_xlarge">18sp</dimen>
-    <dimen name="text_size_20">20sp</dimen>
     <dimen name="text_size_xxlarge">20sp</dimen>
     <dimen name="text_size_title">22sp</dimen>
     <dimen name="text_size_headline">26sp</dimen>
@@ -70,17 +77,14 @@
     <dimen name="elevation_small">4dp</dimen>
     <dimen name="elevation_medium">8dp</dimen>
     <dimen name="elevation_large">12dp</dimen>
-
-
- 
     <dimen name="text_margin">16dp</dimen>
 
-
+    <!-- Circular Progress -->
     <dimen name="progress_stroke_width">8dp</dimen>
     <dimen name="progress_text_size">16sp</dimen>
     <dimen name="progress_view_size">120dp</dimen>
     <dimen name="child_progress_size">60dp</dimen>
 
+    <!-- Animations -->
     <dimen name="anim_translate_y">16dp</dimen>
-
 </resources>

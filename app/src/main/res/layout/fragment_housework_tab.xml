@@ -12,8 +12,7 @@
         android:id="@+id/recyclerHousework"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/spacing_16"
-        android:paddingTop="@dimen/spacing_8"
+        android:padding="0dp"
         android:clipToPadding="false"
         android:nestedScrollingEnabled="false"
         tools:listitem="@layout/item_housework" />

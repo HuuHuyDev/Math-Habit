@@ -19,11 +19,9 @@ import android.widget.Toast;
 import com.kidsapp.R;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.AnswerOption;
-import com.kidsapp.data.model.ExerciseResult;
 import com.kidsapp.data.model.Question;
 import com.kidsapp.data.model.QuestionResponse;
 import com.kidsapp.data.repository.ExerciseRepository;
-import com.kidsapp.data.request.SubmitAnswerRequest;
 import com.kidsapp.databinding.FragmentPracticeBinding;
 import com.kidsapp.utils.ExerciseConverter;
 
@@ -39,8 +37,10 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
     private int correctCount = 0;
     private boolean isAnswerLocked = false;
     private CountDownTimer countDownTimer;
-    private String contentId;
+    private String contentId;  // exerciseId
     private String contentTitle;
+    private String taskId;     // taskId để complete sau khi làm xong
+    private int pointsReward;
     private ExerciseRepository exerciseRepository;
     private SharedPref sharedPref;
     private long startTimeMillis; // Thời gian bắt đầu làm bài
@@ -81,24 +81,23 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         if (getArguments() != null) {
             contentId = getArguments().getString("content_id", "");
             contentTitle = getArguments().getString("content_title", "Luyện tập");
+            taskId = getArguments().getString("taskId", "");
+            pointsReward = getArguments().getInt("pointsReward", 0);
         }
     }
 
     private void setupHeader() {
         binding.btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
+        // Hiển thị title bài tập
+        if (binding.txtHeaderTitle != null && contentTitle != null) {
+            binding.txtHeaderTitle.setText(contentTitle);
+        }
     }
 
     /**
-     * Load câu hỏi từ API
+     * Load câu hỏi từ API dựa trên exerciseId (contentId)
      */
     private void loadQuestionsFromAPI() {
-        // TẠM THỜI DÙNG SAMPLE DATA ĐỂ TEST
-        // TODO: Uncomment để dùng API
-        setupQuestions();
-        updateUI();
-        return;
-        
-        /* COMMENT TẠM THỜI - UNCOMMENT ĐỂ DÙNG API
         if (contentId == null || contentId.isEmpty()) {
             // Fallback to sample data
             setupQuestions();
@@ -108,6 +107,9 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
 
         // Hiển thị loading
         binding.recyclerAnswers.setVisibility(View.GONE);
+        if (binding.progressLoading != null) {
+            binding.progressLoading.setVisibility(View.VISIBLE);
+        }
         
         // Call API để lấy câu hỏi
         exerciseRepository.getExerciseQuestions(contentId, new ExerciseRepository.QuestionListCallback() {
@@ -115,12 +117,20 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             public void onSuccess(List<QuestionResponse> questionResponses) {
                 if (getActivity() == null) return;
                 
-                // Convert API model sang UI model
-                questions = ExerciseConverter.convertToQuestions(questionResponses);
+                // Ẩn loading
+                if (binding.progressLoading != null) {
+                    binding.progressLoading.setVisibility(View.GONE);
+                }
                 
-                if (questions.isEmpty()) {
+                if (questionResponses == null || questionResponses.isEmpty()) {
                     // Nếu không có câu hỏi, fallback to sample data
+                    Toast.makeText(requireContext(), 
+                        "Bài tập chưa có câu hỏi, hiển thị dữ liệu mẫu", 
+                        Toast.LENGTH_SHORT).show();
                     setupQuestions();
+                } else {
+                    // Convert API model sang UI model
+                    questions = ExerciseConverter.convertToQuestions(questionResponses);
                 }
                 
                 // Update UI
@@ -132,9 +142,14 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             public void onError(String error) {
                 if (getActivity() == null) return;
                 
+                // Ẩn loading
+                if (binding.progressLoading != null) {
+                    binding.progressLoading.setVisibility(View.GONE);
+                }
+                
                 // Hiển thị lỗi và fallback to sample data
                 Toast.makeText(requireContext(), 
-                    "Không thể tải câu hỏi: " + error + ". Hiển thị dữ liệu mẫu.", 
+                    "Không thể tải câu hỏi: " + error, 
                     Toast.LENGTH_SHORT).show();
                 
                 setupQuestions();
@@ -142,7 +157,6 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
                 updateUI();
             }
         });
-        */
     }
 
     /**
@@ -431,122 +445,132 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
             countDownTimer.cancel();
         }
         
-        // Tính thời gian làm bài (giây)
-        long timeSpentSeconds = (System.currentTimeMillis() - startTimeMillis) / 1000;
-        
-        // Submit bài làm qua API
-        submitExerciseToAPI(timeSpentSeconds);
-    }
-
-    /**
-     * Submit bài làm lên server
-     */
-    private void submitExerciseToAPI(long timeSpentSeconds) {
-        String childId = sharedPref.getChildId();
-        
-        if (childId == null || childId.isEmpty() || contentId == null || contentId.isEmpty()) {
-            // Fallback: hiển thị kết quả local
-            showLocalResult();
-            return;
-        }
-
-        // Chuẩn bị danh sách câu trả lời
-        List<SubmitAnswerRequest.QuestionAnswer> answers = new ArrayList<>();
+        // Tính điểm dựa trên correctIndex
+        int totalCount = questions.size();
+        int correctAnswers = 0;
         
         for (Question question : questions) {
-            if (question.getSelectedIndex() != -1) {
-                // Lấy optionId từ converter
-                String optionId = ExerciseConverter.getOptionId(
-                    question.getId(), 
-                    question.getSelectedIndex()
-                );
-                
-                if (optionId != null) {
-                    answers.add(new SubmitAnswerRequest.QuestionAnswer(
-                        question.getId(), 
-                        optionId
-                    ));
-                }
+            if (question.getSelectedIndex() != -1 && 
+                question.getSelectedIndex() == question.getCorrectIndex()) {
+                correctAnswers++;
             }
         }
-
-        // Tạo request
-        SubmitAnswerRequest request = new SubmitAnswerRequest(
-            contentId,
-            answers,
-            (int) timeSpentSeconds
-        );
-
-        // Call API
-        exerciseRepository.submitExercise(childId, request, new ExerciseRepository.SubmitExerciseCallback() {
-            @Override
-            public void onSuccess(ExerciseResult result) {
-                if (getActivity() == null) return;
-                
-                // Hiển thị kết quả từ server
-                showResultFromAPI(result);
-            }
-
-            @Override
-            public void onError(String error) {
-                if (getActivity() == null) return;
-                
-                Toast.makeText(requireContext(), 
-                    "Không thể nộp bài: " + error + ". Hiển thị kết quả local.", 
-                    Toast.LENGTH_SHORT).show();
-                
-                // Fallback: hiển thị kết quả local
-                showLocalResult();
-            }
+        
+        int score = totalCount > 0 ? (correctAnswers * 100 / totalCount) : 0;
+        
+        // Complete task trực tiếp
+        final int finalCorrectAnswers = correctAnswers;
+        final int finalScore = score;
+        
+        if (taskId != null && !taskId.isEmpty()) {
+            completeExerciseTask(score, correctAnswers, totalCount);
+        }
+        
+        // Hiển thị dialog kết quả
+        showResultDialog(finalCorrectAnswers, totalCount, finalScore);
+    }
+    
+    /**
+     * Hiển thị dialog kết quả sau khi hoàn thành bài tập
+     */
+    private void showResultDialog(int correctAnswers, int totalCount, int score) {
+        if (getContext() == null) return;
+        
+        // Tạo dialog
+        androidx.appcompat.app.AlertDialog.Builder builder = 
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+        
+        // Tạo custom view cho dialog
+        LinearLayout layout = new LinearLayout(requireContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 32, 48, 16);
+        layout.setGravity(Gravity.CENTER);
+        
+        // Icon kết quả
+        TextView iconText = new TextView(requireContext());
+        iconText.setText(score >= 80 ? "🎉" : score >= 50 ? "👍" : "💪");
+        iconText.setTextSize(48);
+        iconText.setGravity(Gravity.CENTER);
+        layout.addView(iconText);
+        
+        // Tiêu đề
+        TextView titleText = new TextView(requireContext());
+        titleText.setText(score >= 80 ? "Xuất sắc!" : score >= 50 ? "Tốt lắm!" : "Cố gắng hơn nhé!");
+        titleText.setTextSize(22);
+        titleText.setTextColor(getResources().getColor(R.color.text_primary));
+        titleText.setGravity(Gravity.CENTER);
+        titleText.setPadding(0, 16, 0, 16);
+        layout.addView(titleText);
+        
+        // Kết quả chi tiết
+        TextView resultText = new TextView(requireContext());
+        resultText.setText(String.format("Số câu đúng: %d/%d\nĐiểm số: %d%%", 
+            correctAnswers, totalCount, score));
+        resultText.setTextSize(16);
+        resultText.setTextColor(getResources().getColor(R.color.text_secondary));
+        resultText.setGravity(Gravity.CENTER);
+        resultText.setLineSpacing(8, 1);
+        layout.addView(resultText);
+        
+        // Điểm thưởng
+        if (pointsReward > 0) {
+            TextView rewardText = new TextView(requireContext());
+            rewardText.setText(String.format("+%d ⭐ điểm thưởng", pointsReward));
+            rewardText.setTextSize(18);
+            rewardText.setTextColor(getResources().getColor(R.color.coin_orange));
+            rewardText.setGravity(Gravity.CENTER);
+            rewardText.setPadding(0, 24, 0, 0);
+            layout.addView(rewardText);
+        }
+        
+        builder.setView(layout);
+        builder.setCancelable(false);
+        builder.setPositiveButton("Hoàn tất", (dialog, which) -> {
+            dialog.dismiss();
+            // Quay lại và refresh danh sách
+            goBackAndRefresh();
         });
+        
+        builder.show();
     }
-
+    
     /**
-     * Hiển thị kết quả từ API
+     * Quay lại màn hình trước và thông báo refresh
      */
-    private void showResultFromAPI(ExerciseResult result) {
-        // TODO: Navigate to result screen với dữ liệu từ API
-        // Hiện tại chỉ hiển thị Toast
-        int wrongAnswers = result.getTotalQuestions() - result.getCorrectAnswers();
-        
-        String message = String.format(
-            "Kết quả:\n" +
-            "Điểm: %d/%d\n" +
-            "Đúng: %d câu\n" +
-            "Sai: %d câu\n" +
-            "Điểm thưởng: %d",
-            result.getScore(),
-            result.getTotalQuestions(),
-            result.getCorrectAnswers(),
-            wrongAnswers,
-            result.getPointsEarned()
-        );
-        
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
-        
-        // Quay lại màn hình trước
+    private void goBackAndRefresh() {
         if (getActivity() != null) {
+            // Set result để fragment trước biết cần refresh
+            // Dùng activity's fragment manager để ExerciseTabFragment nhận được
+            requireActivity().getSupportFragmentManager().setFragmentResult("exercise_completed", new Bundle());
             getActivity().onBackPressed();
         }
     }
 
     /**
-     * Hiển thị kết quả local (fallback)
+     * Gọi API complete exercise task
      */
-    private void showLocalResult() {
-        Bundle args = new Bundle();
-        args.putInt("correct_count", correctCount);
-        args.putInt("total_count", questions.size());
+    private void completeExerciseTask(int score, int correctAnswers, int totalAnswers) {
+        com.kidsapp.data.api.ApiService apiService = 
+            com.kidsapp.data.api.RetrofitClient.getInstance(sharedPref).getApiService();
         
-        // TODO: điều hướng sang màn hình kết quả
-        Toast.makeText(requireContext(), 
-            String.format("Kết quả: %d/%d câu đúng", correctCount, questions.size()), 
-            Toast.LENGTH_LONG).show();
-        
-        // Quay lại màn hình trước
-        if (getActivity() != null) {
-            getActivity().onBackPressed();
-        }
+        apiService.completeExercise(taskId, score, correctAnswers, totalAnswers)
+            .enqueue(new retrofit2.Callback<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>>() {
+                @Override
+                public void onResponse(retrofit2.Call<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call,
+                                      retrofit2.Response<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> response) {
+                    if (response.isSuccessful()) {
+                        android.util.Log.d("PracticeFragment", "Task completed successfully");
+                    } else {
+                        android.util.Log.e("PracticeFragment", "Failed to complete task: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call, 
+                                     Throwable t) {
+                    android.util.Log.e("PracticeFragment", "Error completing task", t);
+                }
+            });
     }
 
     @Override

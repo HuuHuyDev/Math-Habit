@@ -18,10 +18,14 @@ public class AnswerOptionResponse {
     
     @SerializedName("orderIndex")
     private Integer orderIndex;
+    
+    @SerializedName("isCorrect")
+    private Boolean isCorrect;
 
     // Getters
     public String getId() { return id; }
     public String getOptionText() { return optionText; }
     public String getImageUrl() { return imageUrl; }
     public Integer getOrderIndex() { return orderIndex; }
+    public Boolean getIsCorrect() { return isCorrect; }
 }

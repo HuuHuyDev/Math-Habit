@@ -47,9 +47,20 @@ public class ApiConfig {
     public static final String ENDPOINT_TASK_DETAIL = "tasks/{id}";
     public static final String ENDPOINT_UPDATE_TASK = "tasks/{id}";
     public static final String ENDPOINT_DELETE_TASK = "tasks/{id}";
+    
+    // HABIT task actions
+    public static final String ENDPOINT_TASK_SUBMIT_HABIT = "tasks/{id}/submit-habit";
+    public static final String ENDPOINT_TASK_APPROVE_HABIT = "tasks/{id}/approve-habit";
+    public static final String ENDPOINT_TASK_REJECT_HABIT = "tasks/{id}/reject-habit";
+    
+    // EXERCISE task actions
+    public static final String ENDPOINT_TASK_COMPLETE_EXERCISE = "tasks/{id}/complete-exercise";
+    
+    // Legacy endpoints (deprecated but still work)
     public static final String ENDPOINT_TASK_SUBMIT = "tasks/{id}/submit";
     public static final String ENDPOINT_TASK_APPROVE = "tasks/{id}/approve";
     public static final String ENDPOINT_TASK_REJECT = "tasks/{id}/reject";
+    
     public static final String ENDPOINT_TASKS_UPCOMING = "tasks/child/{childId}/upcoming";
     public static final String ENDPOINT_TASKS_OVERDUE = "tasks/child/{childId}/overdue";
     

@@ -99,8 +99,11 @@ public class ExerciseContentFragment extends Fragment {
         String childId = sharedPref.getChildId();
         
         if (childId == null || childId.isEmpty()) {
-            // Fallback to sample data nếu không có childId
-            loadSampleData();
+            childId = sharedPref.getUserId();
+        }
+        
+        if (childId == null || childId.isEmpty()) {
+            showEmptyState("Không tìm thấy thông tin tài khoản");
             return;
         }
 
@@ -112,6 +115,11 @@ public class ExerciseContentFragment extends Fragment {
             @Override
             public void onSuccess(List<com.kidsapp.data.model.ExerciseContent> exercises) {
                 if (getActivity() == null) return;
+                
+                if (exercises == null || exercises.isEmpty()) {
+                    showEmptyState("Chưa có bài tập nào");
+                    return;
+                }
                 
                 // Convert API model sang UI model
                 List<ExerciseContent> uiExercises = ExerciseConverter.convertToUIExerciseContents(exercises);
@@ -125,25 +133,17 @@ public class ExerciseContentFragment extends Fragment {
             @Override
             public void onError(String error) {
                 if (getActivity() == null) return;
-                
-                // Hiển thị lỗi và fallback to sample data
-                Toast.makeText(requireContext(), 
-                    "Không thể tải bài tập: " + error + ". Hiển thị dữ liệu mẫu.", 
-                    Toast.LENGTH_SHORT).show();
-                
-                loadSampleData();
+                showEmptyState("Không thể tải bài tập: " + error);
             }
         });
     }
 
     /**
-     * Load dữ liệu mẫu khi không có API hoặc lỗi
+     * Hiển thị trạng thái trống
      */
-    private void loadSampleData() {
-        List<ExerciseContent> contents = createSampleContents();
-        adapter = new ExerciseContentAdapter(contents, this::onContentClick);
-        binding.recyclerContents.setAdapter(adapter);
-        binding.recyclerContents.setVisibility(View.VISIBLE);
+    private void showEmptyState(String message) {
+        binding.recyclerContents.setVisibility(View.GONE);
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -238,72 +238,6 @@ public class ExerciseContentFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
         }
-    }
-
-    private List<ExerciseContent> createSampleContents() {
-        List<ExerciseContent> contents = new ArrayList<>();
-        
-        // Phép cộng 1 chữ số
-        contents.add(new ExerciseContent(
-            "1",
-            "Phép cộng 1 chữ số",
-            "Cộng các số từ 0 đến 9",
-            10,
-            5,
-            R.drawable.ic_task,
-            true,  // đã mở khóa
-            8      // đã làm 8/10 câu
-        ));
-        
-        // Phép cộng 2 chữ số
-        contents.add(new ExerciseContent(
-            "2",
-            "Phép cộng 2 chữ số",
-            "Cộng các số từ 10 đến 99",
-            15,
-            8,
-            R.drawable.ic_task,
-            true,
-            5      // đã làm 5/15 câu
-        ));
-        
-        // Bài toán minh họa
-        contents.add(new ExerciseContent(
-            "3",
-            "Bài toán minh họa",
-            "Áp dụng phép cộng vào thực tế",
-            12,
-            10,
-            R.drawable.ic_book,
-            true,
-            0      // chưa làm
-        ));
-        
-        // Kiểm tra tốc độ
-        contents.add(new ExerciseContent(
-            "4",
-            "Kiểm tra tốc độ",
-            "Làm nhanh trong 5 phút",
-            20,
-            5,
-            R.drawable.ic_clock,
-            false, // chưa mở khóa
-            0
-        ));
-        
-        // Phép cộng có nhớ
-        contents.add(new ExerciseContent(
-            "5",
-            "Phép cộng có nhớ",
-            "Cộng các số có nhớ sang hàng chục",
-            15,
-            10,
-            R.drawable.ic_task,
-            false, // chưa mở khóa
-            0
-        ));
-        
-        return contents;
     }
 
     private void onContentClick(ExerciseContent content) {

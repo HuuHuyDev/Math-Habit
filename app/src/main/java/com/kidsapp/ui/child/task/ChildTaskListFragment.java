@@ -62,8 +62,8 @@ public class ChildTaskListFragment extends Fragment {
 
     /**
      * Setup TabLayout với 3 tabs
-     * - Công việc (Việc nhà + Cá nhân)
-     * - Bài tập
+     * - Công việc (HABIT)
+     * - Bài tập (EXERCISE)
      * - Lịch sử
      */
     private void setupTabLayout() {
@@ -78,13 +78,13 @@ public class ChildTaskListFragment extends Fragment {
                 (tab, position) -> {
                     switch (position) {
                         case 0:
-                            tab.setText("Công việc"); // Gộp Việc nhà + Cá nhân
+                            tab.setText("Công việc"); // HABIT tasks
                             break;
                         case 1:
-                            tab.setText(R.string.task_tab_exercise); // Bài tập
+                            tab.setText("Bài tập"); // EXERCISE tasks
                             break;
                         case 2:
-                            tab.setText(R.string.task_tab_history); // Lịch sử
+                            tab.setText("Lịch sử"); // History
                             break;
                     }
                 }

@@ -46,18 +46,18 @@ public class ExerciseConverter {
                 
                 // Lưu optionId để submit sau này
                 optionIds.add(optionResponse.getId());
+                
+                // Tìm đáp án đúng
+                if (optionResponse.getIsCorrect() != null && optionResponse.getIsCorrect()) {
+                    correctIndex = i;
+                }
             }
         }
 
         // Lưu optionIds vào map để dùng khi submit
         optionIdMap.put(response.getId(), optionIds);
-
-        // Note: Backend không trả về correctIndex trong response
-        // Chỉ biết đúng/sai khi submit
-        // Tạm thời set correctIndex = -1, sẽ update sau khi submit
-        correctIndex = -1;
         
-        // Lưu correctIndex vào map (sẽ update sau khi submit)
+        // Lưu correctIndex vào map
         correctAnswerMap.put(response.getId(), correctIndex);
 
         // Tạo Question object
