@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,49 +86,26 @@ public class ExerciseContentFragment extends Fragment {
     }
 
     /**
-     * Load danh sách bài tập từ API
+     * Load dữ liệu mẫu cho danh sách bài tập
      */
-    private void loadExercisesFromAPI() {
-        String childId = sharedPref.getChildId();
+    private void loadSampleData() {
+        List<ExerciseContent> contents = new ArrayList<>();
         
-        if (childId == null || childId.isEmpty()) {
-            childId = sharedPref.getUserId();
+        // Tạo dữ liệu mẫu dựa trên taskTitle
+        if (taskTitle.contains("cộng")) {
+            contents.add(new ExerciseContent("1", "Phép cộng 1 chữ số", "Luyện tập phép cộng với số từ 0-9", 10, 5, R.drawable.ic_task, true, 0));
+            contents.add(new ExerciseContent("2", "Phép cộng 2 chữ số", "Luyện tập phép cộng với số từ 10-99", 10, 5, R.drawable.ic_task, true, 0));
+            contents.add(new ExerciseContent("3", "Bài toán minh họa", "Giải các bài toán có lời văn", 5, 5, R.drawable.ic_book, true, 0));
+        } else if (taskTitle.contains("trừ")) {
+            contents.add(new ExerciseContent("4", "Phép trừ 1 chữ số", "Luyện tập phép trừ với số từ 0-9", 10, 5, R.drawable.ic_task, true, 0));
+            contents.add(new ExerciseContent("5", "Phép trừ 2 chữ số", "Luyện tập phép trừ với số từ 10-99", 10, 5, R.drawable.ic_task, true, 0));
+        } else {
+            contents.add(new ExerciseContent("1", "Bài tập cơ bản", "Luyện tập các phép tính cơ bản", 10, 5, R.drawable.ic_task, true, 0));
+            contents.add(new ExerciseContent("2", "Bài tập nâng cao", "Thử thách với các bài tập khó hơn", 10, 5, R.drawable.ic_task, true, 0));
         }
         
-        if (childId == null || childId.isEmpty()) {
-            showEmptyState("Không tìm thấy thông tin tài khoản");
-            return;
-        }
-
-        // Hiển thị loading
-        binding.recyclerContents.setVisibility(View.GONE);
-        
-        // Call API
-        exerciseRepository.getAllExercises(childId, new ExerciseRepository.ExerciseListCallback() {
-            @Override
-            public void onSuccess(List<com.kidsapp.data.model.ExerciseContent> exercises) {
-                if (getActivity() == null) return;
-                
-                if (exercises == null || exercises.isEmpty()) {
-                    showEmptyState("Chưa có bài tập nào");
-                    return;
-                }
-                
-                // Convert API model sang UI model
-                List<ExerciseContent> uiExercises = ExerciseConverter.convertToUIExerciseContents(exercises);
-                
-                // Update adapter
-                adapter = new ExerciseContentAdapter(uiExercises, ExerciseContentFragment.this::onContentClick);
-                binding.recyclerContents.setAdapter(adapter);
-                binding.recyclerContents.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError(String error) {
-                if (getActivity() == null) return;
-                showEmptyState("Không thể tải bài tập: " + error);
-            }
-        });
+        adapter = new ExerciseContentAdapter(contents, this::onContentClick);
+        binding.recyclerContents.setAdapter(adapter);
     }
 
     /**

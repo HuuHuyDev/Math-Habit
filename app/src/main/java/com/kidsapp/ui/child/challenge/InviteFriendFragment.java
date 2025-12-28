@@ -163,33 +163,32 @@ public class InviteFriendFragment extends Fragment implements FriendAdapter.OnFr
     }
 
     private void loadFriends() {
-        try {
-            showLoading(true);
-            
-            repository.getFriendsList(new ChallengeRepository.ResultCallback<List<Child>>() {
-                @Override
-                public void onSuccess(List<Child> friends) {
-                    try {
-                        showLoading(false);
-                        
-                        if (friends == null || friends.isEmpty()) {
-                            binding.layoutEmpty.setVisibility(View.VISIBLE);
-                            binding.rvFriends.setVisibility(View.GONE);
-                            return;
-                        }
-                        
-                        binding.layoutEmpty.setVisibility(View.GONE);
-                        binding.rvFriends.setVisibility(View.VISIBLE);
-                        friendAdapter.setFriends(friends);
-                        
-                    } catch (Exception e) {
-                        new android.app.AlertDialog.Builder(requireContext())
-                            .setTitle("Lỗi hiển thị")
-                            .setMessage("Có lỗi khi hiển thị danh sách bạn bè")
-                            .setPositiveButton("Quay lại", (dialog, which) -> requireActivity().onBackPressed())
-                            .show();
+        showLoading(true);
+        
+        repository.getFriendsList(new ChallengeRepository.ResultCallback<List<Child>>() {
+            @Override
+            public void onSuccess(List<Child> friends) {
+                try {
+                    showLoading(false);
+                    
+                    if (friends == null || friends.isEmpty()) {
+                        binding.layoutEmpty.setVisibility(View.VISIBLE);
+                        binding.rvFriends.setVisibility(View.GONE);
+                        return;
                     }
+                    
+                    binding.layoutEmpty.setVisibility(View.GONE);
+                    binding.rvFriends.setVisibility(View.VISIBLE);
+                    friendAdapter.setFriends(friends);
+                    
+                } catch (Exception e) {
+                    new android.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Lỗi hiển thị")
+                        .setMessage("Có lỗi khi hiển thị danh sách bạn bè")
+                        .setPositiveButton("Quay lại", (dialog, which) -> requireActivity().onBackPressed())
+                        .show();
                 }
+            }
 
             @Override
             public void onError(String error) {
@@ -202,8 +201,9 @@ public class InviteFriendFragment extends Fragment implements FriendAdapter.OnFr
 
     private void loadMockData() {
         // Không dùng mock data nữa - hiển thị empty state
-        adapter.setFriends(new java.util.ArrayList<>());
-        updateEmptyState();
+        friendAdapter.setFriends(new java.util.ArrayList<>());
+        binding.layoutEmpty.setVisibility(View.VISIBLE);
+        binding.rvFriends.setVisibility(View.GONE);
     }
 
     private void showLoading(boolean show) {

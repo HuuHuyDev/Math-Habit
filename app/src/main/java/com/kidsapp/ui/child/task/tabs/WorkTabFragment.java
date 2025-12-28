@@ -1,8 +1,13 @@
 package com.kidsapp.ui.child.task.tabs;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +17,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -22,6 +29,7 @@ import com.kidsapp.data.repository.TaskRepository;
 import com.kidsapp.databinding.FragmentWorkTabBinding;
 import com.kidsapp.ui.child.task.adapter.WorkTaskAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +77,9 @@ public class WorkTabFragment extends Fragment {
         
         setupActivityLaunchers();
         setupRecyclerView();
+        
+        // Load tasks khi fragment được tạo
+        loadTasks();
     }
     
     /**
