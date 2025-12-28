@@ -52,11 +52,16 @@ public class AuthInterceptor implements Interceptor {
 
         // Không thêm token cho các endpoint public
         if (isPublicEndpoint(path)) {
+            android.util.Log.d("AuthInterceptor", "Public endpoint: " + path + " - No token added");
             return chain.proceed(originalRequest);
         }
 
         // Get token from SharedPreferences
         String token = sharedPref.getAuthToken();
+        
+        android.util.Log.d("AuthInterceptor", "=== API Request ===");
+        android.util.Log.d("AuthInterceptor", "Path: " + path);
+        android.util.Log.d("AuthInterceptor", "Token: " + (token != null ? "EXISTS (length=" + token.length() + ")" : "NULL"));
 
         Request request = originalRequest;
         if (token != null && !token.isEmpty()) {
@@ -64,18 +69,25 @@ public class AuthInterceptor implements Interceptor {
                     .header("Authorization", "Bearer " + token)
                     .header("Content-Type", "application/json")
                     .build();
+            android.util.Log.d("AuthInterceptor", "Token added to request header");
+        } else {
+            android.util.Log.w("AuthInterceptor", "No token available - Request will fail if endpoint requires auth!");
         }
 
         Response response = chain.proceed(request);
+        android.util.Log.d("AuthInterceptor", "Response code: " + response.code());
 
         // Nếu 401 Unauthorized, thử refresh token
         if (response.code() == 401) {
+            android.util.Log.w("AuthInterceptor", "Got 401 Unauthorized for path: " + path);
+            
             synchronized (lock) {
                 // Kiểm tra lại token (có thể đã được refresh bởi request khác)
                 String currentToken = sharedPref.getAuthToken();
                 
                 // Nếu token đã thay đổi, retry với token mới
                 if (token != null && !token.equals(currentToken) && currentToken != null) {
+                    android.util.Log.d("AuthInterceptor", "Token changed, retrying with new token");
                     response.close();
                     Request newRequest = originalRequest.newBuilder()
                             .header("Authorization", "Bearer " + currentToken)
@@ -86,11 +98,13 @@ public class AuthInterceptor implements Interceptor {
 
                 // Thử refresh token
                 if (!isRefreshing) {
+                    android.util.Log.d("AuthInterceptor", "Attempting to refresh token...");
                     isRefreshing = true;
                     boolean refreshSuccess = tryRefreshToken();
                     isRefreshing = false;
 
                     if (refreshSuccess) {
+                        android.util.Log.d("AuthInterceptor", "Token refreshed successfully, retrying request");
                         response.close();
                         String newToken = sharedPref.getAuthToken();
                         Request newRequest = originalRequest.newBuilder()
@@ -99,8 +113,9 @@ public class AuthInterceptor implements Interceptor {
                                 .build();
                         return chain.proceed(newRequest);
                     } else {
-                        // Refresh thất bại -> logout
-                        handleLogout();
+                        // Refresh thất bại -> KHÔNG logout tự động
+                        android.util.Log.e("AuthInterceptor", "Token refresh failed - keeping session for now");
+                        // Để API callback xử lý lỗi
                     }
                 }
             }
@@ -167,7 +182,9 @@ public class AuthInterceptor implements Interceptor {
         sharedPref.clearAll();
         RetrofitClient.resetInstance();
         
-        // Broadcast logout event để các Activity có thể xử lý
+        // Log và hiển thị thông báo
         android.util.Log.w("AuthInterceptor", "Token expired, user logged out");
+        
+        // Không tự động logout nữa, để user thấy thông báo lỗi từ API
     }
 }

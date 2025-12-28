@@ -74,14 +74,16 @@ public class ChallengeHomeFragment extends Fragment {
                 // Ignore vibration errors
             }
             
-            // Navigate to QuickMatchActivity instead of Fragment
-            Intent intent = new Intent(requireContext(), QuickMatchActivity.class);
-            startActivity(intent);
+            // Navigate to SelectChallengeConfigFragment first
+            SelectChallengeConfigFragment fragment = SelectChallengeConfigFragment.newInstance("quick_match");
+            navigateToFragment(fragment);
         });
 
         // Invite Friend - Mời bạn
         binding.cardInviteFriend.setOnClickListener(v -> {
-            navigateToFragment(new InviteFriendFragment());
+            // Navigate to SelectChallengeConfigFragment first (chọn chế độ trước)
+            SelectChallengeConfigFragment fragment = SelectChallengeConfigFragment.newInstance("invite_friend");
+            navigateToFragment(fragment);
         });
 
         // Join by Code - Tham gia bằng mã
