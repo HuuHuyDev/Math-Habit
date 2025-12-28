@@ -4,26 +4,38 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.model.Task;
 import com.kidsapp.databinding.FragmentHouseworkTabBinding;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
- * Fragment hiển thị tab Việc nhà
+ * Fragment hiển thị tab Thói quen (HABIT tasks)
  */
 public class HouseworkTabFragment extends Fragment {
 
     private FragmentHouseworkTabBinding binding;
     private HouseworkAdapter adapter;
+    private String childId;
 
     public HouseworkTabFragment() {
         // Required empty public constructor
@@ -44,26 +56,85 @@ public class HouseworkTabFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        // Lấy childId từ arguments của fragment này
+        if (getArguments() != null) {
+            childId = getArguments().getString("childId");
+        }
+        
         setupRecyclerView();
+        loadHabitTasks();
     }
 
     private void setupRecyclerView() {
-        // Tạo dữ liệu mẫu giống hình tham chiếu
-        List<HouseworkTask> taskList = new ArrayList<>();
-        taskList.add(new HouseworkTask("1", "Đánh răng", true, R.drawable.ic_toothbrush));
-        taskList.add(new HouseworkTask("2", "Dọn đồ chơi", true, R.drawable.ic_toys));
-        taskList.add(new HouseworkTask("3", "Đọc sách", true, R.drawable.ic_book));
-        taskList.add(new HouseworkTask("4", "Uống nước", false, R.drawable.ic_water));
-        taskList.add(new HouseworkTask("5", "Ăn sáng đầy đủ", false, R.drawable.ic_breakfast));
-
-        adapter = new HouseworkAdapter(taskList);
+        adapter = new HouseworkAdapter(new ArrayList<>());
         binding.recyclerHousework.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerHousework.setAdapter(adapter);
         
-        // Thêm padding cho RecyclerView
         int padding = (int) (16 * getResources().getDisplayMetrics().density);
         binding.recyclerHousework.setPadding(padding, padding, padding, padding);
         binding.recyclerHousework.setClipToPadding(false);
+    }
+
+    private void loadHabitTasks() {
+        if (childId == null || childId.isEmpty()) {
+            showEmptyState();
+            return;
+        }
+
+        SharedPref sharedPref = new SharedPref(requireContext());
+        ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        
+        // Lấy ngày hiện tại
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        
+        apiService.getTasksByChild(childId, null, "HABIT", today)
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
+                    @Override
+                    public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call,
+                                           Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
+                        if (!isAdded()) return;
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<Task> tasks = response.body().data;
+                            updateUI(tasks);
+                        } else {
+                            showEmptyState();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
+                        if (!isAdded()) return;
+                        showEmptyState();
+                    }
+                });
+    }
+
+    private void updateUI(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            showEmptyState();
+            return;
+        }
+
+        List<HouseworkTask> taskList = new ArrayList<>();
+        for (Task task : tasks) {
+            boolean isCompleted = "COMPLETED".equals(task.getStatus());
+            taskList.add(new HouseworkTask(
+                    task.getId(),
+                    task.getTitle(),
+                    isCompleted,
+                    R.drawable.ic_task
+            ));
+        }
+        
+        adapter.updateData(taskList);
+        binding.recyclerHousework.setVisibility(View.VISIBLE);
+    }
+
+    private void showEmptyState() {
+        // Hiển thị empty state hoặc message
+        adapter.updateData(new ArrayList<>());
     }
 
     @Override

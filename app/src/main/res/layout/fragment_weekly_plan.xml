@@ -184,32 +184,8 @@
                 android:background="@drawable/bg_card_white_pure"
                 android:layout_marginStart="@dimen/spacing_16"
                 android:layout_marginTop="@dimen/spacing_16"
-                android:layout_marginEnd="@dimen/spacing_16" />
-
-            <!-- Save Button -->
-            <FrameLayout
-                android:id="@+id/fabSaveWeek"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginStart="@dimen/spacing_16"
-                android:layout_marginTop="@dimen/spacing_16"
                 android:layout_marginEnd="@dimen/spacing_16"
-                android:layout_marginBottom="@dimen/spacing_20"
-                android:background="@drawable/bg_button_gradient"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/inter_bold"
-                    android:text="✓ Lưu kế hoạch tuần"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-            </FrameLayout>
+                android:layout_marginBottom="@dimen/spacing_20" />
 
         </LinearLayout>
 

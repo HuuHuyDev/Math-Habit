@@ -35,7 +35,8 @@ public class ExerciseRepository {
      * Lấy tất cả bài tập
      */
     public void getAllExercises(String childId, ExerciseListCallback callback) {
-        apiService.getAllExercises(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ExerciseContent>>>() {
+        // Sử dụng endpoint mới: tasks/exercises/for-child/{childId}
+        apiService.getExercisesForChild(childId, null).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ExerciseContent>>>() {
             @Override
             public void onResponse(Call<ApiService.ApiResponseWrapper<List<ExerciseContent>>> call,
                                  Response<ApiService.ApiResponseWrapper<List<ExerciseContent>>> response) {

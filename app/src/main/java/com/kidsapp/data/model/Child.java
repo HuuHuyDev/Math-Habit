@@ -30,6 +30,9 @@ public class Child {
     @SerializedName("nickname")
     private String nickname;
     
+    @SerializedName("gender")
+    private Boolean gender;  // true = Nam, false = Nữ
+    
     @SerializedName("level")
     private int level;
     
@@ -37,11 +40,17 @@ public class Child {
     private boolean isOnline;
     
     // Tiến độ học tập
-    @SerializedName("totalPoints")
-    private int totalPoints;
+    @SerializedName("totalXp")
+    private int totalXp;
+    
+    @SerializedName("coins")
+    private int coins;
     
     @SerializedName("currentLevel")
     private int currentLevel;
+    
+    @SerializedName("xpToNextLevel")
+    private int xpToNextLevel;
     
     @SerializedName("currentStreak")
     private int currentStreak;
@@ -49,8 +58,8 @@ public class Child {
     @SerializedName("longestStreak")
     private int longestStreak;
     
-    @SerializedName("totalExercisesCompleted")
-    private int totalExercisesCompleted;
+    @SerializedName("totalTasksCompleted")
+    private int totalTasksCompleted;
     
     @SerializedName("totalStudyTimeMinutes")
     private int totalStudyTimeMinutes;
@@ -133,6 +142,22 @@ public class Child {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+    
+    public Boolean getGender() {
+        return gender;
+    }
+    
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
+    
+    /**
+     * Lấy giới tính dạng text
+     */
+    public String getGenderText() {
+        if (gender == null) return "";
+        return gender ? "Nam" : "Nữ";
+    }
 
     public int getLevel() {
         return level;
@@ -151,11 +176,27 @@ public class Child {
     }
 
     public int getTotalPoints() {
-        return totalPoints;
+        return totalXp;
     }
 
     public void setTotalPoints(int totalPoints) {
-        this.totalPoints = totalPoints;
+        this.totalXp = totalPoints;
+    }
+    
+    public int getTotalXp() {
+        return totalXp;
+    }
+
+    public void setTotalXp(int totalXp) {
+        this.totalXp = totalXp;
+    }
+    
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
     }
 
     public int getCurrentLevel() {
@@ -164,6 +205,14 @@ public class Child {
 
     public void setCurrentLevel(int currentLevel) {
         this.currentLevel = currentLevel;
+    }
+    
+    public int getXpToNextLevel() {
+        return xpToNextLevel;
+    }
+
+    public void setXpToNextLevel(int xpToNextLevel) {
+        this.xpToNextLevel = xpToNextLevel;
     }
 
     public int getCurrentStreak() {
@@ -182,12 +231,20 @@ public class Child {
         this.longestStreak = longestStreak;
     }
 
+    public int getTotalTasksCompleted() {
+        return totalTasksCompleted;
+    }
+
+    public void setTotalTasksCompleted(int totalTasksCompleted) {
+        this.totalTasksCompleted = totalTasksCompleted;
+    }
+    
     public int getTotalExercisesCompleted() {
-        return totalExercisesCompleted;
+        return totalTasksCompleted;
     }
 
     public void setTotalExercisesCompleted(int totalExercisesCompleted) {
-        this.totalExercisesCompleted = totalExercisesCompleted;
+        this.totalTasksCompleted = totalExercisesCompleted;
     }
 
     public int getTotalStudyTimeMinutes() {

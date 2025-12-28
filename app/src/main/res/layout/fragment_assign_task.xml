@@ -57,7 +57,7 @@
             android:padding="@dimen/spacing_12"
             android:layout_marginBottom="@dimen/spacing_16" />
 
-        <!-- Loại bài tập -->
+        <!-- Loại bài tập (chỉ EXERCISE và HABIT) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,13 +80,6 @@
                 android:layout_weight="1"
                 android:text="Bài tập"
                 android:checked="true" />
-
-            <RadioButton
-                android:id="@+id/radioHousework"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Công việc" />
 
             <RadioButton
                 android:id="@+id/radioHabit"
@@ -123,42 +116,93 @@
 
         </LinearLayout>
 
-        <!-- Tiêu đề -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tiêu đề"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="@dimen/spacing_8" />
-
-        <EditText
-            android:id="@+id/edtTitle"
+        <!-- Chọn thói quen (chỉ hiện khi chọn "Thói quen") -->
+        <LinearLayout
+            android:id="@+id/layoutHabitSelection"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/spacing_48"
-            android:background="@drawable/bg_input"
-            android:padding="@dimen/spacing_12"
-            android:hint="Ví dụ: Bài 1: Luyện phép cộng"
-            android:inputType="text"
-            android:maxLines="1"
-            android:layout_marginBottom="@dimen/spacing_16" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <!-- Mô tả -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn thói quen"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/text_secondary"
+                android:layout_marginBottom="@dimen/spacing_8" />
+
+            <Spinner
+                android:id="@+id/spinnerHabit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/spacing_48"
+                android:background="@drawable/bg_input"
+                android:padding="@dimen/spacing_12"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+        </LinearLayout>
+
+        <!-- Thông tin template đã chọn -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSelectedTemplate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_16"
+            android:visibility="gone"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/surface">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_12">
+
+                <TextView
+                    android:id="@+id/tvTemplateTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tvTemplateDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="@dimen/spacing_4" />
+
+                <TextView
+                    android:id="@+id/tvTemplateReward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/primary"
+                    android:layout_marginTop="@dimen/spacing_4" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Ghi chú của phụ huynh -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mô tả (tùy chọn)"
+            android:text="Ghi chú cho con (tùy chọn)"
             android:textSize="@dimen/text_size_14"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="@dimen/spacing_8" />
 
         <EditText
-            android:id="@+id/edtDescription"
+            android:id="@+id/edtParentNote"
             android:layout_width="match_parent"
             android:layout_height="@dimen/spacing_96"
             android:background="@drawable/bg_input"
             android:padding="@dimen/spacing_12"
-            android:hint="Mô tả chi tiết về bài tập..."
+            android:hint="Ví dụ: Con cố gắng hoàn thành trước 8h tối nhé!"
             android:inputType="textMultiLine"
             android:gravity="top"
             android:layout_marginBottom="@dimen/spacing_16" />
@@ -205,24 +249,14 @@
 
         </LinearLayout>
 
-        <!-- Điểm thưởng -->
-        <TextView
+        <!-- Bắt buộc -->
+        <CheckBox
+            android:id="@+id/cbMandatory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Điểm thưởng"
+            android:text="Bắt buộc hoàn thành"
             android:textSize="@dimen/text_size_14"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="@dimen/spacing_8" />
-
-        <EditText
-            android:id="@+id/edtPointsReward"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/spacing_48"
-            android:background="@drawable/bg_input"
-            android:padding="@dimen/spacing_12"
-            android:hint="10"
-            android:inputType="number"
-            android:maxLines="1"
+            android:textColor="@color/text_primary"
             android:layout_marginBottom="@dimen/spacing_16" />
 
         <!-- Độ ưu tiên -->
@@ -264,6 +298,14 @@
                 android:text="Cao" />
 
         </RadioGroup>
+
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <!-- Nút giao bài -->
         <Button

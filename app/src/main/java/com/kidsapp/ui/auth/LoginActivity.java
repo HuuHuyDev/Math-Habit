@@ -8,6 +8,7 @@ import androidx.navigation.Navigation;
 import com.kidsapp.R;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.databinding.ActivityLoginBinding;
+import com.kidsapp.service.FcmTokenManager;
 import com.kidsapp.ui.child.main.ChildMainActivity;
 import com.kidsapp.ui.parent.main.ParentMainActivity;
 
@@ -27,12 +28,26 @@ public class LoginActivity extends AppCompatActivity {
         
         // Check if user is already logged in
         if (sharedPref.isLoggedIn() && sharedPref.getAuthToken() != null) {
+            // Gửi lại FCM token khi auto-login
+            resendFcmToken();
             navigateToMain();
             return;
         }
         
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+    }
+    
+    /**
+     * Gửi lại FCM token khi user đã đăng nhập trước đó
+     */
+    private void resendFcmToken() {
+        try {
+            FcmTokenManager fcmTokenManager = new FcmTokenManager(this);
+            fcmTokenManager.resendSavedToken();
+        } catch (Exception e) {
+            android.util.Log.e("LoginActivity", "Error resending FCM token", e);
+        }
     }
     
     private void navigateToMain() {

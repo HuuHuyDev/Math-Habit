@@ -22,10 +22,13 @@ public class Task {
     private String assignedBy; // parent ID
     
     @SerializedName("taskType")
-    private String taskType; // housework, habit, exercise, custom
+    private String taskType; // EXERCISE hoặc HABIT
     
     @SerializedName("exerciseId")
-    private Integer exerciseId;
+    private String exerciseId; // ID của ExerciseContent
+    
+    @SerializedName("habitTemplateId")
+    private String habitTemplateId; // ID của HabitTemplate
     
     @SerializedName("dueDate")
     private String dueDate;
@@ -34,25 +37,43 @@ public class Task {
     private String dueTime;
     
     @SerializedName("status")
-    private String status; // pending, in_progress, completed, verified
+    private String status; // PENDING, SUBMITTED, COMPLETED
     
     @SerializedName("pointsReward")
     private int pointsReward;
     
+    @SerializedName("coinsReward")
+    private int coinsReward;
+    
     @SerializedName("priority")
-    private int priority; // 1=low, 2=medium, 3=high
+    private int priority; // 1-5
+    
+    @SerializedName("isMandatory")
+    private boolean isMandatory;
+    
+    @SerializedName("parentNote")
+    private String parentNote;
     
     @SerializedName("isRecurring")
     private boolean isRecurring;
     
     @SerializedName("recurrencePattern")
-    private String recurrencePattern; // daily, weekly, monthly
+    private String recurrencePattern; // daily, weekly, mon_wed_fri...
     
     @SerializedName("activeProof")
     private TaskProof activeProof; // Minh chứng hiện tại
     
+    @SerializedName("submittedAt")
+    private String submittedAt;
+    
     @SerializedName("completedAt")
     private String completedAt;
+    
+    @SerializedName("xpEarned")
+    private Integer xpEarned;
+    
+    @SerializedName("coinsEarned")
+    private Integer coinsEarned;
     
     @SerializedName("createdAt")
     private String createdAt;
@@ -83,7 +104,7 @@ public class Task {
         private String submittedAt;
         
         @SerializedName("status")
-        private String status; // pending, approved, rejected
+        private String status; // PENDING, APPROVED, REJECTED
         
         @SerializedName("reviewedBy")
         private String reviewedBy;
@@ -128,148 +149,93 @@ public class Task {
     }
 
     // Getters and Setters
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getChildId() { return childId; }
+    public void setChildId(String childId) { this.childId = childId; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getAssignedBy() { return assignedBy; }
+    public void setAssignedBy(String assignedBy) { this.assignedBy = assignedBy; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getTaskType() { return taskType; }
+    public void setTaskType(String taskType) { this.taskType = taskType; }
 
-    public String getChildId() {
-        return childId;
-    }
+    public String getExerciseId() { return exerciseId; }
+    public void setExerciseId(String exerciseId) { this.exerciseId = exerciseId; }
 
-    public void setChildId(String childId) {
-        this.childId = childId;
-    }
+    public String getHabitTemplateId() { return habitTemplateId; }
+    public void setHabitTemplateId(String habitTemplateId) { this.habitTemplateId = habitTemplateId; }
 
-    public String getAssignedBy() {
-        return assignedBy;
-    }
+    public String getDueDate() { return dueDate; }
+    public void setDueDate(String dueDate) { this.dueDate = dueDate; }
 
-    public void setAssignedBy(String assignedBy) {
-        this.assignedBy = assignedBy;
-    }
+    public String getDueTime() { return dueTime; }
+    public void setDueTime(String dueTime) { this.dueTime = dueTime; }
 
-    public String getTaskType() {
-        return taskType;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setTaskType(String taskType) {
-        this.taskType = taskType;
-    }
+    public int getPointsReward() { return pointsReward; }
+    public void setPointsReward(int pointsReward) { this.pointsReward = pointsReward; }
 
-    public Integer getExerciseId() {
-        return exerciseId;
-    }
+    public int getCoinsReward() { return coinsReward; }
+    public void setCoinsReward(int coinsReward) { this.coinsReward = coinsReward; }
 
-    public void setExerciseId(Integer exerciseId) {
-        this.exerciseId = exerciseId;
-    }
+    public int getPriority() { return priority; }
+    public void setPriority(int priority) { this.priority = priority; }
 
-    public String getDueDate() {
-        return dueDate;
-    }
+    public boolean isMandatory() { return isMandatory; }
+    public void setMandatory(boolean mandatory) { isMandatory = mandatory; }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
-    }
+    public String getParentNote() { return parentNote; }
+    public void setParentNote(String parentNote) { this.parentNote = parentNote; }
 
-    public String getDueTime() {
-        return dueTime;
-    }
+    public boolean isRecurring() { return isRecurring; }
+    public void setRecurring(boolean recurring) { isRecurring = recurring; }
 
-    public void setDueTime(String dueTime) {
-        this.dueTime = dueTime;
-    }
+    public String getRecurrencePattern() { return recurrencePattern; }
+    public void setRecurrencePattern(String recurrencePattern) { this.recurrencePattern = recurrencePattern; }
 
-    public String getStatus() {
-        return status;
-    }
+    public TaskProof getActiveProof() { return activeProof; }
+    public void setActiveProof(TaskProof activeProof) { this.activeProof = activeProof; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(String submittedAt) { this.submittedAt = submittedAt; }
 
-    public int getPointsReward() {
-        return pointsReward;
-    }
+    public String getCompletedAt() { return completedAt; }
+    public void setCompletedAt(String completedAt) { this.completedAt = completedAt; }
 
-    public void setPointsReward(int pointsReward) {
-        this.pointsReward = pointsReward;
-    }
+    public Integer getXpEarned() { return xpEarned; }
+    public void setXpEarned(Integer xpEarned) { this.xpEarned = xpEarned; }
 
-    public int getPriority() {
-        return priority;
-    }
+    public Integer getCoinsEarned() { return coinsEarned; }
+    public void setCoinsEarned(Integer coinsEarned) { this.coinsEarned = coinsEarned; }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 
-    public boolean isRecurring() {
-        return isRecurring;
+    public String getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    
+    /**
+     * Check if task is EXERCISE type
+     */
+    public boolean isExercise() {
+        return "EXERCISE".equalsIgnoreCase(taskType);
     }
-
-    public void setRecurring(boolean recurring) {
-        isRecurring = recurring;
-    }
-
-    public String getRecurrencePattern() {
-        return recurrencePattern;
-    }
-
-    public void setRecurrencePattern(String recurrencePattern) {
-        this.recurrencePattern = recurrencePattern;
-    }
-
-    public TaskProof getActiveProof() {
-        return activeProof;
-    }
-
-    public void setActiveProof(TaskProof activeProof) {
-        this.activeProof = activeProof;
-    }
-
-    public String getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(String completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    
+    /**
+     * Check if task is HABIT type
+     */
+    public boolean isHabit() {
+        return "HABIT".equalsIgnoreCase(taskType);
     }
 }
 

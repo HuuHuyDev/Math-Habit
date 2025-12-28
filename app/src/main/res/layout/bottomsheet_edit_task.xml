@@ -151,29 +151,102 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Points Reward (EDITABLE) -->
+    <!-- Reminder Time (EDITABLE) -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilPoints"
+        android:id="@+id/tilReminderTime"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_12"
-        android:hint="Điểm thưởng"
+        android:hint="Giờ nhắc nhở (VD: 17:30)"
         app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
         app:boxCornerRadiusBottomStart="@dimen/radius_medium"
         app:boxCornerRadiusTopEnd="@dimen/radius_medium"
         app:boxCornerRadiusTopStart="@dimen/radius_medium"
-        app:prefixText="⭐ ">
+        app:prefixText="🔔 ">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtPoints"
+            android:id="@+id/edtReminderTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_regular"
-            android:inputType="number"
+            android:inputType="time"
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Parent Note (EDITABLE) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilParentNote"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:hint="Ghi chú cho bé"
+        app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
+        app:boxCornerRadiusBottomStart="@dimen/radius_medium"
+        app:boxCornerRadiusTopEnd="@dimen/radius_medium"
+        app:boxCornerRadiusTopStart="@dimen/radius_medium"
+        app:prefixText="📝 ">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtParentNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:maxLines="4" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Priority (EDITABLE) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:fontFamily="@font/inter_semibold"
+        android:text="Độ ưu tiên"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_size_medium" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="1"
+        android:valueTo="5"
+        android:stepSize="1"
+        android:value="1"
+        app:labelBehavior="floating"
+        app:tickVisible="true"
+        app:trackColorActive="@color/primary"
+        app:thumbColor="@color/primary" />
+
+    <!-- Is Mandatory (EDITABLE) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Bắt buộc phải làm"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_size_medium" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchMandatory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false" />
+
+    </LinearLayout>
 
     <!-- Recurring (EDITABLE) -->
     <LinearLayout

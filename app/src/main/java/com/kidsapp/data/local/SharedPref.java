@@ -88,6 +88,21 @@ public class SharedPref {
         return sharedPreferences.getString("child_id", null);
     }
 
+    // FCM Token
+    public void saveFcmToken(String token) {
+        editor.putString("fcm_token", token);
+        editor.apply();
+    }
+
+    public String getFcmToken() {
+        return sharedPreferences.getString("fcm_token", null);
+    }
+
+    public void clearFcmToken() {
+        editor.remove("fcm_token");
+        editor.apply();
+    }
+
     // Login Status
     public void setLoggedIn(boolean isLoggedIn) {
         editor.putBoolean(Constants.KEY_IS_LOGGED_IN, isLoggedIn);

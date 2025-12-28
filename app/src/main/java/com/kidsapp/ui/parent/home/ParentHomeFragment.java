@@ -14,14 +14,17 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
 import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.ActivityLog;
 import com.kidsapp.data.model.Child;
 import com.kidsapp.databinding.BottomsheetNotificationsBinding;
 import com.kidsapp.databinding.FragmentParentHomeBinding;
+import com.kidsapp.ui.components.LoadingDialog;
 import com.kidsapp.ui.parent.home.adapter.ChildCardAdapter;
 import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
 import com.kidsapp.ui.parent.home.adapter.RecentActivityAdapter;
@@ -30,6 +33,10 @@ import com.kidsapp.viewmodel.HomeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Parent Home Fragment
@@ -41,6 +48,8 @@ public class ParentHomeFragment extends Fragment {
     private HomeViewModel viewModel;
     private ChildCardAdapter childCardAdapter;
     private RecentActivityAdapter recentActivityAdapter;
+    private ApiService apiService;
+    private LoadingDialog loadingDialog;
 
     @Nullable
     @Override
@@ -55,6 +64,8 @@ public class ParentHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         sharedPref = new SharedPref(requireContext());
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        loadingDialog = new LoadingDialog(requireContext());
         
         setupHeader();
         setupChildrenRecycler();
@@ -63,7 +74,23 @@ public class ParentHomeFragment extends Fragment {
         applyAnimations();
         
         // Load data từ API
+        showLoading();
         viewModel.loadHomeData();
+        
+        // Load parent avatar
+        loadParentAvatar();
+    }
+    
+    private void showLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.show("Đang tải...");
+        }
+    }
+    
+    private void hideLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
     }
 
     private void setupHeader() {
@@ -83,6 +110,53 @@ public class ParentHomeFragment extends Fragment {
                         .navigate(R.id.action_nav_home_to_chat);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        });
+        
+        // Click vào avatar để mở Profile
+        binding.headerParent.layoutAvatar.setOnClickListener(v -> {
+            try {
+                Navigation.findNavController(requireView())
+                        .navigate(R.id.nav_profile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    
+    /**
+     * Load avatar của parent từ API
+     */
+    private void loadParentAvatar() {
+        apiService.getParentProfileApi().enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.ParentProfileResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.ParentProfileResponse>> call,
+                                   Response<ApiService.ApiResponseWrapper<ApiService.ParentProfileResponse>> response) {
+                if (!isAdded() || binding == null) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    ApiService.ParentProfileResponse profile = response.body().data;
+                    
+                    // Cập nhật tên
+                    if (profile.fullName != null && !profile.fullName.isEmpty()) {
+                        binding.headerParent.tvHelloSubtitle.setText(getString(R.string.hello_parent, profile.fullName));
+                    }
+                    
+                    // Cập nhật avatar
+                    if (profile.avatarUrl != null && !profile.avatarUrl.isEmpty()) {
+                        Glide.with(requireContext())
+                                .load(profile.avatarUrl)
+                                .placeholder(R.drawable.ic_user_default)
+                                .error(R.drawable.ic_user_default)
+                                .circleCrop()
+                                .into(binding.headerParent.ivParentAvatar);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.ParentProfileResponse>> call, Throwable t) {
+                // Ignore - keep default avatar
             }
         });
     }
@@ -108,7 +182,11 @@ public class ParentHomeFragment extends Fragment {
         // Observe loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null) {
-                binding.loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                if (isLoading) {
+                    showLoading();
+                } else {
+                    hideLoading();
+                }
             }
         });
 
@@ -147,10 +225,19 @@ public class ParentHomeFragment extends Fragment {
         child.setId(response.id);
         child.setName(response.name != null ? response.name : response.nickname);
         child.setLevel(response.level != null ? response.level : 1);
-        child.setTotalPoints(response.totalPoints != null ? response.totalPoints : 0);
-        child.setAvatarUrl(response.avatarUrl);
+        child.setTotalPoints(response.totalXp != null ? response.totalXp : 0);
         child.setGrade(response.grade);
         child.setDailyProgress(response.dailyProgress != null ? response.dailyProgress : 0f);
+        
+        // Set avatar: ưu tiên avatarUrl, fallback theo gender
+        if (response.avatarUrl != null && !response.avatarUrl.isEmpty()) {
+            child.setAvatarUrl(response.avatarUrl);
+        } else {
+            // Dùng emoji theo giới tính
+            String defaultAvatar = (response.gender != null && response.gender) ? "👦" : "👧";
+            child.setAvatarUrl(defaultAvatar);
+        }
+        
         return child;
     }
 
@@ -226,6 +313,8 @@ public class ParentHomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        hideLoading();
+        loadingDialog = null;
         binding = null;
     }
 }

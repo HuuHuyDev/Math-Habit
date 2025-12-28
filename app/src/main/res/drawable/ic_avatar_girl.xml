@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    
+    <!-- Background circle - Pink for girl -->
+    <path
+        android:fillColor="#F48FB1"
+        android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0"/>
+    
+    <!-- Face -->
+    <path
+        android:fillColor="#FFCC80"
+        android:pathData="M24,36c-6.627,0 -12,-5.373 -12,-12s5.373,-12 12,-12s12,5.373 12,12s-5.373,12 -12,12z"/>
+    
+    <!-- Hair - Long girl hair -->
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M12,24c0,-6.627 5.373,-12 12,-12s12,5.373 12,12c0,0 0,-10 -12,-10s-12,10 -12,10z"/>
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M10,28c0,0 -2,8 4,10c0,0 -4,-4 -4,-10z"/>
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M38,28c0,0 2,8 -4,10c0,0 4,-4 4,-10z"/>
+    
+    <!-- Hair bow -->
+    <path
+        android:fillColor="#E91E63"
+        android:pathData="M32,16c0,0 2,-2 4,0s-2,2 -4,0z"/>
+    
+    <!-- Eyes -->
+    <path
+        android:fillColor="#37474F"
+        android:pathData="M19,26m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+    <path
+        android:fillColor="#37474F"
+        android:pathData="M29,26m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+    
+    <!-- Eyelashes -->
+    <path
+        android:fillColor="#37474F"
+        android:strokeWidth="0.5"
+        android:pathData="M17,24l-1,-2M21,24l1,-2M27,24l-1,-2M31,24l1,-2"/>
+    
+    <!-- Smile -->
+    <path
+        android:fillColor="#E57373"
+        android:pathData="M24,32c2,0 4,-1 4,-2s-2,-1 -4,-1s-4,0 -4,1s2,2 4,2z"/>
+    
+    <!-- Blush -->
+    <path
+        android:fillColor="#FFAB91"
+        android:fillAlpha="0.5"
+        android:pathData="M15,29m-2,0a2,1.5 0,1 1,4 0a2,1.5 0,1 1,-4 0"/>
+    <path
+        android:fillColor="#FFAB91"
+        android:fillAlpha="0.5"
+        android:pathData="M33,29m-2,0a2,1.5 0,1 1,4 0a2,1.5 0,1 1,-4 0"/>
+</vector>

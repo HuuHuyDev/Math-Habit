@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.model.WeeklyProgress;
 import com.kidsapp.data.repository.ChildRepository;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ChildViewModel extends AndroidViewModel {
     private ChildRepository childRepository;
     private MutableLiveData<List<ApiService.ChildResponse>> childrenLiveData;
     private MutableLiveData<ApiService.ChildResponse> childDetailLiveData;
+    private MutableLiveData<WeeklyProgress> weeklyProgressLiveData;
     private MutableLiveData<String> errorLiveData;
     private MutableLiveData<String> successLiveData;
     private MutableLiveData<Boolean> isLoadingLiveData;
@@ -28,6 +30,7 @@ public class ChildViewModel extends AndroidViewModel {
         childRepository = new ChildRepository(application);
         childrenLiveData = new MutableLiveData<>();
         childDetailLiveData = new MutableLiveData<>();
+        weeklyProgressLiveData = new MutableLiveData<>();
         errorLiveData = new MutableLiveData<>();
         successLiveData = new MutableLiveData<>();
         isLoadingLiveData = new MutableLiveData<>();
@@ -163,6 +166,24 @@ public class ChildViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Lấy tiến độ tuần hiện tại của bé
+     */
+    public void loadWeeklyProgress(String childId) {
+        childRepository.getWeeklyProgress(childId, new ChildRepository.WeeklyProgressCallback() {
+            @Override
+            public void onSuccess(WeeklyProgress progress) {
+                weeklyProgressLiveData.postValue(progress);
+            }
+
+            @Override
+            public void onError(String error) {
+                // Không hiển thị lỗi, chỉ log
+                android.util.Log.e("ChildViewModel", "loadWeeklyProgress error: " + error);
+            }
+        });
+    }
+
     public void clearMessages() {
         errorLiveData.setValue(null);
         successLiveData.setValue(null);
@@ -187,5 +208,9 @@ public class ChildViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsLoading() {
         return isLoadingLiveData;
+    }
+
+    public LiveData<WeeklyProgress> getWeeklyProgress() {
+        return weeklyProgressLiveData;
     }
 }

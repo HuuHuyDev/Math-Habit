@@ -57,20 +57,26 @@ public class ReportRepository {
     }
 
     public void getWeeklyProgress(String childId, WeeklyProgressCallback callback) {
-        Call<WeeklyProgress> call = apiService.getWeeklyProgress(childId);
+        Call<ApiService.ApiResponseWrapper<WeeklyProgress>> call = apiService.getWeeklyProgress(childId);
         
-        call.enqueue(new Callback<WeeklyProgress>() {
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<WeeklyProgress>>() {
             @Override
-            public void onResponse(Call<WeeklyProgress> call, Response<WeeklyProgress> response) {
+            public void onResponse(Call<ApiService.ApiResponseWrapper<WeeklyProgress>> call, 
+                                   Response<ApiService.ApiResponseWrapper<WeeklyProgress>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    ApiService.ApiResponseWrapper<WeeklyProgress> wrapper = response.body();
+                    if (wrapper.success && wrapper.data != null) {
+                        callback.onSuccess(wrapper.data);
+                    } else {
+                        callback.onError(wrapper.message != null ? wrapper.message : "Không thể tải tiến độ tuần");
+                    }
                 } else {
                     callback.onError("Không thể tải tiến độ tuần");
                 }
             }
 
             @Override
-            public void onFailure(Call<WeeklyProgress> call, Throwable t) {
+            public void onFailure(Call<ApiService.ApiResponseWrapper<WeeklyProgress>> call, Throwable t) {
                 callback.onError(t.getMessage());
             }
         });

@@ -12,8 +12,9 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kidsapp.R;
-import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.repository.TaskAssignmentRepository;
+import com.kidsapp.data.request.UpdateTaskRequest;
+import com.kidsapp.data.response.TaskResponse;
 import com.kidsapp.databinding.BottomsheetEditTaskBinding;
 import com.kidsapp.ui.parent.task_plan.model.WeekTask;
 
@@ -21,7 +22,7 @@ import java.util.Calendar;
 
 /**
  * BottomSheet để chỉnh sửa nhiệm vụ đã giao
- * Chỉ cho phép sửa: dueDate, dueTime, pointsReward, isRecurring
+ * Cho phép sửa: dueDate, dueTime, reminderTime, parentNote, priority, isMandatory, isRecurring
  */
 public class EditTaskBottomSheet extends BottomSheetDialogFragment {
 
@@ -54,6 +55,7 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
         }
         repository = new TaskAssignmentRepository(requireContext());
     }
+
 
     @Nullable
     @Override
@@ -90,13 +92,15 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
 
         // Editable fields
         binding.edtDueDate.setText(getCurrentDueDate());
-        binding.edtDueTime.setText(""); // TODO: Get from task if available
-        binding.edtPoints.setText(String.valueOf(task.getCoins()));
-        binding.switchRecurring.setChecked(false); // TODO: Get from task if available
+        binding.edtDueTime.setText("");
+        binding.edtReminderTime.setText("");
+        binding.edtParentNote.setText("");
+        binding.sliderPriority.setValue(task.getLevel() > 0 ? task.getLevel() : 1);
+        binding.switchMandatory.setChecked(false);
+        binding.switchRecurring.setChecked(false);
     }
 
     private String getCurrentDueDate() {
-        // Calculate due date based on dayIndex
         Calendar calendar = Calendar.getInstance();
         int todayDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         int targetDayOfWeek = (task.getDayIndex() + 2) % 7;
@@ -113,13 +117,8 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void setupListeners() {
-        // Date picker
         binding.edtDueDate.setOnClickListener(v -> showDatePicker());
-
-        // Nút Hủy
         binding.btnCancel.setOnClickListener(v -> dismiss());
-
-        // Nút Cập nhật
         binding.btnUpdate.setOnClickListener(v -> updateTask());
     }
 
@@ -139,47 +138,49 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void updateTask() {
+        if (taskId == null || taskId.isEmpty()) {
+            Toast.makeText(requireContext(), "Không tìm thấy ID nhiệm vụ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String dueDate = binding.edtDueDate.getText().toString().trim();
         String dueTime = binding.edtDueTime.getText().toString().trim();
-        String pointsStr = binding.edtPoints.getText().toString().trim();
+        String reminderTime = binding.edtReminderTime.getText().toString().trim();
+        String parentNote = binding.edtParentNote.getText().toString().trim();
+        int priority = (int) binding.sliderPriority.getValue();
+        boolean isMandatory = binding.switchMandatory.isChecked();
         boolean isRecurring = binding.switchRecurring.isChecked();
 
-        // Validation
         if (dueDate.isEmpty()) {
             binding.tilDueDate.setError("Vui lòng chọn ngày hết hạn");
             return;
         }
 
-        Integer points = pointsStr.isEmpty() ? null : Integer.parseInt(pointsStr);
-
-        // Create update request
-        ApiService.UpdateTaskRequest request = new ApiService.UpdateTaskRequest(
-                dueDate,
-                dueTime.isEmpty() ? null : dueTime,
-                points,
-                isRecurring,
-                isRecurring ? "daily" : null
-        );
+        UpdateTaskRequest request = new UpdateTaskRequest();
+        request.setDueDate(dueDate);
+        if (!dueTime.isEmpty()) request.setDueTime(dueTime);
+        if (!reminderTime.isEmpty()) request.setReminderTime(reminderTime);
+        if (!parentNote.isEmpty()) request.setParentNote(parentNote);
+        request.setPriority(priority);
+        request.setIsMandatory(isMandatory);
+        request.setIsRecurring(isRecurring);
 
         setLoading(true);
 
-        repository.updateTask(taskId, request, new TaskAssignmentRepository.OnUpdateTaskCallback() {
+        repository.updateTask(taskId, request, new TaskAssignmentRepository.OnCreateTaskCallback() {
             @Override
-            public void onSuccess(ApiService.TaskAssignmentResponse response) {
+            public void onSuccess(TaskResponse response) {
                 if (!isAdded()) return;
                 setLoading(false);
 
-                // Update local task object
-                if (points != null) {
-                    task.setCoins(points);
-                    task.setXp(points / 2);
-                }
+                // Update local task
+                task.setLevel(response.getPriority() != null ? response.getPriority() : 1);
 
                 if (listener != null) {
                     listener.onTaskUpdated(task, position);
                 }
 
-                Toast.makeText(requireContext(), "Đã cập nhật nhiệm vụ thành công!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Đã cập nhật nhiệm vụ!", Toast.LENGTH_SHORT).show();
                 dismiss();
             }
 

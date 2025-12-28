@@ -7,75 +7,14 @@ import java.util.List;
  * Model class for Weekly Progress
  */
 public class WeeklyProgress {
-    @SerializedName("week_start")
-    private String weekStart;
-    
-    @SerializedName("week_end")
-    private String weekEnd;
-    
-    @SerializedName("total_tasks")
-    private int totalTasks;
-    
-    @SerializedName("completed_tasks")
-    private int completedTasks;
-    
-    @SerializedName("total_xp")
-    private int totalXP;
-    
-    @SerializedName("daily_progress")
+    @SerializedName("dailyProgress")
     private List<DailyProgress> dailyProgress;
 
     public WeeklyProgress() {
     }
 
-    public WeeklyProgress(String weekStart, String weekEnd, int totalTasks, 
-                         int completedTasks, int totalXP, List<DailyProgress> dailyProgress) {
-        this.weekStart = weekStart;
-        this.weekEnd = weekEnd;
-        this.totalTasks = totalTasks;
-        this.completedTasks = completedTasks;
-        this.totalXP = totalXP;
+    public WeeklyProgress(List<DailyProgress> dailyProgress) {
         this.dailyProgress = dailyProgress;
-    }
-
-    public String getWeekStart() {
-        return weekStart;
-    }
-
-    public void setWeekStart(String weekStart) {
-        this.weekStart = weekStart;
-    }
-
-    public String getWeekEnd() {
-        return weekEnd;
-    }
-
-    public void setWeekEnd(String weekEnd) {
-        this.weekEnd = weekEnd;
-    }
-
-    public int getTotalTasks() {
-        return totalTasks;
-    }
-
-    public void setTotalTasks(int totalTasks) {
-        this.totalTasks = totalTasks;
-    }
-
-    public int getCompletedTasks() {
-        return completedTasks;
-    }
-
-    public void setCompletedTasks(int completedTasks) {
-        this.completedTasks = completedTasks;
-    }
-
-    public int getTotalXP() {
-        return totalXP;
-    }
-
-    public void setTotalXP(int totalXP) {
-        this.totalXP = totalXP;
     }
 
     public List<DailyProgress> getDailyProgress() {
@@ -93,19 +32,28 @@ public class WeeklyProgress {
         @SerializedName("date")
         private String date;
         
-        @SerializedName("tasks_completed")
-        private int tasksCompleted;
+        @SerializedName("dayLabel")
+        private String dayLabel;  // T2, T3, T4, T5, T6, T7, CN
         
-        @SerializedName("xp_earned")
-        private int xpEarned;
+        @SerializedName("totalTasks")
+        private int totalTasks;
+        
+        @SerializedName("completedTasks")
+        private int completedTasks;
+        
+        @SerializedName("progressPercent")
+        private int progressPercent;
 
         public DailyProgress() {
         }
 
-        public DailyProgress(String date, int tasksCompleted, int xpEarned) {
+        public DailyProgress(String date, String dayLabel, int totalTasks, 
+                            int completedTasks, int progressPercent) {
             this.date = date;
-            this.tasksCompleted = tasksCompleted;
-            this.xpEarned = xpEarned;
+            this.dayLabel = dayLabel;
+            this.totalTasks = totalTasks;
+            this.completedTasks = completedTasks;
+            this.progressPercent = progressPercent;
         }
 
         public String getDate() {
@@ -116,20 +64,36 @@ public class WeeklyProgress {
             this.date = date;
         }
 
-        public int getTasksCompleted() {
-            return tasksCompleted;
+        public String getDayLabel() {
+            return dayLabel;
         }
 
-        public void setTasksCompleted(int tasksCompleted) {
-            this.tasksCompleted = tasksCompleted;
+        public void setDayLabel(String dayLabel) {
+            this.dayLabel = dayLabel;
         }
 
-        public int getXpEarned() {
-            return xpEarned;
+        public int getTotalTasks() {
+            return totalTasks;
         }
 
-        public void setXpEarned(int xpEarned) {
-            this.xpEarned = xpEarned;
+        public void setTotalTasks(int totalTasks) {
+            this.totalTasks = totalTasks;
+        }
+
+        public int getCompletedTasks() {
+            return completedTasks;
+        }
+
+        public void setCompletedTasks(int completedTasks) {
+            this.completedTasks = completedTasks;
+        }
+
+        public int getProgressPercent() {
+            return progressPercent;
+        }
+
+        public void setProgressPercent(int progressPercent) {
+            this.progressPercent = progressPercent;
         }
     }
 }

@@ -3,24 +3,22 @@ package com.kidsapp.data.request;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Request để parent tạo/giao bài cho con
+ * Request để parent giao bài cho con
+ * Phụ huynh chọn từ template (ExerciseContent hoặc HabitTemplate)
  */
 public class CreateTaskRequest {
     
     @SerializedName("childId")
     private String childId;
     
-    @SerializedName("title")
-    private String title;
-    
-    @SerializedName("description")
-    private String description;
-    
     @SerializedName("taskType")
-    private String taskType; // exercise, housework, habit, custom
+    private String taskType; // EXERCISE hoặc HABIT
     
     @SerializedName("exerciseId")
-    private String exerciseId;
+    private String exerciseId; // ID của ExerciseContent (khi taskType = EXERCISE)
+    
+    @SerializedName("habitTemplateId")
+    private String habitTemplateId; // ID của HabitTemplate (khi taskType = HABIT)
     
     @SerializedName("dueDate")
     private String dueDate; // yyyy-MM-dd
@@ -28,26 +26,47 @@ public class CreateTaskRequest {
     @SerializedName("dueTime")
     private String dueTime; // HH:mm:ss
     
-    @SerializedName("pointsReward")
-    private Integer pointsReward;
+    @SerializedName("reminderTime")
+    private String reminderTime; // HH:mm:ss
+    
+    @SerializedName("parentNote")
+    private String parentNote; // Ghi chú riêng của phụ huynh
     
     @SerializedName("priority")
-    private Integer priority;
+    private Integer priority; // 1-5
+    
+    @SerializedName("isMandatory")
+    private Boolean isMandatory;
     
     @SerializedName("isRecurring")
     private Boolean isRecurring;
     
     @SerializedName("recurrencePattern")
-    private String recurrencePattern;
+    private String recurrencePattern; // daily, weekly, mon_wed_fri...
 
     public CreateTaskRequest() {
     }
 
-    public CreateTaskRequest(String childId, String title, String description, String taskType) {
-        this.childId = childId;
-        this.title = title;
-        this.description = description;
-        this.taskType = taskType;
+    /**
+     * Constructor cho EXERCISE task
+     */
+    public static CreateTaskRequest forExercise(String childId, String exerciseId) {
+        CreateTaskRequest request = new CreateTaskRequest();
+        request.childId = childId;
+        request.taskType = "EXERCISE";
+        request.exerciseId = exerciseId;
+        return request;
+    }
+    
+    /**
+     * Constructor cho HABIT task
+     */
+    public static CreateTaskRequest forHabit(String childId, String habitTemplateId) {
+        CreateTaskRequest request = new CreateTaskRequest();
+        request.childId = childId;
+        request.taskType = "HABIT";
+        request.habitTemplateId = habitTemplateId;
+        return request;
     }
 
     // Getters and Setters
@@ -57,22 +76,6 @@ public class CreateTaskRequest {
 
     public void setChildId(String childId) {
         this.childId = childId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getTaskType() {
@@ -91,6 +94,14 @@ public class CreateTaskRequest {
         this.exerciseId = exerciseId;
     }
 
+    public String getHabitTemplateId() {
+        return habitTemplateId;
+    }
+
+    public void setHabitTemplateId(String habitTemplateId) {
+        this.habitTemplateId = habitTemplateId;
+    }
+
     public String getDueDate() {
         return dueDate;
     }
@@ -107,12 +118,20 @@ public class CreateTaskRequest {
         this.dueTime = dueTime;
     }
 
-    public Integer getPointsReward() {
-        return pointsReward;
+    public String getReminderTime() {
+        return reminderTime;
     }
 
-    public void setPointsReward(Integer pointsReward) {
-        this.pointsReward = pointsReward;
+    public void setReminderTime(String reminderTime) {
+        this.reminderTime = reminderTime;
+    }
+
+    public String getParentNote() {
+        return parentNote;
+    }
+
+    public void setParentNote(String parentNote) {
+        this.parentNote = parentNote;
     }
 
     public Integer getPriority() {
@@ -121,6 +140,14 @@ public class CreateTaskRequest {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public Boolean getIsMandatory() {
+        return isMandatory;
+    }
+
+    public void setIsMandatory(Boolean isMandatory) {
+        this.isMandatory = isMandatory;
     }
 
     public Boolean getIsRecurring() {

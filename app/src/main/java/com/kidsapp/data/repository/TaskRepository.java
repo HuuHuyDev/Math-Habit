@@ -37,75 +37,34 @@ public class TaskRepository {
     }
 
     /**
-     * Lấy tất cả tasks của child
+     * Lấy tất cả tasks của child với filters
+     */
+    public void getTasksByChild(String childId, String status, String taskType, String date, TasksCallback callback) {
+        Call<ApiService.ApiResponseWrapper<List<Task>>> call = apiService.getTasksByChild(childId, status, taskType, date);
+        
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call, 
+                                 Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tải danh sách nhiệm vụ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Lấy tất cả tasks của child (không filter)
      */
     public void getTasksByChild(String childId, TasksCallback callback) {
-        Call<ApiService.ApiResponseWrapper<List<Task>>> call = apiService.getTasksByChild(childId);
-        
-        call.enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call, 
-                                 Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                    callback.onSuccess(response.body().data);
-                } else {
-                    callback.onError("Không thể tải danh sách nhiệm vụ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
-                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
-            }
-        });
-    }
-
-    /**
-     * Lấy tasks theo status (pending, in_progress, completed)
-     */
-    public void getTasksByStatus(String childId, String status, TasksCallback callback) {
-        Call<ApiService.ApiResponseWrapper<List<Task>>> call = apiService.getTasksByStatus(childId, status);
-        
-        call.enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call, 
-                                 Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                    callback.onSuccess(response.body().data);
-                } else {
-                    callback.onError("Không thể tải danh sách nhiệm vụ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
-                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
-            }
-        });
-    }
-
-    /**
-     * Lấy tasks theo type (housework, habit, exercise, custom)
-     */
-    public void getTasksByType(String childId, String type, TasksCallback callback) {
-        Call<ApiService.ApiResponseWrapper<List<Task>>> call = apiService.getTasksByType(childId, type);
-        
-        call.enqueue(new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call, 
-                                 Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                    callback.onSuccess(response.body().data);
-                } else {
-                    callback.onError("Không thể tải danh sách nhiệm vụ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
-                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
-            }
-        });
+        getTasksByChild(childId, null, null, null, callback);
     }
 
     /**
@@ -260,54 +219,26 @@ public class TaskRepository {
         });
     }
 
-    /**
-     * Hoàn thành task (không cần minh chứng - dùng cho exercise)
-     */
-    public void completeTask(String taskId, TaskCallback callback) {
-        Call<ApiService.ApiResponseWrapper<Task>> call = apiService.completeTask(taskId);
-        
-        call.enqueue(new Callback<ApiService.ApiResponseWrapper<Task>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<Task>> call, 
-                                 Response<ApiService.ApiResponseWrapper<Task>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                    callback.onSuccess(response.body().data);
-                } else {
-                    callback.onError("Không thể hoàn thành nhiệm vụ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<Task>> call, Throwable t) {
-                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
-            }
-        });
-    }
-
     // Legacy method - keep for backward compatibility
     public void getTasks(String childId, TasksCallback callback) {
         getTasksByChild(childId, callback);
     }
-
-    public void createTask(Task task, TaskCallback callback) {
-        Call<Task> call = apiService.createTask(task);
-        
-        call.enqueue(new Callback<Task>() {
-            @Override
-            public void onResponse(Call<Task> call, Response<Task> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError("Không thể tạo nhiệm vụ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Task> call, Throwable t) {
-                callback.onError(t.getMessage());
-            }
-        });
+    
+    /**
+     * Lấy tasks theo status
+     */
+    public void getTasksByStatus(String childId, String status, TasksCallback callback) {
+        getTasksByChild(childId, status, null, null, callback);
     }
+    
+    /**
+     * Lấy tasks theo type
+     */
+    public void getTasksByType(String childId, String type, TasksCallback callback) {
+        getTasksByChild(childId, null, type, null, callback);
+    }
+
+    // NOTE: createTask() method removed - use TaskAssignmentRepository.assignTask() instead
 
     public interface TasksCallback {
         void onSuccess(List<Task> tasks);

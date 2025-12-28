@@ -21,6 +21,7 @@ import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.databinding.FragmentChildManageBinding;
 import com.kidsapp.ui.auth.LoginActivity;
+import com.kidsapp.ui.components.LoadingDialog;
 import com.kidsapp.ui.parent.child_manage.adapter.ChildManageAdapter;
 import com.kidsapp.ui.parent.child_manage.bottomsheet.AddChildBottomSheet;
 import com.kidsapp.ui.parent.child_manage.bottomsheet.DeleteChildBottomSheet;
@@ -38,6 +39,7 @@ public class ChildManageFragment extends Fragment {
     private FragmentChildManageBinding binding;
     private ChildManageAdapter adapter;
     private ChildViewModel viewModel;
+    private LoadingDialog loadingDialog;
     private List<ChildModel> allChildren = new ArrayList<>();
     private List<ChildModel> filteredChildren = new ArrayList<>();
 
@@ -54,13 +56,27 @@ public class ChildManageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         
         viewModel = new ViewModelProvider(this).get(ChildViewModel.class);
+        loadingDialog = new LoadingDialog(requireContext());
         
         setupRecyclerView();
         setupListeners();
         observeViewModel();
         
         // Load data from API
+        showLoading();
         viewModel.loadChildren();
+    }
+    
+    private void showLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.show("Đang tải...");
+        }
+    }
+    
+    private void hideLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
     }
 
     private void setupRecyclerView() {
@@ -152,7 +168,11 @@ public class ChildManageFragment extends Fragment {
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null) {
-                binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                if (isLoading) {
+                    showLoading();
+                } else {
+                    hideLoading();
+                }
             }
         });
     }
@@ -160,12 +180,28 @@ public class ChildManageFragment extends Fragment {
     private ChildModel mapToChildModel(ApiService.ChildResponse response) {
         // Tính maxXP dựa trên level
         int level = response.level != null ? response.level : 1;
-        int totalPoints = response.totalPoints != null ? response.totalPoints : 0;
+        int totalXp = response.totalXp != null ? response.totalXp : 0;
+        int xpToNextLevel = response.xpToNextLevel != null ? response.xpToNextLevel : 100;
         int maxXP = level * 100;
-        int currentXP = totalPoints % 100; // XP trong level hiện tại
+        int currentXP = maxXP - xpToNextLevel; // XP trong level hiện tại
         
         // Tạo className từ grade
         String className = response.grade != null ? "Lớp " + response.grade : "";
+        
+        // Handle avatar: prioritize avatarUrl, fallback to gender emoji
+        String avatar;
+        if (response.avatarUrl != null && !response.avatarUrl.isEmpty() && !response.avatarUrl.startsWith("http")) {
+            // If avatarUrl is emoji or text, use it directly
+            avatar = response.avatarUrl;
+        } else if (response.avatarUrl != null && response.avatarUrl.startsWith("http")) {
+            // If avatarUrl is URL, use first letter of name as fallback for now
+            // TODO: Load image from URL using Glide/Picasso
+            avatar = response.name != null && !response.name.isEmpty() ? 
+                    String.valueOf(response.name.charAt(0)).toUpperCase() : "👤";
+        } else {
+            // Fallback to emoji based on gender
+            avatar = response.gender != null && response.gender ? "👦" : "👧";
+        }
         
         ChildModel model = new ChildModel(
                 response.id,
@@ -175,14 +211,16 @@ public class ChildManageFragment extends Fragment {
                 currentXP,
                 maxXP,
                 response.currentStreak != null ? response.currentStreak : 0,
-                response.avatarUrl != null ? response.avatarUrl : "😊"
+                avatar
         );
         
         model.setNickname(response.nickname);
         model.setSchool(response.school);
         model.setBirthDate(response.birthDate);
-        model.setTotalPoints(totalPoints);
+        model.setTotalPoints(totalXp);
         model.setGender(response.gender);
+        model.setUsername(response.username); // Set username từ API
+        model.setCoins(response.coins != null ? response.coins : 0);
         
         return model;
     }
@@ -269,8 +307,13 @@ public class ChildManageFragment extends Fragment {
         bundle.putString("childName", child.getName());
         bundle.putInt("childLevel", child.getLevel());
         bundle.putInt("childXP", child.getCurrentXP());
+        bundle.putInt("childCoins", child.getCoins());
         bundle.putString("username", child.getUsername());
         bundle.putString("password", child.getPassword());
+        bundle.putString("avatar", child.getAvatar());
+        if (child.getGender() != null) {
+            bundle.putBoolean("gender", child.getGender());
+        }
 
         try {
             Navigation.findNavController(binding.getRoot())
@@ -284,6 +327,8 @@ public class ChildManageFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        hideLoading();
+        loadingDialog = null;
         binding = null;
     }
     

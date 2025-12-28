@@ -327,4 +327,42 @@ public class ChildRepository {
         void onSuccess(String message);
         void onError(String error);
     }
+
+    public interface WeeklyProgressCallback {
+        void onSuccess(com.kidsapp.data.model.WeeklyProgress progress);
+        void onError(String error);
+    }
+
+    /**
+     * Lấy tiến độ tuần hiện tại của bé
+     */
+    public void getWeeklyProgress(String childId, WeeklyProgressCallback callback) {
+        if (apiService == null) {
+            callback.onError("API service chưa được khởi tạo");
+            return;
+        }
+
+        apiService.getWeeklyProgress(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.model.WeeklyProgress>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.model.WeeklyProgress>> call,
+                                   Response<ApiService.ApiResponseWrapper<com.kidsapp.data.model.WeeklyProgress>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.ApiResponseWrapper<com.kidsapp.data.model.WeeklyProgress> wrapper = response.body();
+                    if (wrapper.success && wrapper.data != null) {
+                        callback.onSuccess(wrapper.data);
+                    } else {
+                        callback.onError(wrapper.message != null ? wrapper.message : "Lấy tiến độ thất bại");
+                    }
+                } else {
+                    callback.onError("Lấy tiến độ thất bại");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.model.WeeklyProgress>> call, Throwable t) {
+                Log.e(TAG, "getWeeklyProgress failed", t);
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
 }

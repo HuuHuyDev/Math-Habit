@@ -47,6 +47,11 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
         return taskList != null ? taskList.size() : 0;
     }
 
+    public void updateData(List<ExerciseTask> newTaskList) {
+        this.taskList = newTaskList;
+        notifyDataSetChanged();
+    }
+
     static class ExerciseViewHolder extends RecyclerView.ViewHolder {
         ImageView imgIcon;
         TextView txtTitle;

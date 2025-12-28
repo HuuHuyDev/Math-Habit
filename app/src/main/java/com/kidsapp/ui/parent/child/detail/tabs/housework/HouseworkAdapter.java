@@ -91,6 +91,11 @@ public class HouseworkAdapter extends RecyclerView.Adapter<HouseworkAdapter.Hous
         return taskList != null ? taskList.size() : 0;
     }
 
+    public void updateData(List<HouseworkTask> newTaskList) {
+        this.taskList = newTaskList;
+        notifyDataSetChanged();
+    }
+
     static class HouseworkViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardView;
         ImageView imgIcon;

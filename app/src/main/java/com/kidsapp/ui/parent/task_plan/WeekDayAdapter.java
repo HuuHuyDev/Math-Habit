@@ -1,11 +1,13 @@
 package com.kidsapp.ui.parent.task_plan;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kidsapp.R;
 import com.kidsapp.databinding.ItemWeekDayBinding;
 import com.kidsapp.ui.parent.task_plan.model.WeekDay;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 /**
  * Adapter cho danh sách ngày trong tuần
+ * Hiển thị khác nhau cho: ngày đã qua (mờ), hôm nay (highlight), ngày tương lai
  */
 public class WeekDayAdapter extends RecyclerView.Adapter<WeekDayAdapter.WeekDayViewHolder> {
 
@@ -80,30 +83,36 @@ public class WeekDayAdapter extends RecyclerView.Adapter<WeekDayAdapter.WeekDayV
             binding.txtProgress.setText(weekDay.getProgress() + "%");
             binding.txtTaskCount.setText(weekDay.getTaskCountText());
 
-            // Thay đổi màu khi được chọn
+            android.content.Context context = binding.getRoot().getContext();
+
             if (isSelected) {
-                // Set gradient background cho card
-                binding.cardWeekDay.setBackground(
-                        binding.getRoot().getContext().getDrawable(com.kidsapp.R.drawable.bg_week_day_selected));
-                
-                // Text màu trắng
-                binding.txtDayLabel.setTextColor(
-                        binding.getRoot().getContext().getColor(android.R.color.white));
-                binding.txtProgress.setTextColor(
-                        binding.getRoot().getContext().getColor(android.R.color.white));
-                binding.txtTaskCount.setTextColor(
-                        binding.getRoot().getContext().getColor(android.R.color.white));
+                // Ngày được chọn - gradient background
+                binding.cardWeekDay.setBackground(context.getDrawable(R.drawable.bg_week_day_selected));
+                binding.txtDayLabel.setTextColor(context.getColor(android.R.color.white));
+                binding.txtProgress.setTextColor(context.getColor(android.R.color.white));
+                binding.txtTaskCount.setTextColor(context.getColor(android.R.color.white));
+                binding.cardWeekDay.setAlpha(1.0f);
+            } else if (weekDay.isToday()) {
+                // Ngày hôm nay - viền xanh đặc biệt
+                binding.cardWeekDay.setBackgroundResource(R.drawable.bg_week_day_today);
+                binding.txtDayLabel.setTextColor(context.getColor(R.color.primary));
+                binding.txtProgress.setTextColor(context.getColor(R.color.primary));
+                binding.txtTaskCount.setTextColor(context.getColor(R.color.primary));
+                binding.cardWeekDay.setAlpha(1.0f);
+            } else if (weekDay.isPast()) {
+                // Ngày đã qua - mờ
+                binding.cardWeekDay.setBackgroundResource(R.drawable.bg_card_white_pure);
+                binding.txtDayLabel.setTextColor(context.getColor(R.color.text_secondary));
+                binding.txtProgress.setTextColor(context.getColor(R.color.text_secondary));
+                binding.txtTaskCount.setTextColor(context.getColor(R.color.text_hint));
+                binding.cardWeekDay.setAlpha(0.6f);
             } else {
-                // Set background trắng thuần
-                binding.cardWeekDay.setBackgroundResource(com.kidsapp.R.drawable.bg_card_white_pure);
-                
-                // Text màu mặc định
-                binding.txtDayLabel.setTextColor(
-                        binding.getRoot().getContext().getColor(com.kidsapp.R.color.text_primary));
-                binding.txtProgress.setTextColor(
-                        binding.getRoot().getContext().getColor(com.kidsapp.R.color.text_primary));
-                binding.txtTaskCount.setTextColor(
-                        binding.getRoot().getContext().getColor(com.kidsapp.R.color.text_secondary));
+                // Ngày tương lai - bình thường
+                binding.cardWeekDay.setBackgroundResource(R.drawable.bg_card_white_pure);
+                binding.txtDayLabel.setTextColor(context.getColor(R.color.text_primary));
+                binding.txtProgress.setTextColor(context.getColor(R.color.text_primary));
+                binding.txtTaskCount.setTextColor(context.getColor(R.color.text_secondary));
+                binding.cardWeekDay.setAlpha(1.0f);
             }
         }
     }

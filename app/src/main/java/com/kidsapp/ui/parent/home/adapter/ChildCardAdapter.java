@@ -64,6 +64,7 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
 
     static class ChildViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imgChildAvatar;
+        private final TextView tvEmojiAvatar;
         private final TextView tvChildName;
         private final TextView tvChildClass;
         private final CircularProgressView progressView;
@@ -72,6 +73,7 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
         ChildViewHolder(@NonNull View itemView) {
             super(itemView);
             imgChildAvatar = itemView.findViewById(R.id.imgChildAvatar);
+            tvEmojiAvatar = itemView.findViewById(R.id.tvEmojiAvatar);
             tvChildName = itemView.findViewById(R.id.tvChildName);
             tvChildClass = itemView.findViewById(R.id.tvChildClass);
             progressView = itemView.findViewById(R.id.progressView);
@@ -86,7 +88,7 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
             String gradeText = (grade != null && grade > 0) ? "Lớp " + grade : "Lớp 1";
             tvChildClass.setText(gradeText);
 
-            // Load avatar bằng Glide
+            // Load avatar
             loadAvatar(child.getAvatarUrl());
 
             // Hiển thị progress (% task hoàn thành trong ngày)
@@ -105,13 +107,26 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
 
         private void loadAvatar(String avatarUrl) {
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                Glide.with(itemView.getContext())
-                        .load(avatarUrl)
-                        .transform(new CircleCrop())
-                        .placeholder(R.drawable.ic_user_default)
-                        .error(R.drawable.ic_user_default)
-                        .into(imgChildAvatar);
+                if (avatarUrl.startsWith("http")) {
+                    // Load image from URL using Glide
+                    imgChildAvatar.setVisibility(View.VISIBLE);
+                    tvEmojiAvatar.setVisibility(View.GONE);
+                    Glide.with(itemView.getContext())
+                            .load(avatarUrl)
+                            .transform(new CircleCrop())
+                            .placeholder(R.drawable.ic_user_default)
+                            .error(R.drawable.ic_user_default)
+                            .into(imgChildAvatar);
+                } else {
+                    // avatarUrl is emoji - hiển thị emoji
+                    imgChildAvatar.setVisibility(View.GONE);
+                    tvEmojiAvatar.setVisibility(View.VISIBLE);
+                    tvEmojiAvatar.setText(avatarUrl);
+                }
             } else {
+                // Default avatar
+                imgChildAvatar.setVisibility(View.VISIBLE);
+                tvEmojiAvatar.setVisibility(View.GONE);
                 imgChildAvatar.setImageResource(R.drawable.ic_user_default);
             }
         }

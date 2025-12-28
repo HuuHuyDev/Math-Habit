@@ -45,22 +45,8 @@ public class TaskViewModel extends AndroidViewModel {
         });
     }
 
-    public void createTask(Task task) {
-        isLoadingLiveData.setValue(true);
-        taskRepository.createTask(task, new TaskRepository.TaskCallback() {
-            @Override
-            public void onSuccess(Task createdTask) {
-                isLoadingLiveData.setValue(false);
-                taskLiveData.setValue(createdTask);
-            }
-
-            @Override
-            public void onError(String error) {
-                isLoadingLiveData.setValue(false);
-                errorLiveData.setValue(error);
-            }
-        });
-    }
+    // NOTE: createTask() removed - use TaskAssignmentRepository.assignTask() instead
+    // This ViewModel is deprecated - use TaskAssignmentRepository directly
 
     public LiveData<List<Task>> getTasks() {
         return tasksLiveData;

@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.Task;
-import com.kidsapp.data.repository.FileUploadRepository;
 import com.kidsapp.data.repository.TaskRepository;
 import com.kidsapp.databinding.FragmentWorkTabBinding;
 import com.kidsapp.ui.child.task.adapter.WorkTaskAdapter;
@@ -45,7 +44,6 @@ public class WorkTabFragment extends Fragment {
     private FragmentWorkTabBinding binding;
     private WorkTaskAdapter adapter;
     private TaskRepository taskRepository;
-    private FileUploadRepository fileUploadRepository;
     private SharedPref sharedPref;
     
     // Current task being completed
@@ -74,7 +72,6 @@ public class WorkTabFragment extends Fragment {
         // Initialize
         sharedPref = new SharedPref(requireContext());
         taskRepository = new TaskRepository(requireContext());
-        fileUploadRepository = new FileUploadRepository(requireContext());
         
         setupActivityLaunchers();
         setupRecyclerView();

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "15023319560",
+    "project_id": "math-habit",
+    "storage_bucket": "math-habit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15023319560:android:ce591909ebd3bb28d77fbd",
+        "android_client_info": {
+          "package_name": "com.kidsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtTXI1SDfjXdFiVWm-OeSzSWmQ-KMz9jM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

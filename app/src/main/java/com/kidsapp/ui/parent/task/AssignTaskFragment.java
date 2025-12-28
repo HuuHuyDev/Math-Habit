@@ -17,7 +17,6 @@ import com.kidsapp.R;
 import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
-import com.kidsapp.data.model.Child;
 import com.kidsapp.data.model.ExerciseContent;
 import com.kidsapp.data.request.CreateTaskRequest;
 import com.kidsapp.data.response.TaskResponse;
@@ -35,6 +34,7 @@ import retrofit2.Response;
 
 /**
  * Fragment để parent giao bài cho con
+ * Phụ huynh chọn từ template (ExerciseContent hoặc HabitTemplate)
  */
 public class AssignTaskFragment extends Fragment {
 
@@ -42,14 +42,20 @@ public class AssignTaskFragment extends Fragment {
     private SharedPref sharedPref;
     private ApiService apiService;
     
-    private List<Child> children = new ArrayList<>();
+    // Data lists
+    private List<ApiService.ChildResponse> children = new ArrayList<>();
     private List<ExerciseContent> exercises = new ArrayList<>();
+    private List<ApiService.HabitTemplateResponse> habitTemplates = new ArrayList<>();
     
+    // Selected values
     private String selectedChildId;
     private String selectedExerciseId;
+    private String selectedHabitTemplateId;
     private String selectedDate;
     private String selectedTime;
+    private boolean isExerciseType = true;
     
+    // Date formatters
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
     private SimpleDateFormat displayDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -73,9 +79,10 @@ public class AssignTaskFragment extends Fragment {
         setupHeader();
         setupTaskTypeSelection();
         setupDateTimePickers();
-        setupChildrenSpinner();
-        setupExerciseSpinner();
         setupAssignButton();
+        
+        // Load data from API
+        loadChildren();
     }
 
     private void setupHeader() {
@@ -87,20 +94,26 @@ public class AssignTaskFragment extends Fragment {
     }
 
     /**
-     * Setup chọn loại bài tập
+     * Setup chọn loại bài tập (EXERCISE hoặc HABIT)
      */
     private void setupTaskTypeSelection() {
         binding.radioGroupTaskType.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radioExercise) {
-                // Hiện spinner chọn bài tập
+                isExerciseType = true;
                 binding.layoutExerciseSelection.setVisibility(View.VISIBLE);
-                binding.edtTitle.setEnabled(false);
-                binding.edtTitle.setText(""); // Clear title, sẽ auto-fill từ exercise
-            } else {
-                // Ẩn spinner, cho phép nhập title tự do
+                binding.layoutHabitSelection.setVisibility(View.GONE);
+                selectedHabitTemplateId = null;
+                updateTemplateInfo();
+            } else if (checkedId == R.id.radioHabit) {
+                isExerciseType = false;
                 binding.layoutExerciseSelection.setVisibility(View.GONE);
-                binding.edtTitle.setEnabled(true);
+                binding.layoutHabitSelection.setVisibility(View.VISIBLE);
                 selectedExerciseId = null;
+                // Load habit templates if not loaded
+                if (habitTemplates.isEmpty()) {
+                    loadHabitTemplates();
+                }
+                updateTemplateInfo();
             }
         });
     }
@@ -148,25 +161,46 @@ public class AssignTaskFragment extends Fragment {
     }
 
     /**
+     * Load danh sách con từ API
+     */
+    private void loadChildren() {
+        showLoading(true);
+        
+        apiService.getParentChildren().enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call,
+                                 Response<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    children.clear();
+                    children.addAll(response.body().data);
+                    setupChildrenSpinner();
+                    
+                    // Load exercises for first child
+                    if (!children.isEmpty()) {
+                        selectedChildId = children.get(0).id;
+                        loadExercises(selectedChildId);
+                    }
+                } else {
+                    showLoading(false);
+                    Toast.makeText(requireContext(), "Không thể tải danh sách con", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call, Throwable t) {
+                showLoading(false);
+                Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
      * Setup spinner chọn con
-     * TODO: Load từ API
      */
     private void setupChildrenSpinner() {
-        // Mock data - TODO: Load từ API
-        children.clear();
-        Child child1 = new Child();
-        child1.setId("child-1");
-        child1.setName("Hồ Hữu Huy");
-        children.add(child1);
-        
-        Child child2 = new Child();
-        child2.setId("child-2");
-        child2.setName("Linh");
-        children.add(child2);
-        
         List<String> childNames = new ArrayList<>();
-        for (Child child : children) {
-            childNames.add(child.getName());
+        for (ApiService.ChildResponse child : children) {
+            childNames.add(child.name);
         }
         
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -177,35 +211,64 @@ public class AssignTaskFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerChild.setAdapter(adapter);
         
-        // Set selected child ID
         binding.spinnerChild.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                selectedChildId = children.get(position).getId();
+                String newChildId = children.get(position).id;
+                if (!newChildId.equals(selectedChildId)) {
+                    selectedChildId = newChildId;
+                    // Reload exercises for new child
+                    loadExercises(selectedChildId);
+                }
             }
 
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {
             }
         });
+    }
+
+    /**
+     * Load danh sách bài tập từ API
+     */
+    private void loadExercises(String childId) {
+        showLoading(true);
         
-        if (!children.isEmpty()) {
-            selectedChildId = children.get(0).getId();
-        }
+        apiService.getExercisesForChild(childId, null).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ExerciseContent>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ExerciseContent>>> call,
+                                 Response<ApiService.ApiResponseWrapper<List<ExerciseContent>>> response) {
+                showLoading(false);
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    exercises.clear();
+                    exercises.addAll(response.body().data);
+                    setupExerciseSpinner();
+                } else {
+                    Toast.makeText(requireContext(), "Không thể tải danh sách bài tập", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ExerciseContent>>> call, Throwable t) {
+                showLoading(false);
+                Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
      * Setup spinner chọn bài tập
-     * TODO: Load từ API
      */
     private void setupExerciseSpinner() {
-        // Mock data - TODO: Load từ API
-        exercises.clear();
-        
         List<String> exerciseTitles = new ArrayList<>();
-        exerciseTitles.add("Bài 1: Luyện phép cộng");
-        exerciseTitles.add("Bài 2: Luyện phép trừ");
-        exerciseTitles.add("Bài 3: Bài toán minh họa");
+        for (ExerciseContent exercise : exercises) {
+            exerciseTitles.add(exercise.getTitle());
+        }
+        
+        if (exerciseTitles.isEmpty()) {
+            exerciseTitles.add("Không có bài tập");
+        }
         
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
             requireContext(),
@@ -215,20 +278,139 @@ public class AssignTaskFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerExercise.setAdapter(adapter);
         
-        // Auto-fill title khi chọn exercise
         binding.spinnerExercise.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                String title = exerciseTitles.get(position);
-                binding.edtTitle.setText(title);
-                // TODO: Set selectedExerciseId từ exercises list
-                selectedExerciseId = "exercise-" + (position + 1);
+                if (!exercises.isEmpty() && position < exercises.size()) {
+                    selectedExerciseId = exercises.get(position).getId();
+                    updateTemplateInfo();
+                }
             }
 
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {
             }
         });
+        
+        // Select first exercise
+        if (!exercises.isEmpty()) {
+            selectedExerciseId = exercises.get(0).getId();
+            updateTemplateInfo();
+        }
+    }
+
+    /**
+     * Load danh sách thói quen từ API
+     */
+    private void loadHabitTemplates() {
+        showLoading(true);
+        
+        apiService.getHabitTemplates(null).enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.HabitTemplateResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.HabitTemplateResponse>>> call,
+                                 Response<ApiService.ApiResponseWrapper<List<ApiService.HabitTemplateResponse>>> response) {
+                showLoading(false);
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    habitTemplates.clear();
+                    habitTemplates.addAll(response.body().data);
+                    setupHabitSpinner();
+                } else {
+                    Toast.makeText(requireContext(), "Không thể tải danh sách thói quen", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.HabitTemplateResponse>>> call, Throwable t) {
+                showLoading(false);
+                Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Setup spinner chọn thói quen
+     */
+    private void setupHabitSpinner() {
+        List<String> habitNames = new ArrayList<>();
+        for (ApiService.HabitTemplateResponse habit : habitTemplates) {
+            habitNames.add(habit.name);
+        }
+        
+        if (habitNames.isEmpty()) {
+            habitNames.add("Không có thói quen");
+        }
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            habitNames
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerHabit.setAdapter(adapter);
+        
+        binding.spinnerHabit.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                if (!habitTemplates.isEmpty() && position < habitTemplates.size()) {
+                    selectedHabitTemplateId = habitTemplates.get(position).id;
+                    updateTemplateInfo();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            }
+        });
+        
+        // Select first habit
+        if (!habitTemplates.isEmpty()) {
+            selectedHabitTemplateId = habitTemplates.get(0).id;
+            updateTemplateInfo();
+        }
+    }
+
+    /**
+     * Cập nhật thông tin template đã chọn
+     */
+    private void updateTemplateInfo() {
+        if (isExerciseType && selectedExerciseId != null && !exercises.isEmpty()) {
+            // Find selected exercise
+            ExerciseContent selected = null;
+            for (ExerciseContent ex : exercises) {
+                if (ex.getId().equals(selectedExerciseId)) {
+                    selected = ex;
+                    break;
+                }
+            }
+            
+            if (selected != null) {
+                binding.cardSelectedTemplate.setVisibility(View.VISIBLE);
+                binding.tvTemplateTitle.setText(selected.getTitle());
+                binding.tvTemplateDescription.setText(selected.getDescription() != null ? 
+                    selected.getDescription() : "Không có mô tả");
+                binding.tvTemplateReward.setText("🎯 " + selected.getPointsReward() + " điểm");
+            }
+        } else if (!isExerciseType && selectedHabitTemplateId != null && !habitTemplates.isEmpty()) {
+            // Find selected habit
+            ApiService.HabitTemplateResponse selected = null;
+            for (ApiService.HabitTemplateResponse habit : habitTemplates) {
+                if (habit.id.equals(selectedHabitTemplateId)) {
+                    selected = habit;
+                    break;
+                }
+            }
+            
+            if (selected != null) {
+                binding.cardSelectedTemplate.setVisibility(View.VISIBLE);
+                binding.tvTemplateTitle.setText(selected.name);
+                binding.tvTemplateDescription.setText(selected.description != null ? 
+                    selected.description : "Không có mô tả");
+                binding.tvTemplateReward.setText("🎯 " + selected.xpReward + " XP | 💰 " + selected.coinsReward + " xu");
+            }
+        } else {
+            binding.cardSelectedTemplate.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -251,11 +433,16 @@ public class AssignTaskFragment extends Fragment {
             return false;
         }
         
-        String title = binding.edtTitle.getText().toString().trim();
-        if (title.isEmpty()) {
-            Toast.makeText(requireContext(), "Vui lòng nhập tiêu đề", Toast.LENGTH_SHORT).show();
-            binding.edtTitle.requestFocus();
-            return false;
+        if (isExerciseType) {
+            if (selectedExerciseId == null || selectedExerciseId.isEmpty()) {
+                Toast.makeText(requireContext(), "Vui lòng chọn bài tập", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } else {
+            if (selectedHabitTemplateId == null || selectedHabitTemplateId.isEmpty()) {
+                Toast.makeText(requireContext(), "Vui lòng chọn thói quen", Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
         
         return true;
@@ -265,37 +452,22 @@ public class AssignTaskFragment extends Fragment {
      * Giao bài cho con
      */
     private void assignTask() {
-        // Disable button để tránh double click
         binding.btnAssignTask.setEnabled(false);
+        showLoading(true);
         
-        // Tạo request
-        CreateTaskRequest request = new CreateTaskRequest();
-        request.setChildId(selectedChildId);
-        request.setTitle(binding.edtTitle.getText().toString().trim());
-        request.setDescription(binding.edtDescription.getText().toString().trim());
-        
-        // Task type
-        int checkedId = binding.radioGroupTaskType.getCheckedRadioButtonId();
-        if (checkedId == R.id.radioExercise) {
-            request.setTaskType("exercise");
-            request.setExerciseId(selectedExerciseId);
-        } else if (checkedId == R.id.radioHousework) {
-            request.setTaskType("housework");
-        } else if (checkedId == R.id.radioHabit) {
-            request.setTaskType("habit");
+        // Tạo request từ factory method
+        CreateTaskRequest request;
+        if (isExerciseType) {
+            request = CreateTaskRequest.forExercise(selectedChildId, selectedExerciseId);
+        } else {
+            request = CreateTaskRequest.forHabit(selectedChildId, selectedHabitTemplateId);
         }
         
-        // Due date/time
+        // Set optional fields
         request.setDueDate(selectedDate);
         request.setDueTime(selectedTime);
-        
-        // Points reward
-        String pointsStr = binding.edtPointsReward.getText().toString().trim();
-        if (!pointsStr.isEmpty()) {
-            request.setPointsReward(Integer.parseInt(pointsStr));
-        } else {
-            request.setPointsReward(10); // Default
-        }
+        request.setParentNote(binding.edtParentNote.getText().toString().trim());
+        request.setIsMandatory(binding.cbMandatory.isChecked());
         
         // Priority
         int priorityId = binding.radioGroupPriority.getCheckedRadioButtonId();
@@ -313,11 +485,11 @@ public class AssignTaskFragment extends Fragment {
             public void onResponse(Call<ApiService.ApiResponseWrapper<TaskResponse>> call,
                                  Response<ApiService.ApiResponseWrapper<TaskResponse>> response) {
                 binding.btnAssignTask.setEnabled(true);
+                showLoading(false);
                 
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(requireContext(), "Đã giao bài thành công!", Toast.LENGTH_SHORT).show();
                     
-                    // Quay lại màn hình trước
                     if (getActivity() != null) {
                         getActivity().onBackPressed();
                     }
@@ -329,9 +501,16 @@ public class AssignTaskFragment extends Fragment {
             @Override
             public void onFailure(Call<ApiService.ApiResponseWrapper<TaskResponse>> call, Throwable t) {
                 binding.btnAssignTask.setEnabled(true);
+                showLoading(false);
                 Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showLoading(boolean show) {
+        if (binding != null) {
+            binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override

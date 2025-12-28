@@ -11,14 +11,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.model.WeeklyProgress;
 import com.kidsapp.databinding.FragmentParentChildDetailBinding;
 import com.kidsapp.ui.parent.child.detail.components.DayProgress;
 import com.kidsapp.ui.parent.child.detail.components.ProgressAdapter;
+import com.kidsapp.ui.components.LoadingDialog;
+import com.kidsapp.viewmodel.ChildViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -33,6 +38,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 public class ParentChildDetailFragment extends Fragment {
 
     private FragmentParentChildDetailBinding binding;
+    private ChildViewModel viewModel;
+    private LoadingDialog loadingDialog;
     private String childId;
     private String childName;
     private int childLevel;
@@ -67,12 +74,182 @@ public class ParentChildDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        viewModel = new ViewModelProvider(this).get(ChildViewModel.class);
+        loadingDialog = new LoadingDialog(requireContext());
+        
         setupAppBar();
-        setupButtons(); // Thêm setup buttons
-        setupHeader();
-        setupPasswordToggle(); // Thêm toggle password
+        setupButtons();
+        setupPasswordToggle();
         setupProgressChart();
         setupTabLayout();
+        
+        // Observe ViewModel
+        observeViewModel();
+        
+        // Load child detail từ API
+        if (childId != null && !childId.isEmpty()) {
+            showLoading();
+            viewModel.loadChildDetail(childId);
+            viewModel.loadWeeklyProgress(childId);
+        } else {
+            // Fallback: hiển thị dữ liệu từ arguments
+            setupHeaderFromArguments();
+        }
+    }
+    
+    private void showLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.show("Đang tải...");
+        }
+    }
+    
+    private void hideLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
+    }
+    
+    /**
+     * Observe ViewModel để cập nhật UI khi có dữ liệu
+     */
+    private void observeViewModel() {
+        viewModel.getChildDetail().observe(getViewLifecycleOwner(), child -> {
+            if (child != null) {
+                updateHeaderFromApi(child);
+            }
+        });
+        
+        viewModel.getWeeklyProgress().observe(getViewLifecycleOwner(), progress -> {
+            if (progress != null && progress.getDailyProgress() != null) {
+                updateProgressChart(progress);
+            }
+        });
+        
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                viewModel.clearMessages();
+                // Fallback: hiển thị dữ liệu từ arguments
+                setupHeaderFromArguments();
+            }
+        });
+        
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && !isLoading) {
+                hideLoading();
+            }
+        });
+    }
+    
+    /**
+     * Cập nhật header từ API response
+     */
+    private void updateHeaderFromApi(ApiService.ChildResponse child) {
+        // Tên và thông tin cơ bản
+        String name = child.name != null ? child.name : (child.nickname != null ? child.nickname : "");
+        int level = child.level != null ? child.level : (child.currentLevel != null ? child.currentLevel : 1);
+        int grade = child.grade != null ? child.grade : 1;
+        String className = "Lớp " + grade;
+        
+        binding.header.txtChildName.setText(name);
+        binding.header.txtChildInfo.setText(String.format("%s • Lv %d", className, level));
+        binding.header.txtLevel.setText(String.format("Lv %d", level));
+        
+        // Coins và XP
+        int coins = child.coins != null ? child.coins : 0;
+        int xp = child.totalXp != null ? child.totalXp : 0;
+        binding.header.txtCoin.setText(formatNumber(coins));
+        binding.header.txtXP.setText(String.format("%s XP", formatNumber(xp)));
+        
+        // Avatar - hiển thị emoji nếu có
+        if (child.avatarUrl != null && !child.avatarUrl.isEmpty()) {
+            if (child.avatarUrl.startsWith("http")) {
+                // URL hình ảnh
+                Glide.with(this)
+                        .load(child.avatarUrl)
+                        .placeholder(R.drawable.ic_child_face)
+                        .error(R.drawable.ic_child_face)
+                        .circleCrop()
+                        .into(binding.header.imgChildAvatar);
+                binding.header.txtChildEmoji.setVisibility(View.GONE);
+                binding.header.imgChildAvatar.setVisibility(View.VISIBLE);
+            } else {
+                // Emoji
+                binding.header.txtChildEmoji.setText(child.avatarUrl);
+                binding.header.txtChildEmoji.setVisibility(View.VISIBLE);
+                binding.header.imgChildAvatar.setVisibility(View.GONE);
+            }
+        } else {
+            // Mặc định dựa trên giới tính
+            String emoji = (child.gender != null && child.gender) ? "👦" : "👧";
+            binding.header.txtChildEmoji.setText(emoji);
+            binding.header.txtChildEmoji.setVisibility(View.VISIBLE);
+            binding.header.imgChildAvatar.setVisibility(View.GONE);
+        }
+        
+        // Thông tin đăng nhập
+        // Username: ưu tiên từ API, fallback từ arguments
+        String username = child.username;
+        if (username == null || username.isEmpty()) {
+            Bundle arguments = getArguments();
+            if (arguments != null) {
+                username = arguments.getString("username", "");
+            }
+        }
+        if (username != null && !username.isEmpty()) {
+            binding.txtUsername.setText(username);
+        } else {
+            binding.txtUsername.setText("Chưa có");
+        }
+        
+        // Password: không được trả về từ API (bảo mật)
+        // Hiển thị thông báo cho parent biết
+        binding.txtPassword.setText("••••••••");
+        actualPassword = ""; // Không có password thật để hiển thị
+        
+        // Cập nhật biến local
+        this.childName = name;
+        this.childLevel = level;
+    }
+    
+    /**
+     * Hiển thị header từ arguments (fallback)
+     */
+    private void setupHeaderFromArguments() {
+        Bundle arguments = getArguments();
+        String name = "Bé";
+        String className = "Lớp 1";
+        int level = 1;
+        int coin = 0;
+        int xp = 0;
+        String username = "";
+        String password = "";
+
+        if (arguments != null) {
+            name = arguments.getString("childName", name);
+            level = arguments.getInt("childLevel", level);
+            xp = arguments.getInt("childXP", xp);
+            username = arguments.getString("username", "");
+            password = arguments.getString("password", "");
+            className = "Lớp " + level;
+        }
+
+        binding.header.txtChildName.setText(name);
+        binding.header.txtChildInfo.setText(String.format("%s • Lv %d", className, level));
+        binding.header.txtLevel.setText(String.format("Lv %d", level));
+        binding.header.txtCoin.setText(formatNumber(coin));
+        binding.header.txtXP.setText(String.format("%s XP", formatNumber(xp)));
+
+        if (!username.isEmpty()) {
+            binding.txtUsername.setText(username);
+        }
+        if (!password.isEmpty()) {
+            actualPassword = password;
+            binding.txtPassword.setText("••••••••");
+        }
+        
+        // Default avatar
+        binding.header.imgChildAvatar.setImageResource(R.drawable.ic_child_face);
     }
 
     /**
@@ -134,73 +311,19 @@ public class ParentChildDetailFragment extends Fragment {
     }
 
     /**
-     * Thiết lập và bind dữ liệu cho Header Bé
-     * Lấy dữ liệu từ Bundle arguments hoặc dùng dữ liệu mẫu
-     */
-    private void setupHeader() {
-        // Lấy dữ liệu từ Bundle arguments (nếu có)
-        Bundle arguments = getArguments();
-        String childName = "Hồ Hữu Huy"; // Default
-        String childClass = "Lớp 1"; // Default
-        int childLevel = 4; // Default
-        int coin = 1234; // Default
-        int xp = 1234; // Default
-        String avatarUrl = null; // URL avatar từ server (nếu có)
-        String username = ""; // Username
-        String password = ""; // Password
-
-        if (arguments != null) {
-            // Lấy dữ liệu từ Bundle
-            childName = arguments.getString("childName", childName);
-            childLevel = arguments.getInt("childLevel", childLevel);
-            xp = arguments.getInt("childXP", xp);
-            username = arguments.getString("username", "");
-            password = arguments.getString("password", "");
-            // Tính lớp từ level (hoặc có thể truyền riêng)
-            childClass = "Lớp " + childLevel;
-            // TODO: Lấy coin từ arguments nếu có
-            // coin = arguments.getInt("childCoin", coin);
-        }
-
-        // Hiển thị username và password
-        if (!username.isEmpty()) {
-            binding.txtUsername.setText(username);
-        }
-        if (!password.isEmpty()) {
-            actualPassword = password; // Lưu password thật
-            binding.txtPassword.setText("••••••••"); // Hiển thị dạng ẩn ban đầu
-        }
-
-        // Bind dữ liệu vào các view trong header
-        binding.header.txtChildName.setText(childName);
-        binding.header.txtChildInfo.setText(String.format("%s • Lv %d", childClass, childLevel));
-        binding.header.txtLevel.setText(String.format("Lv %d", childLevel));
-
-        // Format số coin với dấu phẩy (1,234)
-        binding.header.txtCoin.setText(formatNumber(coin));
-
-        // Format số XP với dấu phẩy (1,234 XP)
-        binding.header.txtXP.setText(String.format("%s XP", formatNumber(xp)));
-
-        // Load avatar từ URL bằng Glide (nếu có URL)
-        if (avatarUrl != null && !avatarUrl.isEmpty()) {
-            Glide.with(this)
-                    .load(avatarUrl)
-                    .placeholder(R.drawable.ic_child_face) // Hiển thị placeholder khi đang load
-                    .error(R.drawable.ic_child_face) // Hiển thị khi lỗi
-                    .circleCrop() // Crop hình tròn
-                    .into(binding.header.imgChildAvatar);
-        } else {
-            // Nếu không có URL, dùng icon mặc định
-            binding.header.imgChildAvatar.setImageResource(R.drawable.ic_child_face);
-        }
-    }
-
-    /**
      * Thiết lập toggle hiển thị/ẩn password
      */
     private void setupPasswordToggle() {
         binding.btnTogglePassword.setOnClickListener(v -> {
+            // Password không được trả về từ API vì lý do bảo mật
+            // Hiển thị thông báo cho parent
+            if (actualPassword == null || actualPassword.isEmpty()) {
+                Toast.makeText(requireContext(), 
+                    "Mật khẩu không được hiển thị vì lý do bảo mật. Bạn có thể đặt lại mật khẩu mới khi chỉnh sửa thông tin bé.", 
+                    Toast.LENGTH_LONG).show();
+                return;
+            }
+            
             isPasswordVisible = !isPasswordVisible;
             
             if (isPasswordVisible) {
@@ -216,18 +339,18 @@ public class ParentChildDetailFragment extends Fragment {
     }
 
     /**
-     * Thiết lập biểu đồ tiến độ 7 ngày gần nhất
+     * Thiết lập biểu đồ tiến độ tuần hiện tại (mặc định)
      */
     private void setupProgressChart() {
-        // Tạo danh sách dữ liệu 7 ngày
+        // Tạo danh sách dữ liệu mặc định 7 ngày (T2-CN)
         List<DayProgress> progressList = new ArrayList<>();
-        progressList.add(new DayProgress("T2", 85));
-        progressList.add(new DayProgress("T3", 80));
-        progressList.add(new DayProgress("T4", 75));
-        progressList.add(new DayProgress("T5", 90));
-        progressList.add(new DayProgress("T6", 80));
-        progressList.add(new DayProgress("T7", 70));
-        progressList.add(new DayProgress("CN", 65));
+        progressList.add(new DayProgress("T2", 0));
+        progressList.add(new DayProgress("T3", 0));
+        progressList.add(new DayProgress("T4", 0));
+        progressList.add(new DayProgress("T5", 0));
+        progressList.add(new DayProgress("T6", 0));
+        progressList.add(new DayProgress("T7", 0));
+        progressList.add(new DayProgress("CN", 0));
 
         // Tạo adapter và set cho RecyclerView
         ProgressAdapter adapter = new ProgressAdapter(progressList);
@@ -237,11 +360,31 @@ public class ParentChildDetailFragment extends Fragment {
     }
 
     /**
+     * Cập nhật biểu đồ tiến độ từ API response
+     */
+    private void updateProgressChart(WeeklyProgress progress) {
+        if (progress.getDailyProgress() == null || progress.getDailyProgress().isEmpty()) {
+            return;
+        }
+
+        List<DayProgress> progressList = new ArrayList<>();
+        for (WeeklyProgress.DailyProgress daily : progress.getDailyProgress()) {
+            String dayLabel = daily.getDayLabel() != null ? daily.getDayLabel() : "";
+            int percent = daily.getProgressPercent();
+            progressList.add(new DayProgress(dayLabel, percent));
+        }
+
+        // Cập nhật adapter
+        ProgressAdapter adapter = new ProgressAdapter(progressList);
+        binding.progressChart.recyclerProgress.setAdapter(adapter);
+    }
+
+    /**
      * Thiết lập TabLayout và ViewPager2 với custom tab
      */
     private void setupTabLayout() {
-        // Setup ViewPager2 với adapter
-        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(requireActivity());
+        // Setup ViewPager2 với adapter - truyền childId
+        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(requireActivity(), childId);
         binding.viewPager.setAdapter(pagerAdapter);
 
         // Kết nối TabLayout với ViewPager2 và set custom view cho từng tab
@@ -400,6 +543,8 @@ public class ParentChildDetailFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        hideLoading();
+        loadingDialog = null;
         binding = null;
     }
 }

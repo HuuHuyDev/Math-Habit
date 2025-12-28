@@ -129,11 +129,11 @@
     <string name="coin">Đồng xu</string>
     <string name="xp">Điểm kinh nghiệm</string>
     <string name="tab_icon">Icon tab</string>
-    <string name="housework">Việc nhà</string>
-    <string name="exercise">Bài tập</string>
+    <string name="housework">Thói quen</string>
+    <string name="exercise">Học tập</string>
     <string name="badge">Huy hiệu</string>
-    <string name="tab_housework">Việc nhà</string>
-    <string name="tab_exercise">Bài tập</string>
+    <string name="tab_housework">Thói quen</string>
+    <string name="tab_exercise">Học tập</string>
     <string name="tab_badge">Huy hiệu</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

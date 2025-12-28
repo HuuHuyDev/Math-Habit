@@ -4,20 +4,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.chip.Chip;
 import com.kidsapp.R;
 import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.model.ExerciseContent;
 import com.kidsapp.data.repository.TaskAssignmentRepository;
+import com.kidsapp.data.request.CreateTaskRequest;
+import com.kidsapp.data.response.TaskResponse;
 import com.kidsapp.databinding.BottomsheetAddTaskBinding;
 import com.kidsapp.ui.parent.task_plan.model.WeekTask;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -32,8 +36,10 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
     private String childId;
     private String selectedTaskType = "exercise";
     
-    private List<String> availableSubjects;
-    private List<String> availableHabitCategories;
+    private List<ExerciseContent> availableExercises = new ArrayList<>();
+    private List<ApiService.HabitTemplateResponse> availableHabits = new ArrayList<>();
+    private int selectedExerciseIndex = 0;
+    private int selectedHabitIndex = 0;
 
     public interface OnTaskAddedListener {
         void onTaskAdded(WeekTask task);
@@ -86,9 +92,9 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
         binding.layoutExercise.setVisibility(View.VISIBLE);
         binding.layoutHabit.setVisibility(View.GONE);
         
-        // Load subjects và habit categories từ API
-        loadAvailableSubjects();
-        loadAvailableHabitCategories();
+        // Load exercises và habit templates từ API
+        loadExercises();
+        loadHabitTemplates();
     }
 
     private void setupListeners() {
@@ -116,37 +122,52 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
 
         String dueDate = calculateDueDate(dayIndex);
         String dueTime = binding.edtTime.getText().toString().trim();
-        String pointsStr = binding.edtPoints.getText().toString().trim();
-        Integer points = pointsStr.isEmpty() ? null : Integer.parseInt(pointsStr);
+        String parentNote = binding.edtParentNote.getText().toString().trim();
+        int priority = (int) binding.sliderPriority.getValue();
+        boolean isMandatory = binding.switchMandatory.isChecked();
 
-        ApiService.AssignTaskRequest request;
+        CreateTaskRequest request;
 
         switch (selectedTaskType) {
             case "exercise":
-                String subject = getSelectedSubject();
-                int difficulty = (int) binding.sliderDifficulty.getValue();
-                request = ApiService.AssignTaskRequest.createExercise(childId, subject, difficulty, dueDate);
-                if (points != null) request.pointsReward = points;
-                if (!dueTime.isEmpty()) request.dueTime = dueTime;
+                ExerciseContent selectedExercise = getSelectedExercise();
+                if (selectedExercise == null) {
+                    Toast.makeText(requireContext(), "Vui lòng chọn bài tập", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                request = CreateTaskRequest.forExercise(childId, selectedExercise.getId());
                 break;
 
             case "habit":
-                String category = getSelectedHabitCategory();
-                boolean isRecurring = binding.switchRecurring.isChecked();
-                request = ApiService.AssignTaskRequest.createHabit(childId, category, dueDate, isRecurring);
-                if (points != null) request.pointsReward = points;
-                if (!dueTime.isEmpty()) request.dueTime = dueTime;
+                ApiService.HabitTemplateResponse selectedHabit = getSelectedHabit();
+                if (selectedHabit == null) {
+                    Toast.makeText(requireContext(), "Vui lòng chọn thói quen", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                request = CreateTaskRequest.forHabit(childId, selectedHabit.id);
+                request.setIsRecurring(binding.switchRecurring.isChecked());
                 break;
 
             default:
                 return;
         }
 
+        // Set common fields
+        request.setDueDate(dueDate);
+        if (!dueTime.isEmpty()) {
+            request.setDueTime(dueTime);
+        }
+        if (!parentNote.isEmpty()) {
+            request.setParentNote(parentNote);
+        }
+        request.setPriority(priority);
+        request.setIsMandatory(isMandatory);
+
         setLoading(true);
 
-        repository.assignTask(request, new TaskAssignmentRepository.OnAssignTaskCallback() {
+        repository.createTask(request, new TaskAssignmentRepository.OnCreateTaskCallback() {
             @Override
-            public void onSuccess(ApiService.TaskAssignmentResponse response) {
+            public void onSuccess(TaskResponse response) {
                 if (!isAdded()) return;
                 setLoading(false);
 
@@ -169,143 +190,131 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
         });
     }
 
-    private void loadAvailableSubjects() {
-        repository.getAvailableSubjects(new TaskAssignmentRepository.OnSubjectsCallback() {
+    private void loadExercises() {
+        if (childId == null || childId.isEmpty()) {
+            return;
+        }
+        
+        repository.getExercisesForChild(childId, new TaskAssignmentRepository.OnExercisesCallback() {
             @Override
-            public void onSuccess(List<String> subjects) {
+            public void onSuccess(List<ExerciseContent> exercises) {
                 if (!isAdded()) return;
-                availableSubjects = subjects;
-                populateSubjectChips(subjects);
-            }
-
-            @Override
-            public void onError(String message) {
-                if (!isAdded()) return;
-                Toast.makeText(requireContext(), "Không thể load môn học: " + message, Toast.LENGTH_SHORT).show();
-                // Fallback to default subjects
-                availableSubjects = java.util.Arrays.asList("math", "vietnamese", "english");
-                populateSubjectChips(availableSubjects);
-            }
-        });
-    }
-
-    private void loadAvailableHabitCategories() {
-        repository.getAvailableHabitCategories(new TaskAssignmentRepository.OnHabitCategoriesCallback() {
-            @Override
-            public void onSuccess(List<String> categories) {
-                if (!isAdded()) return;
-                availableHabitCategories = categories;
-                populateHabitCategoryChips(categories);
+                availableExercises = exercises;
+                setupExerciseSpinner(exercises);
             }
 
             @Override
             public void onError(String message) {
                 if (!isAdded()) return;
-                Toast.makeText(requireContext(), "Không thể load loại thói quen: " + message, Toast.LENGTH_SHORT).show();
-                // Fallback to default categories
-                availableHabitCategories = java.util.Arrays.asList("health", "study", "housework", "sport", "creativity");
-                populateHabitCategoryChips(availableHabitCategories);
+                Toast.makeText(requireContext(), "Không thể load bài tập: " + message, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void populateSubjectChips(List<String> subjects) {
-        binding.chipGroupSubject.removeAllViews();
-        
-        for (int i = 0; i < subjects.size(); i++) {
-            String subject = subjects.get(i);
-            Chip chip = new Chip(requireContext());
-            chip.setId(View.generateViewId());
-            chip.setText(getSubjectDisplayName(subject));
-            chip.setCheckable(true);
-            chip.setChipIcon(getResources().getDrawable(R.drawable.ic_quiz, null));
-            
-            // Set first chip as checked
-            if (i == 0) {
-                chip.setChecked(true);
-            }
-            
-            binding.chipGroupSubject.addView(chip);
+    private void loadHabitTemplates() {
+        if (childId == null || childId.isEmpty()) {
+            repository.getHabitTemplates(null, new TaskAssignmentRepository.OnHabitsCallback() {
+                @Override
+                public void onSuccess(List<ApiService.HabitTemplateResponse> habits) {
+                    if (!isAdded()) return;
+                    availableHabits = habits;
+                    setupHabitSpinner(habits);
+                }
+
+                @Override
+                public void onError(String message) {
+                    if (!isAdded()) return;
+                    Toast.makeText(requireContext(), "Không thể load thói quen: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            repository.getHabitTemplatesForChild(childId, null, new TaskAssignmentRepository.OnHabitsCallback() {
+                @Override
+                public void onSuccess(List<ApiService.HabitTemplateResponse> habits) {
+                    if (!isAdded()) return;
+                    availableHabits = habits;
+                    setupHabitSpinner(habits);
+                }
+
+                @Override
+                public void onError(String message) {
+                    if (!isAdded()) return;
+                    Toast.makeText(requireContext(), "Không thể load thói quen: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
-    private void populateHabitCategoryChips(List<String> categories) {
-        binding.chipGroupHabitCategory.removeAllViews();
-        
-        for (int i = 0; i < categories.size(); i++) {
-            String category = categories.get(i);
-            Chip chip = new Chip(requireContext());
-            chip.setId(View.generateViewId());
-            chip.setText(getCategoryDisplayName(category));
-            chip.setCheckable(true);
-            chip.setChipIcon(getResources().getDrawable(R.drawable.ic_habit, null));
-            
-            // Set first chip as checked
-            if (i == 0) {
-                chip.setChecked(true);
-            }
-            
-            binding.chipGroupHabitCategory.addView(chip);
+    private void setupExerciseSpinner(List<ExerciseContent> exercises) {
+        List<String> exerciseTitles = new ArrayList<>();
+        for (ExerciseContent exercise : exercises) {
+            exerciseTitles.add(exercise.getTitle());
         }
+        
+        if (exerciseTitles.isEmpty()) {
+            exerciseTitles.add("Không có bài tập");
+        }
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                exerciseTitles
+        );
+        binding.spinnerExercise.setAdapter(adapter);
+        
+        // Set default selection
+        if (!exerciseTitles.isEmpty()) {
+            binding.spinnerExercise.setText(exerciseTitles.get(0), false);
+            selectedExerciseIndex = 0;
+        }
+        
+        // Listen for selection
+        binding.spinnerExercise.setOnItemClickListener((parent, view, position, id) -> {
+            selectedExerciseIndex = position;
+        });
     }
 
-    private String getSubjectDisplayName(String subject) {
-        switch (subject.toLowerCase()) {
-            case "math": return "Toán";
-            case "vietnamese": return "Tiếng Việt";
-            case "english": return "Tiếng Anh";
-            case "science": return "Khoa học";
-            case "history": return "Lịch sử";
-            case "geography": return "Địa lý";
-            default: return subject;
+    private void setupHabitSpinner(List<ApiService.HabitTemplateResponse> habits) {
+        List<String> habitNames = new ArrayList<>();
+        for (ApiService.HabitTemplateResponse habit : habits) {
+            habitNames.add(habit.name);
         }
+        
+        if (habitNames.isEmpty()) {
+            habitNames.add("Không có thói quen");
+        }
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                habitNames
+        );
+        binding.spinnerHabit.setAdapter(adapter);
+        
+        // Set default selection
+        if (!habitNames.isEmpty()) {
+            binding.spinnerHabit.setText(habitNames.get(0), false);
+            selectedHabitIndex = 0;
+        }
+        
+        // Listen for selection
+        binding.spinnerHabit.setOnItemClickListener((parent, view, position, id) -> {
+            selectedHabitIndex = position;
+        });
     }
 
-    private String getCategoryDisplayName(String category) {
-        switch (category.toLowerCase()) {
-            case "health": return "Sức khỏe";
-            case "study": return "Học tập";
-            case "housework": return "Việc nhà";
-            case "sport": return "Thể thao";
-            case "creativity": return "Sáng tạo";
-            case "responsibility": return "Trách nhiệm";
-            case "self_discipline": return "Kỷ luật";
-            default: return category;
+    private ExerciseContent getSelectedExercise() {
+        if (availableExercises.isEmpty() || selectedExerciseIndex >= availableExercises.size()) {
+            return null;
         }
+        return availableExercises.get(selectedExerciseIndex);
     }
 
-    private String getSelectedSubject() {
-        int checkedId = binding.chipGroupSubject.getCheckedChipId();
-        if (checkedId == View.NO_ID || availableSubjects == null || availableSubjects.isEmpty()) {
-            return "math"; // fallback
+    private ApiService.HabitTemplateResponse getSelectedHabit() {
+        if (availableHabits.isEmpty() || selectedHabitIndex >= availableHabits.size()) {
+            return null;
         }
-        
-        // Find the selected chip and get its position
-        for (int i = 0; i < binding.chipGroupSubject.getChildCount(); i++) {
-            Chip chip = (Chip) binding.chipGroupSubject.getChildAt(i);
-            if (chip.getId() == checkedId) {
-                return availableSubjects.get(i);
-            }
-        }
-        
-        return availableSubjects.get(0); // fallback to first
-    }
-
-    private String getSelectedHabitCategory() {
-        int checkedId = binding.chipGroupHabitCategory.getCheckedChipId();
-        if (checkedId == View.NO_ID || availableHabitCategories == null || availableHabitCategories.isEmpty()) {
-            return "health"; // fallback
-        }
-        
-        // Find the selected chip and get its position
-        for (int i = 0; i < binding.chipGroupHabitCategory.getChildCount(); i++) {
-            Chip chip = (Chip) binding.chipGroupHabitCategory.getChildAt(i);
-            if (chip.getId() == checkedId) {
-                return availableHabitCategories.get(i);
-            }
-        }
-        
-        return availableHabitCategories.get(0); // fallback to first
+        return availableHabits.get(selectedHabitIndex);
     }
 
     private String calculateDueDate(int dayIndex) {
@@ -324,24 +333,24 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
         return sdf.format(calendar.getTime());
     }
 
-    private WeekTask convertToWeekTask(ApiService.TaskAssignmentResponse response) {
+    private WeekTask convertToWeekTask(TaskResponse response) {
         String type = "habit";
-        if ("exercise".equals(response.taskType)) {
+        if ("EXERCISE".equalsIgnoreCase(response.getTaskType())) {
             type = "quiz";
         }
 
         WeekTask task = new WeekTask(
-                response.id,
-                response.title,
-                response.description != null ? response.description : "",
+                response.getId(),
+                response.getTitle(),
+                response.getDescription() != null ? response.getDescription() : "",
                 type,
-                response.pointsReward != null ? response.pointsReward : 10,
-                response.pointsReward != null ? response.pointsReward / 2 : 5,
+                response.getPointsReward() != null ? response.getPointsReward() : 10,
+                response.getPointsReward() != null ? response.getPointsReward() / 2 : 5,
                 dayIndex
         );
 
-        if (response.priority != null) {
-            task.setLevel(response.priority);
+        if (response.getPriority() != null) {
+            task.setLevel(response.getPriority());
         }
 
         return task;

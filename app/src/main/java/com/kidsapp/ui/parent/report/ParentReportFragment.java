@@ -10,13 +10,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.databinding.FragmentParentReportBinding;
+import com.kidsapp.ui.components.LoadingDialog;
 import com.kidsapp.ui.parent.report.adapter.AchievementAdapter;
 import com.kidsapp.ui.parent.report.adapter.ReportChildSelectorAdapter;
 import com.kidsapp.ui.parent.report.components.WeeklyChartView;
@@ -27,12 +30,18 @@ import com.kidsapp.ui.parent.report.model.WeeklyStat;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * Parent Report Fragment - Hiển thị báo cáo chi tiết của bé
  */
 public class ParentReportFragment extends Fragment {
 
     private FragmentParentReportBinding binding;
+    private ApiService apiService;
+    private LoadingDialog loadingDialog;
     
     // Data variables
     private List<Child> childList = new ArrayList<>();
@@ -53,27 +62,19 @@ public class ParentReportFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Init API service
+        SharedPref sharedPref = new SharedPref(requireContext());
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
 
         // Lấy childId và childName từ arguments (nếu có)
         if (getArguments() != null) {
             String childId = getArguments().getString("childId");
             String childName = getArguments().getString("childName");
             
-            // Tìm child trong danh sách demo
-            initDemoChildren();
-            if (childId != null) {
-                for (Child child : childList) {
-                    if (child.getId().equals(childId)) {
-                        selectedChild = child;
-                        break;
-                    }
-                }
+            if (childId != null && childName != null) {
+                selectedChild = new Child(childId, childName, 1, 0, "👦");
             }
-        }
-        
-        // Nếu không có child được chọn, chọn child đầu tiên
-        if (selectedChild == null && !childList.isEmpty()) {
-            selectedChild = childList.get(0);
         }
     }
 
@@ -89,24 +90,28 @@ public class ParentReportFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        loadingDialog = new LoadingDialog(requireContext());
+        
         initViews();
-        setupChildSelector();
         setupFilterTabs();
         setupAchievements();
-        
-        // Load initial data
-        loadReport();
         setupAppBar();
+        
+        // Load children list first, then load report
+        showLoading();
+        loadChildrenList();
     }
-
-    /**
-     * Khởi tạo danh sách bé DEMO
-     */
-    private void initDemoChildren() {
-        childList.clear();
-        childList.add(new Child("1", "Hồ Hữu Huy", 3, 1200, "👦"));
-        childList.add(new Child("2", "Linh", 2, 900, "👧"));
-        childList.add(new Child("3", "Tuấn", 4, 1500, "👦"));
+    
+    private void showLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.show("Đang tải...");
+        }
+    }
+    
+    private void hideLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
     }
 
     /**
@@ -136,6 +141,55 @@ public class ParentReportFragment extends Fragment {
         // Achievements RecyclerView
         recyclerAchievements = binding.getRoot().findViewById(R.id.recyclerAchievements);
     }
+    
+    /**
+     * Load danh sách children từ API
+     */
+    private void loadChildrenList() {
+        apiService.getParentChildren().enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> response) {
+                if (!isAdded()) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    childList.clear();
+                    for (ApiService.ChildResponse child : response.body().data) {
+                        String avatar = (child.gender != null && child.gender) ? "👦" : "👧";
+                        if (child.avatarUrl != null && !child.avatarUrl.isEmpty() && !child.avatarUrl.startsWith("http")) {
+                            avatar = child.avatarUrl;
+                        }
+                        int level = child.currentLevel != null ? child.currentLevel : 1;
+                        int xp = child.totalXp != null ? child.totalXp : 0;
+                        childList.add(new Child(child.id, child.name, level, xp, avatar));
+                    }
+                    
+                    // Nếu chưa có selected child, chọn child đầu tiên
+                    if (selectedChild == null && !childList.isEmpty()) {
+                        selectedChild = childList.get(0);
+                    } else if (selectedChild != null) {
+                        // Cập nhật thông tin selected child từ API
+                        for (Child c : childList) {
+                            if (c.getId().equals(selectedChild.getId())) {
+                                selectedChild = c;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    setupChildSelector();
+                    loadReport();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call, Throwable t) {
+                if (!isAdded()) return;
+                hideLoading();
+                Toast.makeText(requireContext(), "Không thể tải danh sách bé", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     /**
      * Setup child selector với bottom sheet
@@ -161,15 +215,10 @@ public class ParentReportFragment extends Fragment {
         RecyclerView recyclerChildList = bottomSheetView.findViewById(R.id.recyclerChildList);
         
         ReportChildSelectorAdapter adapter = new ReportChildSelectorAdapter(child -> {
-            // Cập nhật selected child
             selectedChild = child;
             txtSelectedChild.setText(child.getName() + " – " + child.getLevelText());
             imgChildAvatar.setText(child.getAvatar());
-            
-            // Đóng bottom sheet
             bottomSheetDialog.dismiss();
-            
-            // Tải lại dữ liệu
             loadReport();
         });
         
@@ -199,7 +248,6 @@ public class ParentReportFragment extends Fragment {
             loadReport();
         });
         
-        // Set initial active state
         setActiveTab("WEEK");
     }
 
@@ -209,7 +257,6 @@ public class ParentReportFragment extends Fragment {
     private void setActiveTab(String filter) {
         currentFilter = filter;
         
-        // Reset all tabs
         tabWeek.setBackgroundResource(android.R.color.transparent);
         tabWeek.setTextColor(getResources().getColor(R.color.text_secondary));
         
@@ -219,7 +266,6 @@ public class ParentReportFragment extends Fragment {
         tabAll.setBackgroundResource(android.R.color.transparent);
         tabAll.setTextColor(getResources().getColor(R.color.text_secondary));
         
-        // Set active tab
         switch (filter) {
             case "WEEK":
                 tabWeek.setBackgroundResource(R.drawable.bg_tab_active);
@@ -243,7 +289,6 @@ public class ParentReportFragment extends Fragment {
         achievementAdapter = new AchievementAdapter();
         recyclerAchievements.setLayoutManager(new GridLayoutManager(requireContext(), 3));
         
-        // Thêm spacing giữa các item
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.spacing_8);
         recyclerAchievements.addItemDecoration(
                 new com.kidsapp.ui.parent.report.components.GridSpacingItemDecoration(3, spacingInPixels, false)
@@ -251,124 +296,91 @@ public class ParentReportFragment extends Fragment {
         
         recyclerAchievements.setAdapter(achievementAdapter);
     }
+    
     private void setupAppBar() {
-        // Sự kiện click nút Back - gọi onBackPressed của Activity để xử lý logic
         binding.appbar.btnBack.setOnClickListener(v -> {
             requireActivity().onBackPressed();
         });
     }
+    
     /**
-     * Load báo cáo theo filter hiện tại
+     * Load báo cáo từ API
      */
     private void loadReport() {
         if (selectedChild == null) {
-            Toast.makeText(requireContext(), "Chưa chọn bé", Toast.LENGTH_SHORT).show();
             return;
         }
         
-        switch (currentFilter) {
-            case "WEEK":
-                loadWeeklyReport(selectedChild);
-                break;
-            case "MONTH":
-                loadMonthlyReport(selectedChild);
-                break;
-            case "ALL":
-                loadAllReport(selectedChild);
-                break;
+        apiService.getDetailReport(selectedChild.getId(), currentFilter)
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<ApiService.DetailReportResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiService.ApiResponseWrapper<ApiService.DetailReportResponse>> call,
+                                           Response<ApiService.ApiResponseWrapper<ApiService.DetailReportResponse>> response) {
+                        if (!isAdded()) return;
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            updateUI(response.body().data);
+                        } else {
+                            showEmptyState();
+                        }
+                        hideLoading();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiService.ApiResponseWrapper<ApiService.DetailReportResponse>> call, Throwable t) {
+                        if (!isAdded()) return;
+                        hideLoading();
+                        showEmptyState();
+                    }
+                });
+    }
+    
+    /**
+     * Cập nhật UI với dữ liệu từ API
+     */
+    private void updateUI(ApiService.DetailReportResponse data) {
+        // Info cards
+        txtHabit.setText(String.valueOf(data.totalHabits));
+        txtQuiz.setText(String.valueOf(data.totalExercises));
+        txtTime.setText(data.totalTime != null ? data.totalTime : "0m");
+        
+        // Chart data
+        if (data.chartData != null && !data.chartData.isEmpty()) {
+            List<WeeklyStat> stats = new ArrayList<>();
+            for (ApiService.ChartData chart : data.chartData) {
+                stats.add(new WeeklyStat(chart.label, chart.habitCount, chart.exerciseCount));
+            }
+            chartView.setData(stats);
+        }
+        
+        // Achievements
+        if (data.achievements != null && !data.achievements.isEmpty()) {
+            List<Achievement> achievements = new ArrayList<>();
+            for (ApiService.AchievementData ach : data.achievements) {
+                achievements.add(new Achievement(ach.id, ach.name, ach.icon, ach.count));
+            }
+            achievementAdapter.setAchievementList(achievements);
+        } else {
+            achievementAdapter.setAchievementList(new ArrayList<>());
         }
     }
-
+    
     /**
-     * Load dữ liệu báo cáo tuần này (DEMO)
+     * Hiển thị trạng thái trống
      */
-    private void loadWeeklyReport(Child child) {
-        // Info cards
-        txtHabit.setText("24");
-        txtQuiz.setText("18");
-        txtTime.setText("3.2h");
-        
-        // Chart data (7 ngày)
-        List<WeeklyStat> weeklyStats = new ArrayList<>();
-        weeklyStats.add(new WeeklyStat("T2", 4, 3));
-        weeklyStats.add(new WeeklyStat("T3", 5, 2));
-        weeklyStats.add(new WeeklyStat("T4", 3, 4));
-        weeklyStats.add(new WeeklyStat("T5", 6, 3));
-        weeklyStats.add(new WeeklyStat("T6", 2, 2));
-        weeklyStats.add(new WeeklyStat("T7", 3, 3));
-        weeklyStats.add(new WeeklyStat("CN", 1, 1));
-        chartView.setData(weeklyStats);
-        
-        // Achievements
-        List<Achievement> achievements = new ArrayList<>();
-        achievements.add(new Achievement("1", "Siêu sao", "⭐", 5));
-        achievements.add(new Achievement("2", "Nỗ lực", "💪", 8));
-        achievements.add(new Achievement("3", "Kiên trì", "🔥", 12));
-        achievements.add(new Achievement("4", "Tia chớp", "⚡", 6));
-        achievements.add(new Achievement("5", "Ngôi sao vàng", "🌟", 4));
-        achievements.add(new Achievement("6", "MVP", "🏆", 3));
-        achievementAdapter.setAchievementList(achievements);
-    }
-
-    /**
-     * Load dữ liệu báo cáo tháng này (DEMO)
-     */
-    private void loadMonthlyReport(Child child) {
-        // Info cards
-        txtHabit.setText("96");
-        txtQuiz.setText("72");
-        txtTime.setText("12.8h");
-        
-        // Chart data (4 tuần)
-        List<WeeklyStat> monthlyStats = new ArrayList<>();
-        monthlyStats.add(new WeeklyStat("T1", 20, 15));
-        monthlyStats.add(new WeeklyStat("T2", 24, 18));
-        monthlyStats.add(new WeeklyStat("T3", 28, 20));
-        monthlyStats.add(new WeeklyStat("T4", 24, 19));
-        chartView.setData(monthlyStats);
-        
-        // Achievements
-        List<Achievement> achievements = new ArrayList<>();
-        achievements.add(new Achievement("1", "Siêu sao", "⭐", 20));
-        achievements.add(new Achievement("2", "Nỗ lực", "💪", 32));
-        achievements.add(new Achievement("3", "Kiên trì", "🔥", 48));
-        achievements.add(new Achievement("4", "Tia chớp", "⚡", 24));
-        achievements.add(new Achievement("5", "Ngôi sao vàng", "🌟", 16));
-        achievements.add(new Achievement("6", "MVP", "🏆", 12));
-        achievementAdapter.setAchievementList(achievements);
-    }
-
-    /**
-     * Load dữ liệu báo cáo tất cả (DEMO)
-     */
-    private void loadAllReport(Child child) {
-        // Info cards
-        txtHabit.setText("288");
-        txtQuiz.setText("216");
-        txtTime.setText("38.4h");
-        
-        // Chart data (3 tháng)
-        List<WeeklyStat> allStats = new ArrayList<>();
-        allStats.add(new WeeklyStat("T1", 80, 60));
-        allStats.add(new WeeklyStat("T2", 88, 68));
-        allStats.add(new WeeklyStat("T3", 96, 72));
-        allStats.add(new WeeklyStat("T4", 24, 16));
-        chartView.setData(allStats);
-        
-        // Achievements
-        List<Achievement> achievements = new ArrayList<>();
-        achievements.add(new Achievement("1", "Siêu sao", "⭐", 60));
-        achievements.add(new Achievement("2", "Nỗ lực", "💪", 96));
-        achievements.add(new Achievement("3", "Kiên trì", "🔥", 144));
-        achievements.add(new Achievement("4", "Tia chớp", "⚡", 72));
-        achievements.add(new Achievement("5", "Ngôi sao vàng", "🌟", 48));
-        achievements.add(new Achievement("6", "MVP", "🏆", 36));
-        achievementAdapter.setAchievementList(achievements);
+    private void showEmptyState() {
+        txtHabit.setText("0");
+        txtQuiz.setText("0");
+        txtTime.setText("0m");
+        chartView.setData(new ArrayList<>());
+        achievementAdapter.setAchievementList(new ArrayList<>());
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        hideLoading();
+        loadingDialog = null;
         binding = null;
     }
 }

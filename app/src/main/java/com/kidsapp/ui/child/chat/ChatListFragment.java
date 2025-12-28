@@ -106,10 +106,10 @@ public class ChatListFragment extends Fragment implements ConversationAdapter.On
         
         showLoading(true);
         
-        String currentChildId = getCurrentChildId();
         Log.d(TAG, "Searching friends: " + keyword);
         
-        apiService.searchChildren(currentChildId, keyword)
+        // Không cần truyền currentChildId - BE lấy từ JWT
+        apiService.searchChildren(keyword)
                 .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> call,

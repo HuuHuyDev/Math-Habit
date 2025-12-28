@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 
-    Component hiển thị biểu đồ tiến độ 7 ngày gần nhất
-    Gồm: Card trắng, tiêu đề, và RecyclerView chứa 7 cột
+    Component hiển thị biểu đồ tiến độ tuần hiện tại
+    Gồm: Card trắng, tiêu đề, và RecyclerView chứa 7 cột (T2-CN)
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,12 +11,12 @@
     android:background="@drawable/bg_white_card"
     android:padding="@dimen/spacing_20">
 
-    <!-- Tiêu đề "Tiến độ 7 ngày gần nhất" -->
+    <!-- Tiêu đề "Tiến độ tuần này" -->
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tiến độ 7 ngày gần nhất"
+        android:text="Tiến độ tuần này"
         android:textColor="#1A1A1A"
         android:textSize="18sp"
         android:textStyle="bold"

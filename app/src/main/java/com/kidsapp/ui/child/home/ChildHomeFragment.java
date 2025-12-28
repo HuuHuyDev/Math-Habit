@@ -20,6 +20,7 @@ import com.kidsapp.ui.child.components.ChildProfileLoader;
 import com.kidsapp.ui.child.progress.ProgresssFragment;
 import com.kidsapp.ui.child.shop.ShopFragment;
 import com.kidsapp.ui.child.task.ChildTaskListFragment;
+import com.kidsapp.ui.components.LoadingDialog;
 import com.kidsapp.ui.parent.home.adapter.NotificationAdapter;
 import com.kidsapp.ui.parent.home.model.Notification;
 
@@ -29,6 +30,7 @@ import java.util.List;
 public class ChildHomeFragment extends Fragment {
     private FragmentChildHomeBinding binding;
     private ChildProfileLoader profileLoader;
+    private LoadingDialog loadingDialog;
 
     @Nullable
     @Override
@@ -36,10 +38,12 @@ public class ChildHomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentChildHomeBinding.inflate(inflater, container, false);
         
-        // Khởi tạo profile loader
+        // Khởi tạo profile loader và loading dialog
         profileLoader = new ChildProfileLoader(requireContext());
+        loadingDialog = new LoadingDialog(requireContext());
         
         // Load profile từ API
+        showLoading();
         loadChildProfile();
         
         setupLevelCard();
@@ -47,6 +51,18 @@ public class ChildHomeFragment extends Fragment {
         setupClickListeners();
         
         return binding.getRoot();
+    }
+    
+    private void showLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.show("Đang tải...");
+        }
+    }
+    
+    private void hideLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
     }
 
     /**
@@ -57,6 +73,7 @@ public class ChildHomeFragment extends Fragment {
             @Override
             public void onProfileLoaded(Child child) {
                 if (getActivity() == null) return;
+                hideLoading();
                 
                 // Cập nhật level card với dữ liệu thực
                 updateLevelCard(child);
@@ -64,6 +81,7 @@ public class ChildHomeFragment extends Fragment {
 
             @Override
             public void onProfileLoadError(String error) {
+                hideLoading();
                 // Dữ liệu mặc định đã được fill bởi loader
             }
         });
@@ -296,6 +314,8 @@ public class ChildHomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        hideLoading();
+        loadingDialog = null;
         binding = null;
     }
 }

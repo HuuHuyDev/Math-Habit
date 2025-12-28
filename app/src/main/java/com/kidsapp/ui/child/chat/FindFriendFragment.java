@@ -17,8 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.kidsapp.R;
-import com.kidsapp.data.api.ApiConfig;
 import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.response.ChildSearchResponse;
 import com.kidsapp.databinding.FragmentFindFriendBinding;
@@ -28,8 +28,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Fragment tìm bạn mới để chat
@@ -66,11 +64,8 @@ public class FindFriendFragment extends Fragment implements FriendSearchAdapter.
     }
 
     private void setupRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiConfig.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        apiService = retrofit.create(ApiService.class);
+        // Sử dụng RetrofitClient với AuthInterceptor để có JWT token
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
     }
 
     private void setupViews() {
@@ -106,20 +101,10 @@ public class FindFriendFragment extends Fragment implements FriendSearchAdapter.
     private void loadFriends(String keyword) {
         showLoading(true);
         
-        // Lấy currentChildId từ SharedPref
-        String currentChildId = sharedPref.getChildId();
-        if (currentChildId == null || currentChildId.isEmpty()) {
-            // Fallback: dùng userId nếu không có childId
-            currentChildId = sharedPref.getUserId();
-        }
-        if (currentChildId == null || currentChildId.isEmpty()) {
-            // Fallback: dùng mock ID nếu chưa login
-            currentChildId = "00000000-0000-0000-0000-000000000000";
-        }
+        Log.d(TAG, "Searching friends with keyword: " + keyword);
         
-        Log.d(TAG, "Searching friends with keyword: " + keyword + ", currentChildId: " + currentChildId);
-        
-        apiService.searchChildren(currentChildId, keyword.isEmpty() ? null : keyword)
+        // Không cần truyền currentChildId - BE lấy từ JWT
+        apiService.searchChildren(keyword.isEmpty() ? null : keyword)
                 .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<ChildSearchResponse>>> call,

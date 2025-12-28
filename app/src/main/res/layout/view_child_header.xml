@@ -46,6 +46,20 @@
         app:layout_constraintStart_toStartOf="@id/viewAvatarWhite"
         app:layout_constraintTop_toTopOf="@id/viewAvatarWhite" />
 
+    <!-- TextView hiển thị emoji avatar -->
+    <TextView
+        android:id="@+id/txtChildEmoji"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="@dimen/spacing_4"
+        android:layout_marginTop="@dimen/spacing_4"
+        android:gravity="center"
+        android:text="👦"
+        android:textSize="36sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/viewAvatarWhite"
+        app:layout_constraintTop_toTopOf="@id/viewAvatarWhite" />
+
     <!-- Badge Level "Lv 4" màu xanh, chồng lên dưới bên phải avatar -->
     <TextView
         android:id="@+id/txtLevel"

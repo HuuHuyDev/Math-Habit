@@ -6,6 +6,7 @@ import com.kidsapp.data.api.ApiConfig;
 import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.service.FcmTokenManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -16,9 +17,11 @@ import retrofit2.Response;
 public class AuthRepository {
     private ApiService apiService;
     private SharedPref sharedPref;
+    private Context context;
 
     public AuthRepository(Context context) {
         try {
+            this.context = context;
             sharedPref = new SharedPref(context);
             apiService = RetrofitClient.getInstance(sharedPref).getApiService();
         } catch (Exception e) {
@@ -221,6 +224,21 @@ public class AuthRepository {
         
         // Reset RetrofitClient để sử dụng token mới
         RetrofitClient.resetInstance();
+        
+        // Đăng ký FCM token sau khi login thành công
+        registerFcmToken();
+    }
+    
+    /**
+     * Đăng ký FCM token lên server
+     */
+    private void registerFcmToken() {
+        try {
+            FcmTokenManager fcmTokenManager = new FcmTokenManager(context);
+            fcmTokenManager.registerToken();
+        } catch (Exception e) {
+            android.util.Log.e("AuthRepository", "Error registering FCM token", e);
+        }
     }
 
     public void logout() {
@@ -229,6 +247,14 @@ public class AuthRepository {
 
     public void logout(LogoutCallback callback) {
         String refreshToken = sharedPref.getRefreshToken();
+        
+        // Xóa FCM token khỏi server trước khi logout
+        try {
+            FcmTokenManager fcmTokenManager = new FcmTokenManager(context);
+            fcmTokenManager.unregisterToken();
+        } catch (Exception e) {
+            android.util.Log.e("AuthRepository", "Error unregistering FCM token", e);
+        }
         
         // Clear local data first
         sharedPref.clearAll();

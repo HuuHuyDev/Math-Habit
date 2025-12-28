@@ -60,6 +60,29 @@
             android:maxLines="2"
             android:ellipsize="end" />
 
+        <!-- Progress bar (chỉ hiện khi chưa unlock) -->
+        <ProgressBar
+            android:id="@+id/progressBadge"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_badge"
+            android:visibility="gone" />
+        
+        <!-- Progress text (chỉ hiện khi chưa unlock) -->
+        <TextView
+            android:id="@+id/txtProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_2"
+            android:text="0/10"
+            android:textColor="#6B7280"
+            android:textSize="@dimen/text_size_xsmall"
+            android:visibility="gone" />
+
         <!-- Badge count (optional - chỉ hiện trong report) -->
         <TextView
             android:id="@+id/txtBadgeCount"
