@@ -11,13 +11,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.widget.Toast;
+
 import com.kidsapp.R;
+import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.ComprehensiveTest;
 import com.kidsapp.data.repository.ComprehensiveTestRepository;
+import com.kidsapp.data.repository.ExerciseRepository;
 import com.kidsapp.databinding.FragmentExerciseContentBinding;
 import com.kidsapp.databinding.CardComprehensiveTestBinding;
 import com.kidsapp.ui.child.practice.PracticeFragment;
 import com.kidsapp.ui.child.quizz.ExamFragment;
+import com.kidsapp.utils.ExerciseConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +30,6 @@ import java.util.List;
 /**
  * Fragment để chọn nội dung bài tập cụ thể
  * Hiển thị danh sách các chủ đề: Phép cộng 1 chữ số, Phép cộng 2 chữ số, v.v.
- * 
- * NOTE: API logic đã bị xóa, chỉ giữ lại UI với mock data
  */
 public class ExerciseContentFragment extends Fragment {
 
@@ -35,6 +38,8 @@ public class ExerciseContentFragment extends Fragment {
     private ExerciseContentAdapter adapter;
     private String taskTitle = "Bài 1: Luyện phép cộng";
     private ComprehensiveTestRepository comprehensiveTestRepository;
+    private ExerciseRepository exerciseRepository;
+    private SharedPref sharedPref;
 
     public static ExerciseContentFragment newInstance(String taskTitle) {
         ExerciseContentFragment fragment = new ExerciseContentFragment();
@@ -51,12 +56,14 @@ public class ExerciseContentFragment extends Fragment {
         binding = FragmentExerciseContentBinding.inflate(inflater, container, false);
         comprehensiveTestBinding = CardComprehensiveTestBinding.bind(binding.cardComprehensiveTest.getRoot());
         comprehensiveTestRepository = ComprehensiveTestRepository.getInstance();
+        exerciseRepository = new ExerciseRepository(requireContext());
+        sharedPref = new SharedPref(requireContext());
         
         loadArguments();
         setupHeader();
         setupComprehensiveTest();
         setupRecyclerView();
-        loadSampleData();
+        loadExercisesFromAPI();
         
         return binding.getRoot();
     }
@@ -79,13 +86,58 @@ public class ExerciseContentFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
+        // Khởi tạo adapter với danh sách rỗng, sẽ load từ API
         adapter = new ExerciseContentAdapter(new ArrayList<>(), this::onContentClick);
         binding.recyclerContents.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerContents.setAdapter(adapter);
     }
 
     /**
-     * Load mock data để test UI
+     * Load danh sách bài tập từ API
+     */
+    private void loadExercisesFromAPI() {
+        String childId = sharedPref.getChildId();
+        
+        if (childId == null || childId.isEmpty()) {
+            // Fallback to sample data nếu không có childId
+            loadSampleData();
+            return;
+        }
+
+        // Hiển thị loading
+        binding.recyclerContents.setVisibility(View.GONE);
+        
+        // Call API
+        exerciseRepository.getAllExercises(childId, new ExerciseRepository.ExerciseListCallback() {
+            @Override
+            public void onSuccess(List<com.kidsapp.data.model.ExerciseContent> exercises) {
+                if (getActivity() == null) return;
+                
+                // Convert API model sang UI model
+                List<ExerciseContent> uiExercises = ExerciseConverter.convertToUIExerciseContents(exercises);
+                
+                // Update adapter
+                adapter = new ExerciseContentAdapter(uiExercises, ExerciseContentFragment.this::onContentClick);
+                binding.recyclerContents.setAdapter(adapter);
+                binding.recyclerContents.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                
+                // Hiển thị lỗi và fallback to sample data
+                Toast.makeText(requireContext(), 
+                    "Không thể tải bài tập: " + error + ". Hiển thị dữ liệu mẫu.", 
+                    Toast.LENGTH_SHORT).show();
+                
+                loadSampleData();
+            }
+        });
+    }
+
+    /**
+     * Load dữ liệu mẫu khi không có API hoặc lỗi
      */
     private void loadSampleData() {
         List<ExerciseContent> contents = createSampleContents();
@@ -95,7 +147,7 @@ public class ExerciseContentFragment extends Fragment {
     }
 
     /**
-     * Setup card bài test tổng hợp
+     * Thiết lập card Làm bài test tổng
      */
     private void setupComprehensiveTest() {
         // Lấy thông tin bài test tổng từ repository

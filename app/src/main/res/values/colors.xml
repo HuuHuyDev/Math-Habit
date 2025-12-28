@@ -112,8 +112,4 @@
     
     <!-- Reward Colors -->
     <color name="reward_gold">#FBBF24</color>
-    
-    <!-- Challenge Config Colors -->
-    <color name="info_background">#E3F2FD</color>
-    <color name="gray_light">#E0E0E0</color>
 </resources>

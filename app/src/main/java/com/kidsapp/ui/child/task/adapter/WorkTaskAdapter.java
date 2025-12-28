@@ -38,14 +38,6 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
         notifyDataSetChanged();
     }
     
-    public void removeTask(Task task) {
-        int position = tasks.indexOf(task);
-        if (position != -1) {
-            tasks.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-    
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

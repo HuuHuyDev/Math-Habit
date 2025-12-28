@@ -214,23 +214,4 @@
     <string name="ready">Sẵn sàng</string>
     <string name="vs">VS</string>
 
-    <!-- Challenge Config Screen -->
-    <string name="select_challenge_config">Chọn chế độ</string>
-    <string name="select_category">Chọn chủ đề *</string>
-    <string name="select_category_hint">Chọn loại câu hỏi bạn muốn...</string>
-    <string name="select_difficulty">Chọn độ khó *</string>
-    <string name="difficulty_easy">Dễ</string>
-    <string name="difficulty_medium">Trung bình</string>
-    <string name="difficulty_hard">Khó</string>
-    <string name="difficulty_very_hard">Rất khó</string>
-    <string name="difficulty_extreme">Cực khó</string>
-    <string name="difficulty_1">Độ khó 1 sao</string>
-    <string name="difficulty_2">Độ khó 2 sao</string>
-    <string name="difficulty_3">Độ khó 3 sao</string>
-    <string name="difficulty_4">Độ khó 4 sao</string>
-    <string name="difficulty_5">Độ khó 5 sao</string>
-    <string name="start_finding_opponent">Bắt đầu tìm đối thủ</string>
-    <string name="matching_info">Hệ thống sẽ tìm đối thủ có cùng chủ đề và độ khó với bạn</string>
-    <string name="category_icon">Icon chủ đề</string>
-
 </resources>
