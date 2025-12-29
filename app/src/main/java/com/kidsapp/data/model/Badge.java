@@ -15,32 +15,40 @@ public class Badge {
     @SerializedName("description")
     private String description;
     
-    @SerializedName("icon")
-    private String icon;
+    @SerializedName("iconUrl")
+    private String iconUrl;
     
-    @SerializedName("child_id")
-    private String childId;
+    @SerializedName("badgeType")
+    private String badgeType;
     
-    @SerializedName("earned_at")
+    @SerializedName("rarity")
+    private String rarity;
+    
+    @SerializedName("xpReward")
+    private int xpReward;
+    
+    @SerializedName("coinsReward")
+    private int coinsReward;
+    
+    @SerializedName("earned")
+    private boolean earned;
+    
+    @SerializedName("earnedAt")
     private String earnedAt;
     
-    @SerializedName("created_at")
-    private String createdAt;
+    @SerializedName("requirementValue")
+    private int requirementValue;
+    
+    @SerializedName("progressValue")
+    private int progressValue;
+    
+    @SerializedName("progressPercent")
+    private int progressPercent;
 
     public Badge() {
     }
 
-    public Badge(String id, String name, String description, String icon, 
-                 String childId, String earnedAt, String createdAt) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.icon = icon;
-        this.childId = childId;
-        this.earnedAt = earnedAt;
-        this.createdAt = createdAt;
-    }
-
+    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -65,20 +73,52 @@ public class Badge {
         this.description = description;
     }
 
-    public String getIcon() {
-        return icon;
+    public String getIconUrl() {
+        return iconUrl;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
     }
 
-    public String getChildId() {
-        return childId;
+    public String getBadgeType() {
+        return badgeType;
     }
 
-    public void setChildId(String childId) {
-        this.childId = childId;
+    public void setBadgeType(String badgeType) {
+        this.badgeType = badgeType;
+    }
+
+    public String getRarity() {
+        return rarity;
+    }
+
+    public void setRarity(String rarity) {
+        this.rarity = rarity;
+    }
+
+    public int getXpReward() {
+        return xpReward;
+    }
+
+    public void setXpReward(int xpReward) {
+        this.xpReward = xpReward;
+    }
+
+    public int getCoinsReward() {
+        return coinsReward;
+    }
+
+    public void setCoinsReward(int coinsReward) {
+        this.coinsReward = coinsReward;
+    }
+
+    public boolean isEarned() {
+        return earned;
+    }
+
+    public void setEarned(boolean earned) {
+        this.earned = earned;
     }
 
     public String getEarnedAt() {
@@ -89,12 +129,27 @@ public class Badge {
         this.earnedAt = earnedAt;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public int getRequirementValue() {
+        return requirementValue;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setRequirementValue(int requirementValue) {
+        this.requirementValue = requirementValue;
+    }
+
+    public int getProgressValue() {
+        return progressValue;
+    }
+
+    public void setProgressValue(int progressValue) {
+        this.progressValue = progressValue;
+    }
+
+    public int getProgressPercent() {
+        return progressPercent;
+    }
+
+    public void setProgressPercent(int progressPercent) {
+        this.progressPercent = progressPercent;
     }
 }
-

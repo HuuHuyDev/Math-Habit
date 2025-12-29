@@ -47,7 +47,6 @@ public class ChildHomeFragment extends Fragment {
         loadChildProfile();
         
         setupLevelCard();
-        setupTodayGoal();
         setupClickListeners();
         
         return binding.getRoot();
@@ -91,20 +90,49 @@ public class ChildHomeFragment extends Fragment {
      * Cập nhật level card với dữ liệu từ API
      */
     private void updateLevelCard(Child child) {
-        int level = child.getLevel();
-        int currentExp = child.getTotalPoints();
+        int level = child.getCurrentLevel() > 0 ? child.getCurrentLevel() : child.getLevel();
+        int currentExp = child.getTotalXp();
+        int xpToNext = child.getXpToNextLevel() > 0 ? child.getXpToNextLevel() : 100;
         
-        // Tính XP cần để lên level tiếp theo (mỗi level cần 100 XP)
-        int targetExp = level * 100;
-        int currentLevelExp = currentExp % 100; // XP trong level hiện tại
-        int remainExp = 100 - currentLevelExp;
-        int percent = currentLevelExp;
+        // Tính XP trong level hiện tại
+        int currentLevelExp = currentExp % xpToNext;
+        int remainExp = xpToNext - currentLevelExp;
+        int percent = xpToNext > 0 ? (currentLevelExp * 100) / xpToNext : 0;
 
         binding.txtLevelLabel.setText(getString(R.string.child_level_value, level));
-        binding.txtExp.setText(currentLevelExp + " / 100 XP");
+        binding.txtExp.setText(currentLevelExp + " / " + xpToNext + " XP");
         binding.txtExpPercent.setText(percent + "%");
         binding.progressExp.setProgress(percent);
         binding.txtExpHint.setText("Chỉ còn " + remainExp + " XP nữa để lên cấp!");
+        
+        // Cập nhật Today Goal card
+        updateTodayGoalCard(child);
+    }
+    
+    /**
+     * Cập nhật Today Goal card với dữ liệu từ API
+     */
+    private void updateTodayGoalCard(Child child) {
+        // Daily progress (0-100)
+        float dailyProgress = child.getDailyProgress();
+        int progressPercent = Math.round(dailyProgress);
+        
+        // Tasks
+        int tasksCompleted = child.getTotalTasksCompleted();
+        int dailyGoalTasks = child.getDailyGoalExercises() > 0 ? child.getDailyGoalExercises() : 5;
+        
+        // Streak
+        int streak = child.getCurrentStreak();
+        
+        // XP earned today (estimate from daily progress)
+        int xpToday = Math.round(dailyProgress * 10); // Rough estimate
+        
+        // Update UI
+        binding.txtGoalPercent.setText(progressPercent + "%");
+        binding.progressTodayGoal.setProgress(progressPercent);
+        binding.txtTasksCompleted.setText(tasksCompleted + "/" + dailyGoalTasks);
+        binding.txtXpEarnedToday.setText(String.valueOf(xpToday));
+        binding.txtStreak.setText(String.valueOf(streak));
     }
 
     private void setupHeader() {
@@ -128,16 +156,13 @@ public class ChildHomeFragment extends Fragment {
         binding.txtExpPercent.setText(percent + "%");
         binding.progressExp.setProgress(percent);
         binding.txtExpHint.setText("Chỉ còn " + remainExp + " XP nữa để lên cấp!");
-    }
-
-    private void setupTodayGoal() {
-        // TODO: Lấy từ API
-        int tasksCompleted = 0;
-        int totalTasks = 5;
-        int xpEarned = 0;
-
-        binding.txtTasksInfo.setText("Hoàn thành " + tasksCompleted + "/" + totalTasks + " nhiệm vụ");
-        binding.txtXpInfo.setText("Nhận " + xpEarned + " XP");
+        
+        // Default today goal
+        binding.txtGoalPercent.setText("0%");
+        binding.progressTodayGoal.setProgress(0);
+        binding.txtTasksCompleted.setText("0/5");
+        binding.txtXpEarnedToday.setText("0");
+        binding.txtStreak.setText("0");
     }
 
     private void setupClickListeners() {

@@ -13,10 +13,10 @@ public class Constants {
     // public static final String BASE_URL = "http://10.0.2.2:8080/api/";
     
     // THIẾT BỊ THẬT: IP WiFi hiện tại (192.168.53.4)
-    public static final String BASE_URL = "http://192.168.53.4:8080/api/";
+    public static final String BASE_URL = "http://192.168.55.8:8080/api/";
     
     // WebSocket URL
-    public static final String WS_URL = "ws://192.168.53.4:8080/api/ws";
+    public static final String WS_URL = "ws://192.168.55.8:8080/api/ws";
  
     
     // SharedPreferences Keys

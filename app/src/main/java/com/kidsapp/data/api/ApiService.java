@@ -1020,4 +1020,100 @@ public interface ApiService {
             @Path("inviteId") String inviteId,
             @Query("childId") String childId
     );
+    
+    // ==================== SHOP APIs ====================
+    
+    /**
+     * Lấy danh sách vật phẩm trong shop
+     * GET /shop/items?childId={childId}&itemType={itemType}
+     */
+    @GET(ApiConfig.ENDPOINT_SHOP_ITEMS)
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.ShopItem>>> getShopItems(
+            @Query("childId") String childId,
+            @Query("itemType") String itemType
+    );
+    
+    /**
+     * Lấy chi tiết vật phẩm
+     * GET /shop/items/{itemId}?childId={childId}
+     */
+    @GET(ApiConfig.ENDPOINT_SHOP_ITEM_DETAIL)
+    Call<ApiResponseWrapper<com.kidsapp.data.model.ShopItem>> getShopItemDetail(
+            @Path("itemId") String itemId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Mua vật phẩm
+     * POST /shop/purchase/{itemId}?childId={childId}
+     */
+    @POST(ApiConfig.ENDPOINT_SHOP_PURCHASE)
+    Call<ApiResponseWrapper<com.kidsapp.data.model.PurchasedItem>> purchaseItem(
+            @Path("itemId") String itemId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy danh sách vật phẩm đã mua
+     * GET /shop/my-items?childId={childId}&itemType={itemType}
+     */
+    @GET(ApiConfig.ENDPOINT_SHOP_MY_ITEMS)
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.PurchasedItem>>> getMyItems(
+            @Query("childId") String childId,
+            @Query("itemType") String itemType
+    );
+    
+    /**
+     * Lấy avatar đang trang bị
+     * GET /shop/equipped-avatar?childId={childId}
+     */
+    @GET(ApiConfig.ENDPOINT_SHOP_EQUIPPED_AVATAR)
+    Call<ApiResponseWrapper<com.kidsapp.data.model.PurchasedItem>> getEquippedAvatar(
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy các booster đang active
+     * GET /shop/active-boosters?childId={childId}
+     */
+    @GET(ApiConfig.ENDPOINT_SHOP_ACTIVE_BOOSTERS)
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.PurchasedItem>>> getActiveBoosters(
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Trang bị avatar
+     * POST /shop/equip/{purchasedItemId}?childId={childId}
+     */
+    @POST(ApiConfig.ENDPOINT_SHOP_EQUIP)
+    Call<ApiResponseWrapper<com.kidsapp.data.model.PurchasedItem>> equipAvatar(
+            @Path("purchasedItemId") String purchasedItemId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Kích hoạt booster
+     * POST /shop/activate-booster/{purchasedItemId}?childId={childId}
+     */
+    @POST(ApiConfig.ENDPOINT_SHOP_ACTIVATE_BOOSTER)
+    Call<ApiResponseWrapper<com.kidsapp.data.model.PurchasedItem>> activateBooster(
+            @Path("purchasedItemId") String purchasedItemId,
+            @Query("childId") String childId
+    );
+    
+    // ==================== BADGE APIs ====================
+    
+    /**
+     * Lấy tất cả badges với tiến độ của child hiện tại
+     * GET /api/badges/me
+     */
+    @GET("api/badges/me")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.Badge>>> getMyBadges();
+    
+    /**
+     * Lấy badges đã đạt được của child hiện tại
+     * GET /api/badges/me/earned
+     */
+    @GET("api/badges/me/earned")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.Badge>>> getMyEarnedBadges();
 }

@@ -12,17 +12,28 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.model.Badge;
 import com.kidsapp.data.model.Child;
 import com.kidsapp.data.repository.ChildRepository;
 import com.kidsapp.databinding.FragmentProfileChildBinding;
 import com.kidsapp.ui.auth.LoginActivity;
-import com.kidsapp.ui.child.equip.equip;
+import com.kidsapp.ui.child.equip.EquipFragment;
 import com.kidsapp.viewmodel.AuthViewModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Fragment hiển thị thông tin hồ sơ của Bé
@@ -34,6 +45,12 @@ public class ChildProfileFragment extends Fragment {
     private FragmentProfileChildBinding binding;
     private AuthViewModel authViewModel;
     private ChildRepository childRepository;
+    private SharedPref sharedPref;
+    private ApiService apiService;
+    private String childId;
+    
+    private List<Badge> badges = new ArrayList<>();
+    private BadgeProfileAdapter badgeAdapter;
 
     @Nullable
     @Override
@@ -44,9 +61,21 @@ public class ChildProfileFragment extends Fragment {
         // Khởi tạo ViewModel và Repository
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         childRepository = new ChildRepository(requireContext());
+        sharedPref = new SharedPref(requireContext());
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+        
+        // Lấy childId
+        childId = sharedPref.getChildId();
+        if (childId == null || childId.isEmpty()) {
+            childId = sharedPref.getUserId();
+        }
+        
+        // Setup badges RecyclerView
+        setupBadgesRecyclerView();
         
         // Load dữ liệu từ API
         loadChildProfile();
+        loadBadges();
         
         // Xử lý sự kiện nút Back
         setupBackButton();
@@ -104,14 +133,14 @@ public class ChildProfileFragment extends Fragment {
         binding.txtChildName.setText(displayName);
         
         // Level
-        binding.txtLevel.setText("Level " + child.getLevel());
+        int level = child.getCurrentLevel() > 0 ? child.getCurrentLevel() : child.getLevel();
+        binding.txtLevel.setText("Level " + level);
         
-        // XP (totalPoints)
-        binding.txtXP.setText(String.valueOf(child.getTotalPoints()));
+        // XP
+        binding.txtXP.setText(String.format("%,d", child.getTotalXp()));
         
-        // Coins - Tạm thời dùng totalPoints / 2 (hoặc có thể thêm field coins vào backend)
-        int coins = child.getTotalPoints() / 2;
-        binding.txtCoins.setText(String.valueOf(coins));
+        // Coins
+        binding.txtCoins.setText(String.format("%,d", child.getCoins()));
         
         // Tuổi
         int age = child.getAge();
@@ -121,8 +150,9 @@ public class ChildProfileFragment extends Fragment {
         String birthDate = formatBirthDate(child.getBirthDate());
         binding.txtBirthday.setText(birthDate);
         
-        // Giới tính - Tạm thời ẩn vì backend chưa có field này
-        binding.txtGender.setText("Chưa cập nhật");
+        // Giới tính
+        String genderText = child.getGenderText();
+        binding.txtGender.setText(genderText.isEmpty() ? "Chưa cập nhật" : genderText);
         
         // Lớp học
         Integer grade = child.getGrade();
@@ -132,10 +162,35 @@ public class ChildProfileFragment extends Fragment {
             binding.txtGrade.setText("Chưa cập nhật");
         }
         
-        // TODO: Load avatar từ URL nếu có
-        // if (child.getAvatarUrl() != null && !child.getAvatarUrl().isEmpty()) {
-        //     Glide.with(this).load(child.getAvatarUrl()).into(binding.imgAvatar);
-        // }
+        // Load avatar
+        String avatarUrl = child.getAvatarUrl();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            loadAvatarImage(avatarUrl);
+        }
+    }
+    
+    /**
+     * Load avatar - hỗ trợ cả URL và drawable name
+     */
+    private void loadAvatarImage(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return;
+        }
+        
+        if (imageUrl.startsWith("http")) {
+            // Load từ URL
+            com.bumptech.glide.Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_avatar_default)
+                    .error(R.drawable.ic_avatar_default)
+                    .into(binding.imgAvatar);
+        } else {
+            // Load từ drawable name (vd: ic_avatar_boy)
+            int resId = getResources().getIdentifier(imageUrl, "drawable", requireContext().getPackageName());
+            if (resId != 0) {
+                binding.imgAvatar.setImageResource(resId);
+            }
+        }
     }
 
     /**
@@ -167,6 +222,52 @@ public class ChildProfileFragment extends Fragment {
         binding.txtBirthday.setText("Chưa cập nhật");
         binding.txtGender.setText("Chưa cập nhật");
         binding.txtGrade.setText("Chưa cập nhật");
+    }
+    
+    /**
+     * Setup RecyclerView cho badges
+     */
+    private void setupBadgesRecyclerView() {
+        badgeAdapter = new BadgeProfileAdapter(badges);
+        binding.rvBadges.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        binding.rvBadges.setAdapter(badgeAdapter);
+    }
+    
+    /**
+     * Load badges từ API
+     */
+    private void loadBadges() {
+        apiService.getMyEarnedBadges().enqueue(new Callback<ApiService.ApiResponseWrapper<List<Badge>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<Badge>>> call,
+                                   @NonNull Response<ApiService.ApiResponseWrapper<List<Badge>>> response) {
+                if (getActivity() == null) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    badges.clear();
+                    badges.addAll(response.body().data);
+                    badgeAdapter.notifyDataSetChanged();
+                    
+                    if (badges.isEmpty()) {
+                        binding.tvEmptyBadges.setVisibility(View.VISIBLE);
+                        binding.rvBadges.setVisibility(View.GONE);
+                    } else {
+                        binding.tvEmptyBadges.setVisibility(View.GONE);
+                        binding.rvBadges.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    binding.tvEmptyBadges.setVisibility(View.VISIBLE);
+                    binding.rvBadges.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<Badge>>> call, @NonNull Throwable t) {
+                if (getActivity() == null) return;
+                binding.tvEmptyBadges.setVisibility(View.VISIBLE);
+                binding.rvBadges.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
@@ -202,7 +303,7 @@ public class ChildProfileFragment extends Fragment {
             
             // Navigate to equip fragment
             if (getActivity() != null) {
-                equip equipFragment = new equip();
+                EquipFragment equipFragment = EquipFragment.newInstance();
                 
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
