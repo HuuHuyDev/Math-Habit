@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kidsapp.R;
@@ -37,9 +38,20 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
         ExerciseTask task = taskList.get(position);
         
         holder.txtTitle.setText(task.getTitle());
-        holder.txtScore.setText(String.format("%d/%d đúng", task.getCorrectAnswers(), task.getTotalQuestions()));
-        holder.txtXP.setText(String.format("+%d XP", task.getXp()));
         holder.imgIcon.setImageResource(task.getIconRes());
+        
+        // Hiển thị trạng thái: Đã làm / Chưa làm
+        if (task.isCompleted()) {
+            holder.txtScore.setText("✅ Đã làm");
+            holder.txtScore.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.status_success));
+        } else {
+            holder.txtScore.setText("⏳ Chưa làm");
+            holder.txtScore.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.primary));
+        }
+        
+        // Hiển thị coin và XP
+        holder.txtCoin.setText("🪙 +" + task.getCoinReward());
+        holder.txtXP.setText("+" + task.getXp() + " XP");
     }
 
     @Override
@@ -56,6 +68,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
         ImageView imgIcon;
         TextView txtTitle;
         TextView txtScore;
+        TextView txtCoin;
         TextView txtXP;
 
         ExerciseViewHolder(@NonNull View itemView) {
@@ -63,6 +76,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
             imgIcon = itemView.findViewById(R.id.imgExerciseIcon);
             txtTitle = itemView.findViewById(R.id.txtExerciseTitle);
             txtScore = itemView.findViewById(R.id.txtExerciseScore);
+            txtCoin = itemView.findViewById(R.id.txtExerciseCoin);
             txtXP = itemView.findViewById(R.id.txtExerciseXP);
         }
     }

@@ -105,6 +105,7 @@ public class BadgeTabFragment extends Fragment {
             return;
         }
 
+        hideEmptyState();
         List<BadgeItem> badgeList = new ArrayList<>();
         for (ApiService.BadgeResponse badge : badges) {
             badgeList.add(new BadgeItem(
@@ -127,6 +128,13 @@ public class BadgeTabFragment extends Fragment {
 
     private void showEmptyState() {
         adapter.updateData(new ArrayList<>());
+        binding.recyclerBadge.setVisibility(View.GONE);
+        binding.layoutEmpty.setVisibility(View.VISIBLE);
+    }
+    
+    private void hideEmptyState() {
+        binding.recyclerBadge.setVisibility(View.VISIBLE);
+        binding.layoutEmpty.setVisibility(View.GONE);
     }
 
     @Override

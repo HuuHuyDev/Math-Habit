@@ -62,41 +62,59 @@ public class ExamReviewAdapter extends RecyclerView.Adapter<ExamReviewAdapter.Re
         void bind(Question question, int questionNumber) {
             txtQuestionNumber.setText("Câu " + questionNumber);
             txtQuestionTitle.setText(question.getTitle());
-            txtExplanation.setText("💡 " + question.getExplanation());
+            
+            // Hiển thị giải thích
+            String explanation = question.getExplanation();
+            if (explanation != null && !explanation.isEmpty()) {
+                txtExplanation.setText("💡 " + explanation);
+                txtExplanation.setVisibility(View.VISIBLE);
+            } else {
+                txtExplanation.setVisibility(View.GONE);
+            }
 
             // Hiển thị các đáp án
             layoutAnswers.removeAllViews();
             List<AnswerOption> options = question.getOptions();
+            int selectedIndex = question.getSelectedIndex();
+            int correctIndex = question.getCorrectIndex();
+            
             for (int i = 0; i < options.size(); i++) {
                 AnswerOption option = options.get(i);
-                TextView answerView = createAnswerView(option, i == question.getCorrectIndex());
+                boolean isCorrect = (i == correctIndex);
+                boolean isSelected = (i == selectedIndex);
+                TextView answerView = createAnswerView(option, isCorrect, isSelected);
                 layoutAnswers.addView(answerView);
             }
         }
 
-        private TextView createAnswerView(AnswerOption option, boolean isCorrect) {
+        private TextView createAnswerView(AnswerOption option, boolean isCorrect, boolean isSelected) {
             TextView textView = new TextView(itemView.getContext());
-            textView.setText(option.getLabel() + ". " + option.getContent());
             textView.setTextSize(15);
-            textView.setPadding(16, 12, 16, 12);
+            textView.setPadding(32, 24, 32, 24);
             
             android.view.ViewGroup.MarginLayoutParams params = 
                 new android.view.ViewGroup.MarginLayoutParams(
                     android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT
                 );
-            params.bottomMargin = 8;
+            params.bottomMargin = 12;
             textView.setLayoutParams(params);
 
             if (isCorrect) {
                 // Đáp án đúng - màu xanh lá
-                textView.setBackgroundColor(0xFF4CAF50);
-                textView.setTextColor(Color.WHITE);
-                textView.setText("✓ " + option.getLabel() + ". " + option.getContent());
+                textView.setBackgroundColor(0xFFE8F5E9);
+                textView.setTextColor(0xFF2E7D32);
+                textView.setText("✓ " + option.getLabel() + ". " + option.getContent() + " (Đáp án đúng)");
+            } else if (isSelected) {
+                // Đáp án sai mà người dùng đã chọn - màu đỏ
+                textView.setBackgroundColor(0xFFFFEBEE);
+                textView.setTextColor(0xFFC62828);
+                textView.setText("✗ " + option.getLabel() + ". " + option.getContent() + " (Bạn đã chọn)");
             } else {
                 // Đáp án khác - màu xám nhạt
                 textView.setBackgroundColor(0xFFF5F5F5);
                 textView.setTextColor(0xFF666666);
+                textView.setText(option.getLabel() + ". " + option.getContent());
             }
 
             return textView;

@@ -38,7 +38,12 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
     private boolean isExamFinished = false;
     private String contentId;
     private String contentTitle;
+    private String taskId;           // Task ID để complete
+    private int pointsReward;        // XP thưởng khi hoàn thành
+    private int coinsReward;         // Coin thưởng khi hoàn thành
     private ComprehensiveTestRepository comprehensiveTestRepository;
+    private com.kidsapp.data.local.SharedPref sharedPref;
+    private com.kidsapp.data.repository.ExerciseRepository exerciseRepository;
 
     public static ExamFragment newInstance(String contentId, String contentTitle) {
         ExamFragment fragment = new ExamFragment();
@@ -55,13 +60,16 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentExamBinding.inflate(inflater, container, false);
         comprehensiveTestRepository = ComprehensiveTestRepository.getInstance();
+        sharedPref = new com.kidsapp.data.local.SharedPref(requireContext());
+        exerciseRepository = new com.kidsapp.data.repository.ExerciseRepository(requireContext());
         
         loadArguments();
         initRecycler();
         setupButtons();
-        setupQuestions();
-        bindCurrentQuestion();
-        startTimer();
+        
+        // Load questions từ API
+        loadQuestionsFromAPI();
+        
         return binding.getRoot();
     }
 
@@ -69,6 +77,9 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
         if (getArguments() != null) {
             contentId = getArguments().getString("content_id", "");
             contentTitle = getArguments().getString("content_title", "Kiểm tra");
+            taskId = getArguments().getString("taskId", "");
+            pointsReward = getArguments().getInt("pointsReward", 0);
+            coinsReward = getArguments().getInt("coinsReward", 0);
         }
     }
 
@@ -95,19 +106,70 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
         binding.btnSubmit.setOnClickListener(v -> finishExam(false));
     }
 
-    private void setupQuestions() {
-        questions.clear();
-        
+    /**
+     * Load câu hỏi từ API dựa trên exerciseId (contentId)
+     */
+    private void loadQuestionsFromAPI() {
         // Kiểm tra nếu là comprehensive test
         if (contentId != null && contentId.startsWith("comprehensive_test_")) {
-            // Load câu hỏi từ comprehensive test repository
             List<Question> comprehensiveQuestions = comprehensiveTestRepository.getComprehensiveTestQuestions(contentId);
             questions.addAll(comprehensiveQuestions);
+            bindCurrentQuestion();
+            startTimer();
             return;
         }
         
+        if (contentId == null || contentId.isEmpty()) {
+            // Fallback to sample data
+            setupSampleQuestions();
+            bindCurrentQuestion();
+            startTimer();
+            return;
+        }
+
+        // Call API để lấy câu hỏi
+        exerciseRepository.getExerciseQuestions(contentId, new com.kidsapp.data.repository.ExerciseRepository.QuestionListCallback() {
+            @Override
+            public void onSuccess(List<com.kidsapp.data.model.QuestionResponse> questionResponses) {
+                if (getActivity() == null) return;
+                
+                if (questionResponses == null || questionResponses.isEmpty()) {
+                    // Nếu không có câu hỏi, fallback to sample data
+                    Toast.makeText(requireContext(), 
+                        "Bài tập chưa có câu hỏi, hiển thị dữ liệu mẫu", 
+                        Toast.LENGTH_SHORT).show();
+                    setupSampleQuestions();
+                } else {
+                    // Convert API model sang UI model
+                    questions.addAll(com.kidsapp.utils.ExerciseConverter.convertToQuestions(questionResponses));
+                }
+                
+                bindCurrentQuestion();
+                startTimer();
+            }
+
+            @Override
+            public void onError(String error) {
+                if (getActivity() == null) return;
+                
+                Toast.makeText(requireContext(), 
+                    "Không thể tải câu hỏi: " + error, 
+                    Toast.LENGTH_SHORT).show();
+                
+                setupSampleQuestions();
+                bindCurrentQuestion();
+                startTimer();
+            }
+        });
+    }
+
+    /**
+     * Setup câu hỏi mẫu (fallback khi không có API)
+     */
+    private void setupSampleQuestions() {
+        questions.clear();
+        
         // Load questions based on contentId
-        // TODO: In production, load from database or API
         switch (contentId) {
             case "1": // Phép cộng 1 chữ số
                 questions.add(new Question("q1", "2 + 3 = ?",
@@ -299,15 +361,23 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
         int wrongCount = total - correctCount;
         int percent = Math.round((correctCount * 100f) / total);
 
+        // ✅ KIỂM TRA: Chỉ complete task và cộng coin/xp khi đúng 100%
+        if (percent == 100 && taskId != null && !taskId.isEmpty()) {
+            completeExerciseTask(percent, correctCount, total);
+        }
+
         // Tạo danh sách câu sai với đầy đủ thông tin
         ArrayList<Question> wrongQuestions = new ArrayList<>();
         for (Question question : questions) {
             Integer answerIndex = selectedAnswers.get(question.getId());
             if (answerIndex == null || answerIndex != question.getCorrectIndex()) {
+                // Lưu đáp án người dùng đã chọn vào question
+                question.setSelectedIndex(answerIndex != null ? answerIndex : -1);
                 wrongQuestions.add(question);
             }
         }
         
+        // Truyền thêm thông tin để hiển thị phần thưởng nếu đúng 100%
         ExamResultFragment fragment = ExamResultFragment.newInstance(
                 correctCount,
                 wrongCount,
@@ -319,12 +389,48 @@ public class ExamFragment extends Fragment implements ExamAnswerAdapter.OnAnswer
                 contentId,
                 contentTitle
         );
+        
+        // Truyền thêm pointsReward để hiển thị nếu đúng 100%
+        Bundle args = fragment.getArguments();
+        if (args == null) args = new Bundle();
+        args.putInt("pointsReward", percent == 100 ? pointsReward : 0);
+        args.putInt("coinsReward", percent == 100 ? coinsReward : 0);
+        args.putBoolean("taskCompleted", percent == 100);
+        args.putString("taskId", taskId); // Truyền taskId để làm lại bài
+        fragment.setArguments(args);
 
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.childHomeHost, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+    
+    /**
+     * Gọi API complete exercise task khi đúng 100%
+     */
+    private void completeExerciseTask(int score, int correctAnswers, int totalAnswers) {
+        com.kidsapp.data.api.ApiService apiService = 
+            com.kidsapp.data.api.RetrofitClient.getInstance(sharedPref).getApiService();
+        
+        apiService.completeExercise(taskId, score, correctAnswers, totalAnswers)
+            .enqueue(new retrofit2.Callback<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>>() {
+                @Override
+                public void onResponse(retrofit2.Call<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call,
+                                      retrofit2.Response<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> response) {
+                    if (response.isSuccessful()) {
+                        android.util.Log.d("ExamFragment", "Task completed successfully! +coin +xp");
+                    } else {
+                        android.util.Log.e("ExamFragment", "Failed to complete task: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<com.kidsapp.data.api.ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskResponse>> call, 
+                                     Throwable t) {
+                    android.util.Log.e("ExamFragment", "Error completing task", t);
+                }
+            });
     }
 
     @Override

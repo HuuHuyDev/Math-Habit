@@ -62,6 +62,7 @@ public class ExerciseTaskAdapter extends RecyclerView.Adapter<ExerciseTaskAdapte
         private final ImageView ivCompleted;
         private final TextView tvTitle;
         private final TextView tvDescription;
+        private final TextView tvCoin;
         private final TextView tvPoints;
         private final TextView tvDueTime;
         private final MaterialButton btnStart;
@@ -73,6 +74,7 @@ public class ExerciseTaskAdapter extends RecyclerView.Adapter<ExerciseTaskAdapte
             ivCompleted = itemView.findViewById(R.id.ivCompleted);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvCoin = itemView.findViewById(R.id.tvCoin);
             tvPoints = itemView.findViewById(R.id.tvPoints);
             tvDueTime = itemView.findViewById(R.id.tvDueTime);
             btnStart = itemView.findViewById(R.id.btnStart);
@@ -81,7 +83,12 @@ public class ExerciseTaskAdapter extends RecyclerView.Adapter<ExerciseTaskAdapte
         void bind(Task task) {
             tvTitle.setText(task.getTitle() != null ? task.getTitle() : "");
             tvDescription.setText(task.getDescription() != null ? task.getDescription() : "");
-            tvPoints.setText("+" + task.getPointsReward() + " ⭐");
+            
+            // Hiển thị coin và XP với emoji đẹp
+            int coins = task.getCoinsReward();
+            int xp = task.getPointsReward();
+            tvCoin.setText("🪙 +" + coins);
+            tvPoints.setText("+" + xp + " XP");
             
             // Due time
             if (task.getDueTime() != null && !task.getDueTime().isEmpty()) {
@@ -98,20 +105,25 @@ public class ExerciseTaskAdapter extends RecyclerView.Adapter<ExerciseTaskAdapte
             boolean isCompleted = "COMPLETED".equalsIgnoreCase(task.getStatus());
             
             if (isCompleted) {
-                // Đã hoàn thành - hiện badge và đổi style
+                // Đã hoàn thành - đổi màu xanh lá
                 ivCompleted.setVisibility(View.VISIBLE);
+                ivIcon.setBackgroundResource(R.drawable.bg_icon_completed);
                 btnStart.setText("Đã xong");
                 btnStart.setEnabled(false);
                 btnStart.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
                     itemView.getContext().getResources().getColor(R.color.status_success)));
-                cardTask.setAlpha(0.85f);
+                cardTask.setStrokeColor(itemView.getContext().getResources().getColor(R.color.status_success));
+                cardTask.setStrokeWidth(2);
+                cardTask.setAlpha(1.0f);
             } else {
                 // Chưa hoàn thành
                 ivCompleted.setVisibility(View.GONE);
+                ivIcon.setBackgroundResource(R.drawable.bg_icon_exercise);
                 btnStart.setText("Làm bài");
                 btnStart.setEnabled(true);
                 btnStart.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
                     itemView.getContext().getResources().getColor(R.color.exercise_color)));
+                cardTask.setStrokeWidth(0);
                 cardTask.setAlpha(1.0f);
             }
             

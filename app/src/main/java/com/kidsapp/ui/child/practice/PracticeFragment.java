@@ -458,20 +458,16 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         
         int score = totalCount > 0 ? (correctAnswers * 100 / totalCount) : 0;
         
-        // Complete task trực tiếp
-        final int finalCorrectAnswers = correctAnswers;
-        final int finalScore = score;
+        // ⚠️ LUYỆN TẬP: KHÔNG gọi API complete task, KHÔNG cộng coin/xp
+        // Chỉ hiển thị kết quả để bé biết làm đúng bao nhiêu
         
-        if (taskId != null && !taskId.isEmpty()) {
-            completeExerciseTask(score, correctAnswers, totalCount);
-        }
-        
-        // Hiển thị dialog kết quả
-        showResultDialog(finalCorrectAnswers, totalCount, finalScore);
+        // Hiển thị dialog kết quả (không có phần thưởng)
+        showResultDialog(correctAnswers, totalCount, score);
     }
     
     /**
      * Hiển thị dialog kết quả sau khi hoàn thành bài tập
+     * ⚠️ LUYỆN TẬP: Không hiển thị phần thưởng
      */
     private void showResultDialog(int correctAnswers, int totalCount, int score) {
         if (getContext() == null) return;
@@ -512,15 +508,16 @@ public class PracticeFragment extends Fragment implements AnswerAdapter.OnAnswer
         resultText.setLineSpacing(8, 1);
         layout.addView(resultText);
         
-        // Điểm thưởng
-        if (pointsReward > 0) {
-            TextView rewardText = new TextView(requireContext());
-            rewardText.setText(String.format("+%d ⭐ điểm thưởng", pointsReward));
-            rewardText.setTextSize(18);
-            rewardText.setTextColor(getResources().getColor(R.color.coin_orange));
-            rewardText.setGravity(Gravity.CENTER);
-            rewardText.setPadding(0, 24, 0, 0);
-            layout.addView(rewardText);
+        // ⚠️ LUYỆN TẬP: Không hiển thị phần thưởng coin/xp
+        // Thêm gợi ý chuyển sang chế độ Kiểm tra
+        if (score == 100) {
+            TextView hintText = new TextView(requireContext());
+            hintText.setText("💡 Bạn đã sẵn sàng làm bài Kiểm tra!");
+            hintText.setTextSize(14);
+            hintText.setTextColor(getResources().getColor(R.color.primary));
+            hintText.setGravity(Gravity.CENTER);
+            hintText.setPadding(0, 24, 0, 0);
+            layout.addView(hintText);
         }
         
         builder.setView(layout);

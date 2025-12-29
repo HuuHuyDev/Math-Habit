@@ -35,6 +35,9 @@ public class ExamResultFragment extends Fragment {
     private ArrayList<com.kidsapp.data.model.Question> wrongQuestions;
     private String contentId;
     private String contentTitle;
+    private int pointsReward;      // XP thưởng
+    private int coinsReward;       // Coin thưởng
+    private boolean taskCompleted; // Task đã hoàn thành (đúng 100%)
 
     public static ExamResultFragment newInstance(int correct, int wrong, int total, int percent,
                                                  @NonNull ArrayList<String> wrongTitles,
@@ -103,6 +106,15 @@ public class ExamResultFragment extends Fragment {
                 if (contentId != null && !contentId.isEmpty()) {
                     // Làm lại bài với cùng nội dung
                     examFragment = ExamFragment.newInstance(contentId, contentTitle);
+                    
+                    // Truyền lại taskId, pointsReward và coinsReward để có thể complete task nếu đúng 100%
+                    Bundle args = examFragment.getArguments();
+                    if (args == null) args = new Bundle();
+                    String taskId = requireArguments().getString("taskId", "");
+                    args.putString("taskId", taskId);
+                    args.putInt("pointsReward", pointsReward);
+                    args.putInt("coinsReward", coinsReward);
+                    examFragment.setArguments(args);
                 } else {
                     // Làm lại bài mặc định
                     examFragment = new ExamFragment();
@@ -119,6 +131,9 @@ public class ExamResultFragment extends Fragment {
         // Nút Về trang chính
         binding.btnGoHome.setOnClickListener(v -> {
             if (getActivity() != null) {
+                // Gửi signal để refresh danh sách task
+                requireActivity().getSupportFragmentManager().setFragmentResult("exercise_completed", new Bundle());
+                
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.childHomeHost, new ChildHomeFragment())
@@ -138,6 +153,9 @@ public class ExamResultFragment extends Fragment {
         wrongQuestions = (ArrayList<com.kidsapp.data.model.Question>) args.getSerializable(ARG_WRONG_QUESTIONS);
         contentId = args.getString(ARG_CONTENT_ID, "");
         contentTitle = args.getString(ARG_CONTENT_TITLE, "");
+        pointsReward = args.getInt("pointsReward", 0);
+        coinsReward = args.getInt("coinsReward", 0);
+        taskCompleted = args.getBoolean("taskCompleted", false);
 
         // Hiển thị % điểm
         binding.txtScorePercent.setText(getString(R.string.percent_value, percent));
@@ -160,6 +178,40 @@ public class ExamResultFragment extends Fragment {
 
         // Tính số sao dựa trên % điểm
         calculateRating(percent);
+        
+        // ✅ Hiển thị phần thưởng nếu đúng 100%
+        showRewardIfCompleted();
+    }
+    
+    /**
+     * Hiển thị phần thưởng nếu task đã hoàn thành (đúng 100%)
+     */
+    private void showRewardIfCompleted() {
+        if (taskCompleted && (pointsReward > 0 || coinsReward > 0)) {
+            binding.cardReward.setVisibility(View.VISIBLE);
+            
+            // Hiển thị coin và XP
+            StringBuilder rewardText = new StringBuilder();
+            if (coinsReward > 0) {
+                rewardText.append("🪙 +").append(coinsReward);
+            }
+            if (pointsReward > 0) {
+                if (rewardText.length() > 0) rewardText.append("  ");
+                rewardText.append("⭐ +").append(pointsReward).append(" XP");
+            }
+            binding.txtRewardPoints.setText(rewardText.toString());
+            
+            // Cập nhật text chúc mừng
+            binding.txtCongratulations.setText("🎉 Xuất sắc!");
+            binding.txtWellDone.setText("Bạn đã hoàn thành bài kiểm tra và nhận thưởng!");
+        } else {
+            binding.cardReward.setVisibility(View.GONE);
+            
+            // Nếu chưa đúng 100%, hiển thị gợi ý
+            if (!taskCompleted) {
+                binding.txtWellDone.setText("Hãy làm lại để đạt 100% và nhận thưởng nhé!");
+            }
+        }
     }
 
     private void calculateRating(int percent) {

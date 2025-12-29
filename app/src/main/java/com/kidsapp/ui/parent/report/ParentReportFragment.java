@@ -182,7 +182,18 @@ public class ParentReportFragment extends Fragment {
                     }
                     
                     setupChildSelector();
-                    loadReport();
+                    
+                    // Nếu có child thì load report, không thì ẩn loading
+                    if (selectedChild != null) {
+                        loadReport();
+                    } else {
+                        hideLoading();
+                        showEmptyState();
+                    }
+                } else {
+                    // Response không thành công - ẩn loading và hiện empty state
+                    hideLoading();
+                    showEmptyState();
                 }
             }
 
@@ -190,6 +201,7 @@ public class ParentReportFragment extends Fragment {
             public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.ChildResponse>>> call, Throwable t) {
                 if (!isAdded()) return;
                 hideLoading();
+                showEmptyState();
                 Toast.makeText(requireContext(), "Không thể tải danh sách bé", Toast.LENGTH_SHORT).show();
             }
         });

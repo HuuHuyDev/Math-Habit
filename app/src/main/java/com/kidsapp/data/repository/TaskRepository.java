@@ -401,6 +401,31 @@ public class TaskRepository {
             }
         });
     }
+    
+    /**
+     * Lấy chi tiết lịch sử làm bài (số câu đúng/sai, thời gian, chi tiết từng câu)
+     */
+    public void getTaskHistoryDetail(String taskId, TaskHistoryDetailCallback callback) {
+        Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskHistoryDetailResponse>> call = 
+                apiService.getTaskHistoryDetail(taskId);
+        
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskHistoryDetailResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskHistoryDetailResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskHistoryDetailResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tải chi tiết lịch sử");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.TaskHistoryDetailResponse>> call, Throwable t) {
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
 
     public interface TasksCallback {
         void onSuccess(List<Task> tasks);
@@ -419,6 +444,11 @@ public class TaskRepository {
     
     public interface SimpleCallback {
         void onSuccess();
+        void onError(String error);
+    }
+    
+    public interface TaskHistoryDetailCallback {
+        void onSuccess(com.kidsapp.data.response.TaskHistoryDetailResponse detail);
         void onError(String error);
     }
 }

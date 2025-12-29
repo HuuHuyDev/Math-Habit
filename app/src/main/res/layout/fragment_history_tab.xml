@@ -123,6 +123,44 @@
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_history_task" />
+                    
+                    <!-- Empty State -->
+                    <LinearLayout
+                        android:id="@+id/layoutEmptyState"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/spacing_32"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+                        
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/ic_empty_task"
+                            android:alpha="0.6"
+                            android:layout_marginBottom="@dimen/spacing_16" />
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chưa có lịch sử"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_size_large"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_bold"
+                            android:layout_marginBottom="@dimen/spacing_8" />
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hoàn thành nhiệm vụ để xem lịch sử tại đây"
+                            android:textColor="@color/text_hint"
+                            android:textSize="@dimen/text_size_small"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="center" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

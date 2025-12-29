@@ -165,10 +165,21 @@ public class HistoryTabFragment extends Fragment {
     
     private Date parseDate(String dateStr) {
         try {
+            // Try formatted date first (dd/MM/yyyy - HH:mm)
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
             return sdf.parse(dateStr);
         } catch (Exception e) {
-            return null;
+            try {
+                // Fallback to ISO format
+                SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                String cleanDate = dateStr;
+                if (dateStr.contains(".")) {
+                    cleanDate = dateStr.substring(0, dateStr.indexOf("."));
+                }
+                return isoFormat.parse(cleanDate);
+            } catch (Exception e2) {
+                return null;
+            }
         }
     }
     
@@ -209,12 +220,19 @@ public class HistoryTabFragment extends Fragment {
     private void navigateToHistoryDetail(HistoryTask history) {
         if (getActivity() != null) {
             HistoryDetailFragment detailFragment = HistoryDetailFragment.newInstance(
+                    history.getTaskId(),
                     history.getTitle(),
                     history.getCompletionTime(),
                     history.getCoins(),
                     history.getXp(),
                     history.getRating(),
-                    history.getIconRes()
+                    history.getIconRes(),
+                    history.getTaskType(),
+                    history.getTotalQuestions(),
+                    history.getCorrectAnswers(),
+                    history.getWrongAnswers(),
+                    history.getDurationSeconds(),
+                    history.getScore()
             );
             
             getActivity().getSupportFragmentManager()
@@ -254,13 +272,10 @@ public class HistoryTabFragment extends Fragment {
                 
                 // Convert Task to HistoryTask
                 allHistoryTasks.clear();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
                 
                 for (Task task : tasks) {
-                    String completionTime = task.getCompletedAt();
-                    if (completionTime == null) {
-                        completionTime = sdf.format(new Date());
-                    }
+                    // Format completion time from ISO to readable format
+                    String completionTime = formatCompletionTime(task.getCompletedAt());
                     
                     // Xác định icon dựa vào loại task
                     int iconRes = R.drawable.ic_task_habit;
@@ -270,17 +285,32 @@ public class HistoryTabFragment extends Fragment {
                     
                     // Rating cho exercise (từ score)
                     float rating = 0f;
+                    int score = 0;
                     if (task.getScore() != null) {
-                        rating = task.getScore() / 20f; // Convert 0-100 to 0-5
+                        score = task.getScore();
+                        rating = score / 20f; // Convert 0-100 to 0-5
                     }
                     
+                    // Calculate questions data (for EXERCISE type)
+                    // Note: Backend should provide these fields, using score as fallback
+                    int totalQuestions = 10; // Default, should come from API
+                    int correctAnswers = score / 10; // Estimate from score
+                    int wrongAnswers = totalQuestions - correctAnswers;
+                    
                     HistoryTask historyTask = new HistoryTask(
+                            task.getId(),
                             task.getTitle(),
                             completionTime,
                             task.getCoinsReward(),
                             task.getPointsReward(),
                             rating,
-                            iconRes
+                            iconRes,
+                            task.getTaskType(),
+                            totalQuestions,
+                            correctAnswers,
+                            wrongAnswers,
+                            0, // Duration - not available from API yet
+                            score
                     );
                     allHistoryTasks.add(historyTask);
                 }
@@ -298,14 +328,44 @@ public class HistoryTabFragment extends Fragment {
         });
     }
     
+    /**
+     * Format ISO date string to readable format
+     * Input: "2025-12-29T10:52:07.835387" 
+     * Output: "29/12/2025 - 10:52"
+     */
+    private String formatCompletionTime(String isoDate) {
+        if (isoDate == null || isoDate.isEmpty()) {
+            return new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault()).format(new Date());
+        }
+        
+        try {
+            // Parse ISO format
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            // Handle milliseconds if present
+            String dateStr = isoDate;
+            if (isoDate.contains(".")) {
+                dateStr = isoDate.substring(0, isoDate.indexOf("."));
+            }
+            Date date = isoFormat.parse(dateStr);
+            
+            // Format to readable
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            Log.e(TAG, "Error parsing date: " + isoDate, e);
+            return isoDate; // Return original if parsing fails
+        }
+    }
+    
     private void updateEmptyState() {
         if (binding == null) return;
         
         if (filteredTasks.isEmpty()) {
             binding.recyclerViewHistory.setVisibility(View.GONE);
-            // TODO: Show empty state view if exists
+            binding.layoutEmptyState.setVisibility(View.VISIBLE);
         } else {
             binding.recyclerViewHistory.setVisibility(View.VISIBLE);
+            binding.layoutEmptyState.setVisibility(View.GONE);
         }
     }
     

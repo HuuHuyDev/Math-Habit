@@ -147,6 +147,7 @@ public class HouseworkTabFragment extends Fragment {
             return;
         }
 
+        hideEmptyState();
         List<HouseworkTask> taskList = new ArrayList<>();
         for (Task task : tasks) {
             String status = task.getStatus();
@@ -171,8 +172,15 @@ public class HouseworkTabFragment extends Fragment {
     }
 
     private void showEmptyState() {
-        // Hiển thị empty state hoặc message
+        // Hiển thị empty state
         adapter.updateData(new ArrayList<>());
+        binding.recyclerHousework.setVisibility(View.GONE);
+        binding.layoutEmpty.setVisibility(View.VISIBLE);
+    }
+    
+    private void hideEmptyState() {
+        binding.recyclerHousework.setVisibility(View.VISIBLE);
+        binding.layoutEmpty.setVisibility(View.GONE);
     }
     
     /**

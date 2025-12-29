@@ -91,6 +91,14 @@ public class WorkTabFragment extends Fragment {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     // Handle camera result
+                    if (result.getResultCode() == android.app.Activity.RESULT_OK) {
+                        if (photoUri != null && currentTask != null) {
+                            Log.d(TAG, "Camera result OK, uploading proof: " + photoUri);
+                            uploadProof(photoUri, currentTask);
+                        }
+                    } else {
+                        Log.d(TAG, "Camera cancelled");
+                    }
                 }
         );
         
@@ -99,6 +107,15 @@ public class WorkTabFragment extends Fragment {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     // Handle gallery result
+                    if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
+                        Uri selectedUri = result.getData().getData();
+                        if (selectedUri != null && currentTask != null) {
+                            Log.d(TAG, "Gallery result OK, uploading proof: " + selectedUri);
+                            uploadProof(selectedUri, currentTask);
+                        }
+                    } else {
+                        Log.d(TAG, "Gallery cancelled");
+                    }
                 }
         );
         
@@ -159,12 +176,8 @@ public class WorkTabFragment extends Fragment {
 
             @Override
             public void onCompleteClick(Task task) {
-                Toast.makeText(requireContext(), "Hoàn thành: " + task.getTitle(), Toast.LENGTH_SHORT).show();
-                // Remove task from list
-                adapter.removeTask(task);
-                if (adapter.getItemCount() == 0) {
-                    showEmptyState();
-                }
+                // Gọi logic xử lý hoàn thành task (chụp minh chứng)
+                onTaskComplete(task);
             }
         });
         
@@ -314,10 +327,19 @@ public class WorkTabFragment extends Fragment {
     private void onTaskComplete(Task task) {
         // Kiểm tra status
         String status = task.getStatus();
+        
+        // Nếu đã hoàn thành, không cho làm gì nữa
+        if ("COMPLETED".equalsIgnoreCase(status)) {
+            Toast.makeText(requireContext(), 
+                    "✅ Bạn đã hoàn thành công việc này rồi!", 
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         if ("SUBMITTED".equalsIgnoreCase(status)) {
             // Đã nộp, đang chờ duyệt
             Toast.makeText(requireContext(), 
-                    "Đang chờ phụ huynh duyệt minh chứng", 
+                    "⏳ Đang chờ phụ huynh duyệt minh chứng", 
                     Toast.LENGTH_SHORT).show();
             return;
         }

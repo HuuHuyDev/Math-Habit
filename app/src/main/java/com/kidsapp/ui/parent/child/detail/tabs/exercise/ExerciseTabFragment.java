@@ -123,14 +123,18 @@ public class ExerciseTabFragment extends Fragment {
             return;
         }
 
+        hideEmptyState();
         List<ExerciseTask> taskList = new ArrayList<>();
         for (Task task : tasks) {
             int xpReward = task.getPointsReward();
+            int coinReward = task.getPointsReward(); // Coin = XP (hoặc lấy từ field khác nếu có)
+            String status = task.getStatus();
+            
             taskList.add(new ExerciseTask(
                     task.getId(),
                     task.getTitle(),
-                    0, // correctCount - không có trong Task model
-                    10, // totalQuestions - mặc định
+                    status,
+                    coinReward,
                     xpReward,
                     R.drawable.ic_task
             ));
@@ -142,6 +146,13 @@ public class ExerciseTabFragment extends Fragment {
 
     private void showEmptyState() {
         adapter.updateData(new ArrayList<>());
+        binding.recyclerExercise.setVisibility(View.GONE);
+        binding.layoutEmpty.setVisibility(View.VISIBLE);
+    }
+    
+    private void hideEmptyState() {
+        binding.recyclerExercise.setVisibility(View.VISIBLE);
+        binding.layoutEmpty.setVisibility(View.GONE);
     }
 
     @Override

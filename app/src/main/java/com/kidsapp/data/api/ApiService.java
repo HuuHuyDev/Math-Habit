@@ -181,6 +181,15 @@ public interface ApiService {
     @GET(ApiConfig.ENDPOINT_TASK_DETAIL)
     Call<ApiResponseWrapper<Task>> getTaskDetail(@Path("id") String taskId);
     
+    /**
+     * Lấy chi tiết lịch sử làm bài (số câu đúng/sai, thời gian, chi tiết từng câu)
+     * GET /tasks/{id}/history-detail
+     */
+    @GET("tasks/{id}/history-detail")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.TaskHistoryDetailResponse>> getTaskHistoryDetail(
+            @Path("id") String taskId
+    );
+    
     @POST(ApiConfig.ENDPOINT_TASK_SUBMIT)
     Call<ApiResponseWrapper<Task>> submitTaskProof(
             @Path("id") String taskId,

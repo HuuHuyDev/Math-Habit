@@ -6,16 +6,16 @@ package com.kidsapp.ui.parent.child.detail.tabs.exercise;
 public class ExerciseTask {
     private String id;
     private String title;
-    private int correctAnswers;
-    private int totalQuestions;
-    private int xp;
+    private String status;      // PENDING, COMPLETED
+    private int coinReward;     // Coin thưởng
+    private int xp;             // XP thưởng
     private int iconRes;
 
-    public ExerciseTask(String id, String title, int correctAnswers, int totalQuestions, int xp, int iconRes) {
+    public ExerciseTask(String id, String title, String status, int coinReward, int xp, int iconRes) {
         this.id = id;
         this.title = title;
-        this.correctAnswers = correctAnswers;
-        this.totalQuestions = totalQuestions;
+        this.status = status;
+        this.coinReward = coinReward;
         this.xp = xp;
         this.iconRes = iconRes;
     }
@@ -36,20 +36,20 @@ public class ExerciseTask {
         this.title = title;
     }
 
-    public int getCorrectAnswers() {
-        return correctAnswers;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCorrectAnswers(int correctAnswers) {
-        this.correctAnswers = correctAnswers;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public int getTotalQuestions() {
-        return totalQuestions;
+    public int getCoinReward() {
+        return coinReward;
     }
 
-    public void setTotalQuestions(int totalQuestions) {
-        this.totalQuestions = totalQuestions;
+    public void setCoinReward(int coinReward) {
+        this.coinReward = coinReward;
     }
 
     public int getXp() {
@@ -66,5 +66,9 @@ public class ExerciseTask {
 
     public void setIconRes(int iconRes) {
         this.iconRes = iconRes;
+    }
+    
+    public boolean isCompleted() {
+        return "COMPLETED".equalsIgnoreCase(status);
     }
 }

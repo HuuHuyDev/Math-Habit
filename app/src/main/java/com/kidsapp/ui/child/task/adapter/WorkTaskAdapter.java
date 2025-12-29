@@ -75,6 +75,7 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
         private final TextView tvTitle;
         private final TextView tvDescription;
         private final TextView tvType;
+        private final TextView tvCoin;
         private final TextView tvPoints;
         private final TextView tvDueTime;
         private final TextView tvPriority;
@@ -88,6 +89,7 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvType = itemView.findViewById(R.id.tvType);
+            tvCoin = itemView.findViewById(R.id.tvCoin);
             tvPoints = itemView.findViewById(R.id.tvPoints);
             tvDueTime = itemView.findViewById(R.id.tvDueTime);
             tvPriority = itemView.findViewById(R.id.tvPriority);
@@ -99,9 +101,11 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
             tvTitle.setText(task.getTitle() != null ? task.getTitle() : "");
             tvDescription.setText(task.getDescription() != null ? task.getDescription() : "");
             
-            // Points reward
-            int points = task.getPointsReward();
-            tvPoints.setText("+" + points + " ⭐");
+            // Hiển thị coin và XP
+            int coins = task.getCoinsReward();
+            int xp = task.getPointsReward();
+            tvCoin.setText("🪙 +" + coins);
+            tvPoints.setText("+" + xp + " XP");
             
             // Task type badge
             setupTaskType(task);
@@ -120,6 +124,16 @@ public class WorkTaskAdapter extends RecyclerView.Adapter<WorkTaskAdapter.TaskVi
             
             // Button state
             setupButton(task);
+            
+            // Kiểm tra trạng thái COMPLETED - đổi màu xanh lá
+            boolean isCompleted = "COMPLETED".equalsIgnoreCase(task.getStatus());
+            if (isCompleted) {
+                cardTask.setStrokeColor(ContextCompat.getColor(itemView.getContext(), R.color.status_success));
+                cardTask.setStrokeWidth(2);
+                ivTaskIcon.setBackgroundResource(R.drawable.bg_icon_completed);
+            } else {
+                cardTask.setStrokeWidth(0);
+            }
             
             // Click listeners
             cardTask.setOnClickListener(v -> {

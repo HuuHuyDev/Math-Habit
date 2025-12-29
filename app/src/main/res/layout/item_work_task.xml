@@ -127,7 +127,7 @@
                     android:layout_marginStart="8dp"
                     android:text="⏰ 18:00"
                     android:textSize="11sp"
-                    android:textColor="@color/text_hint"
+                    android:textColor="#546E7A"
                     tools:text="⏰ 18:00" />
 
                 <View
@@ -135,16 +135,28 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <!-- Points reward -->
+                <!-- Coin reward -->
+                <TextView
+                    android:id="@+id/tvCoin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🪙 +10"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFD700"
+                    tools:text="🪙 +10" />
+
+                <!-- XP reward -->
                 <TextView
                     android:id="@+id/tvPoints"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+15 ⭐"
+                    android:layout_marginStart="8dp"
+                    android:text="+15 XP"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="@color/reward_gold"
-                    tools:text="+15 ⭐" />
+                    android:textColor="#1565C0"
+                    tools:text="+15 XP" />
             </LinearLayout>
         </LinearLayout>
 

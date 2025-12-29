@@ -123,11 +123,11 @@
                 android:paddingEnd="@dimen/spacing_10"
                 android:paddingBottom="@dimen/spacing_6">
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_star"
-                    app:tint="@color/coin_gold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🪙"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/txtCoins"
@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_4"
                     android:text="50"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/coin_gold"
                     android:textSize="@dimen/text_size_small"
                     android:textStyle="bold"
                     android:fontFamily="@font/inter_bold"

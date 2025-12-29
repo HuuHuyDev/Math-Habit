@@ -179,12 +179,14 @@ public class ExerciseTabFragment extends Fragment {
     
     /**
      * Mở màn hình làm bài tập
-     * Chuyển thẳng sang PracticeFragment với exerciseId từ Task
+     * Hiển thị BottomSheet để chọn chế độ: Luyện tập hoặc Kiểm tra
      */
     private void openExerciseDetail(Task task) {
         String exerciseId = task.getExerciseId();
         String taskId = task.getId();
         String title = task.getTitle();
+        int pointsReward = task.getPointsReward();
+        int coinsReward = task.getCoinsReward();
         
         if (exerciseId == null || exerciseId.isEmpty()) {
             Toast.makeText(requireContext(), "Bài tập chưa được cấu hình", Toast.LENGTH_SHORT).show();
@@ -197,17 +199,53 @@ public class ExerciseTabFragment extends Fragment {
             return;
         }
         
-        // Mở trực tiếp màn hình làm bài với exerciseId và taskId
+        // Hiển thị BottomSheet chọn chế độ
+        com.kidsapp.ui.child.task.exercise.ExerciseModeBottomSheet bottomSheet = 
+            com.kidsapp.ui.child.task.exercise.ExerciseModeBottomSheet.newInstance(title, 10, 0);
+        
+        bottomSheet.setModeListener(mode -> {
+            if (mode == com.kidsapp.ui.child.task.exercise.ExerciseModeBottomSheet.Mode.PRACTICE) {
+                // Chế độ Luyện tập - KHÔNG cộng coin/xp
+                openPracticeMode(exerciseId, title);
+            } else {
+                // Chế độ Kiểm tra - Đúng 100% mới cộng coin/xp
+                openExamMode(exerciseId, title, taskId, pointsReward, coinsReward);
+            }
+        });
+        
+        bottomSheet.show(getChildFragmentManager(), "ExerciseModeBottomSheet");
+    }
+    
+    /**
+     * Mở chế độ Luyện tập - KHÔNG cộng coin/xp
+     */
+    private void openPracticeMode(String exerciseId, String title) {
         com.kidsapp.ui.child.practice.PracticeFragment fragment = 
             com.kidsapp.ui.child.practice.PracticeFragment.newInstance(exerciseId, title);
         
-        // Truyền thêm taskId để complete task sau khi làm xong
+        // KHÔNG truyền taskId → không gọi API complete
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.childHomeHost, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+    
+    /**
+     * Mở chế độ Kiểm tra - Đúng 100% mới cộng coin/xp
+     */
+    private void openExamMode(String exerciseId, String title, String taskId, int pointsReward, int coinsReward) {
+        com.kidsapp.ui.child.quizz.ExamFragment fragment = 
+            com.kidsapp.ui.child.quizz.ExamFragment.newInstance(exerciseId, title);
+        
+        // Truyền taskId, pointsReward và coinsReward để complete task khi đúng 100%
         Bundle args = fragment.getArguments();
         if (args == null) args = new Bundle();
         args.putString("taskId", taskId);
-        args.putInt("pointsReward", task.getPointsReward());
+        args.putInt("pointsReward", pointsReward);
+        args.putInt("coinsReward", coinsReward);
         fragment.setArguments(args);
-    
+        
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.childHomeHost, fragment)

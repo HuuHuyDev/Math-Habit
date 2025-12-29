@@ -66,7 +66,7 @@
                 android:textStyle="bold"
                 tools:text="Cộng level 2" />
 
-            <!-- Dòng hiển thị điểm và XP -->
+            <!-- Dòng hiển thị trạng thái và phần thưởng -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,17 +74,37 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <!-- Số câu đúng -->
+                <!-- Trạng thái: Đã làm / Chưa làm -->
                 <TextView
                     android:id="@+id/txtExerciseScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_bold"
-                    android:text="5/5 đúng"
+                    android:text="Chưa làm"
                     android:textColor="#3B82F6"
                     android:textSize="@dimen/text_size_small"
                     android:textStyle="bold"
-                    tools:text="5/5 đúng" />
+                    tools:text="Chưa làm" />
+
+                <!-- Separator -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" · "
+                    android:textColor="#9CA3AF"
+                    android:textSize="@dimen/text_size_small" />
+
+                <!-- Icon coin -->
+                <TextView
+                    android:id="@+id/txtExerciseCoin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="🪙 +10"
+                    android:textColor="#FFD700"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
+                    tools:text="🪙 +10" />
 
                 <!-- Separator -->
                 <TextView
