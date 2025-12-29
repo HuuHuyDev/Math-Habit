@@ -4,166 +4,142 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_background"
+    android:background="@android:color/transparent"
     tools:context=".ui.child.task.tabs.HistoryTabFragment">
-
 
     <!-- Nội dung cuộn được -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingHorizontal="@dimen/spacing_16"
+            android:paddingTop="@dimen/spacing_8"
             android:paddingBottom="@dimen/spacing_20">
 
-            <!-- Container trắng bo góc -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Bộ lọc thời gian -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_16"
-                android:layout_marginTop="@dimen/spacing_16"
-                app:cardElevation="0dp"
-                app:shapeAppearanceOverlay="@style/ShapeCardRounded"
-                app:cardBackgroundColor="@color/white">
+                android:layout_marginBottom="@dimen/spacing_12"
+                android:scrollbars="none"
+                android:clipToPadding="false">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupFilter"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_app_background"
-                    android:padding="@dimen/spacing_16">
+                    app:chipSpacing="@dimen/spacing_8"
+                    app:singleSelection="true">
 
-                    <!-- Bộ lọc thời gian -->
-                    <HorizontalScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/spacing_16"
-                        android:scrollbars="none">
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Tất cả"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/inter_medium"
+                        android:background="@drawable/bg_filter_chip_selected"
+                        android:checked="true"
+                        app:chipMinHeight="36dp"
+                        app:chipCornerRadius="18dp"
+                        style="@style/Widget.MaterialComponents.Chip.Choice" />
 
-                        <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/chipGroupFilter"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:chipSpacing="@dimen/spacing_12"
-                            app:singleSelection="true">
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipToday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Hôm nay"
+                        android:textColor="@color/primary"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/inter_medium"
+                        android:background="@drawable/bg_filter_chip_unselected"
+                        app:chipMinHeight="36dp"
+                        app:chipCornerRadius="18dp"
+                        style="@style/Widget.MaterialComponents.Chip.Choice" />
 
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipAll"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tất cả"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/text_size_small"
-                                android:textStyle="bold"
-                                android:paddingStart="@dimen/spacing_16"
-                                android:paddingEnd="@dimen/spacing_16"
-                                android:paddingTop="@dimen/spacing_10"
-                                android:paddingBottom="@dimen/spacing_10"
-                                android:background="@drawable/bg_filter_chip_selected"
-                                android:checked="true"
-                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipThisWeek"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Tuần này"
+                        android:textColor="@color/primary"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/inter_medium"
+                        android:background="@drawable/bg_filter_chip_unselected"
+                        app:chipMinHeight="36dp"
+                        app:chipCornerRadius="18dp"
+                        style="@style/Widget.MaterialComponents.Chip.Choice" />
 
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipToday"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Hôm nay"
-                                android:textColor="@color/history_primary"
-                                android:textSize="@dimen/text_size_small"
-                                android:textStyle="bold"
-                                android:paddingStart="@dimen/spacing_16"
-                                android:paddingEnd="@dimen/spacing_16"
-                                android:paddingTop="@dimen/spacing_10"
-                                android:paddingBottom="@dimen/spacing_10"
-                                android:background="@drawable/bg_filter_chip_unselected"
-                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipThisMonth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Tháng này"
+                        android:textColor="@color/primary"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/inter_medium"
+                        android:background="@drawable/bg_filter_chip_unselected"
+                        app:chipMinHeight="36dp"
+                        app:chipCornerRadius="18dp"
+                        style="@style/Widget.MaterialComponents.Chip.Choice" />
 
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipThisWeek"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tuần này"
-                                android:textColor="@color/history_primary"
-                                android:textSize="@dimen/text_size_small"
-                                android:textStyle="bold"
-                                android:paddingStart="@dimen/spacing_16"
-                                android:paddingEnd="@dimen/spacing_16"
-                                android:paddingTop="@dimen/spacing_10"
-                                android:paddingBottom="@dimen/spacing_10"
-                                android:background="@drawable/bg_filter_chip_unselected"
-                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
 
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/chipThisMonth"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tháng này"
-                                android:textColor="@color/history_primary"
-                                android:textSize="@dimen/text_size_small"
-                                android:textStyle="bold"
-                                android:paddingStart="@dimen/spacing_16"
-                                android:paddingEnd="@dimen/spacing_16"
-                                android:paddingTop="@dimen/spacing_10"
-                                android:paddingBottom="@dimen/spacing_10"
-                                android:background="@drawable/bg_filter_chip_unselected"
-                                style="@style/Widget.MaterialComponents.Chip.Choice" />
-                        </com.google.android.material.chip.ChipGroup>
+            <!-- RecyclerView danh sách nhiệm vụ -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:clipToPadding="false"
+                tools:listitem="@layout/item_history_task" />
 
-                    </HorizontalScrollView>
+            <!-- Empty State -->
+            <LinearLayout
+                android:id="@+id/layoutEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="@dimen/spacing_48"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-                    <!-- RecyclerView danh sách nhiệm vụ -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewHistory"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        tools:listitem="@layout/item_history_task" />
-                    
-                    <!-- Empty State -->
-                    <LinearLayout
-                        android:id="@+id/layoutEmptyState"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="@dimen/spacing_32"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-                        
-                        <ImageView
-                            android:layout_width="120dp"
-                            android:layout_height="120dp"
-                            android:src="@drawable/ic_empty_task"
-                            android:alpha="0.6"
-                            android:layout_marginBottom="@dimen/spacing_16" />
-                        
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chưa có lịch sử"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="@dimen/text_size_large"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/inter_bold"
-                            android:layout_marginBottom="@dimen/spacing_8" />
-                        
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hoàn thành nhiệm vụ để xem lịch sử tại đây"
-                            android:textColor="@color/text_hint"
-                            android:textSize="@dimen/text_size_small"
-                            android:fontFamily="@font/inter_regular"
-                            android:gravity="center" />
-                    </LinearLayout>
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_empty_task"
+                    android:alpha="0.5"
+                    android:layout_marginBottom="@dimen/spacing_16" />
 
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chưa có lịch sử"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_medium"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/inter_semibold"
+                    android:layout_marginBottom="@dimen/spacing_4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hoàn thành nhiệm vụ để xem lịch sử"
+                    android:textColor="@color/text_hint"
+                    android:textSize="@dimen/text_size_small"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

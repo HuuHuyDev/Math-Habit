@@ -19,25 +19,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/background_light">
+        android:background="@drawable/bg_app_background">
 
         <!-- Navigation Bar - Quay lại -->
         <LinearLayout
             android:id="@+id/layoutBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_12"
-            android:layout_marginStart="@dimen/spacing_16"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:layout_marginStart="@dimen/spacing_12"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="@dimen/spacing_8"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackground">
+            android:background="?attr/selectableItemBackgroundBorderless">
 
             <ImageView
-                android:layout_width="@dimen/icon_size_medium"
-                android:layout_height="@dimen/icon_size_medium"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@drawable/ic_back"
                 android:contentDescription="@string/task_back"
                 app:tint="@color/text_primary" />
@@ -48,60 +48,35 @@
                 android:layout_marginStart="@dimen/spacing_8"
                 android:text="@string/task_back"
                 android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_size_medium" />
+                android:textSize="@dimen/text_size_medium"
+                android:fontFamily="@font/inter_medium" />
         </LinearLayout>
 
-        <!-- Search Bar -->
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- TabLayout - 3 tabs: Thói quen | Học tập | Lịch sử -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_12"
             android:layout_marginHorizontal="@dimen/spacing_16"
-            app:boxCornerRadiusTopStart="@dimen/radius_input"
-            app:boxCornerRadiusTopEnd="@dimen/radius_input"
-            app:boxCornerRadiusBottomStart="@dimen/radius_input"
-            app:boxCornerRadiusBottomEnd="@dimen/radius_input"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            app:hintEnabled="false"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/white">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtSearch"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/task_search_hint"
-                android:paddingStart="@dimen/spacing_16"
-                android:paddingEnd="@dimen/spacing_16"
-                android:paddingTop="@dimen/spacing_12"
-                android:paddingBottom="@dimen/spacing_12"
-                android:background="@drawable/bg_search_input"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="@dimen/spacing_12"
-                android:drawableTint="@color/text_tertiary"
-                android:textSize="@dimen/text_size_medium"
-                android:inputType="text"
-                android:imeOptions="actionSearch" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                app:tabIndicatorHeight="0dp"
+                app:tabBackground="@drawable/bg_tab_selector"
+                app:tabTextColor="@color/text_secondary"
+                app:tabSelectedTextColor="@color/white"
+                app:tabRippleColor="@android:color/transparent"
+                app:tabTextAppearance="@style/TabTextStyle" />
 
-        <!-- TabLayout - 3 tabs: Công việc | Bài tập | Lịch sử -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_16"
-            android:layout_marginHorizontal="@dimen/spacing_16"
-            app:tabMode="fixed"
-            app:tabGravity="fill"
-            app:tabIndicatorHeight="0dp"
-            app:tabBackground="@drawable/bg_tab_selector"
-            app:tabTextColor="@color/text_tertiary"
-            app:tabSelectedTextColor="@color/text_white"
-            app:tabRippleColor="@android:color/transparent"
-            app:tabPaddingStart="@dimen/spacing_12"
-            app:tabPaddingEnd="@dimen/spacing_12"
-            app:tabPaddingTop="@dimen/spacing_8"
-            app:tabPaddingBottom="@dimen/spacing_8" />
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- ViewPager2 - Chiếm toàn bộ không gian còn lại -->
         <androidx.viewpager2.widget.ViewPager2
@@ -109,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginTop="@dimen/spacing_12"
+            android:layout_marginTop="@dimen/spacing_8"
             android:clipToPadding="false"
             android:overScrollMode="never" />
 

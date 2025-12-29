@@ -102,15 +102,17 @@ public class HistoryTabFragment extends Fragment {
     }
 
     private void updateFilterChipStyles() {
+        // Reset all chips to unselected state
         binding.chipAll.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
-        binding.chipAll.setTextColor(ContextCompat.getColor(requireContext(), R.color.history_primary));
+        binding.chipAll.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
         binding.chipToday.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
-        binding.chipToday.setTextColor(ContextCompat.getColor(requireContext(), R.color.history_primary));
+        binding.chipToday.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
         binding.chipThisWeek.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
-        binding.chipThisWeek.setTextColor(ContextCompat.getColor(requireContext(), R.color.history_primary));
+        binding.chipThisWeek.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
         binding.chipThisMonth.setBackgroundResource(R.drawable.bg_filter_chip_unselected);
-        binding.chipThisMonth.setTextColor(ContextCompat.getColor(requireContext(), R.color.history_primary));
+        binding.chipThisMonth.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
 
+        // Set selected chip style
         Chip selectedChip = null;
         switch (selectedFilterIndex) {
             case 0: selectedChip = binding.chipAll; break;
