@@ -20,25 +20,6 @@
         android:clickable="true"
         android:focusable="true" />
 
-    <!-- Avatar phụ huynh (bên phải) -->
-    <FrameLayout
-        android:id="@+id/btnAvatar"
-        android:layout_width="@dimen/spacing_40"
-        android:layout_height="@dimen/spacing_40"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/bg_avatar_circle"
-        android:foreground="?attr/selectableItemBackgroundBorderless">
-
-        <ImageView
-            android:id="@+id/imgAvatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/spacing_6"
-            android:src="@drawable/ic_user_default"
-            android:scaleType="centerCrop" />
-    </FrameLayout>
-
     <!-- Tiêu đề ở giữa -->
     <TextView
         android:id="@+id/tvTitle"

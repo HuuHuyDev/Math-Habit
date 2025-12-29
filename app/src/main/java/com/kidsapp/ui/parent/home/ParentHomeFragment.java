@@ -289,25 +289,111 @@ public class ParentHomeFragment extends Fragment {
         BottomsheetNotificationsBinding bottomSheetBinding = BottomsheetNotificationsBinding.inflate(
                 getLayoutInflater());
 
-        List<Notification> notifications = new ArrayList<>();
-
         NotificationAdapter adapter = new NotificationAdapter();
-        adapter.setNotifications(notifications);
+        bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
+        
+        // Show loading state
+        bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
+        bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+
+        // Gọi API lấy thông báo
+        apiService.getNotifications().enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.NotificationResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.NotificationResponse>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<ApiService.NotificationResponse>>> response) {
+                if (!isAdded()) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    List<ApiService.NotificationResponse> apiNotifications = response.body().data;
+                    
+                    if (apiNotifications != null && !apiNotifications.isEmpty()) {
+                        List<Notification> notifications = new ArrayList<>();
+                        for (ApiService.NotificationResponse n : apiNotifications) {
+                            notifications.add(new Notification(
+                                    n.id,
+                                    n.title != null ? n.title : "Thông báo",
+                                    n.iconUrl,
+                                    n.message != null ? n.message : "",
+                                    n.type != null ? n.type : "info",
+                                    n.timeAgo != null ? n.timeAgo : "",
+                                    n.isRead
+                            ));
+                        }
+                        adapter.setNotifications(notifications);
+                        bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.GONE);
+                        bottomSheetBinding.recyclerNotifications.setVisibility(View.VISIBLE);
+                    } else {
+                        bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+                        bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+                    }
+                } else {
+                    bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+                    bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.NotificationResponse>>> call, Throwable t) {
+                if (!isAdded()) return;
+                bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
+                bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
+            }
+        });
+
         adapter.setOnNotificationClickListener((notification, position) -> {
+            // Đánh dấu đã đọc khi click
+            if (!notification.isRead()) {
+                markNotificationAsRead(notification.getId());
+                notification.setRead(true);
+                adapter.notifyItemChanged(position);
+            }
             Toast.makeText(requireContext(), notification.getMessage(), Toast.LENGTH_SHORT).show();
         });
 
-        bottomSheetBinding.recyclerNotifications.setAdapter(adapter);
-        bottomSheetBinding.layoutEmptyNotifications.setVisibility(View.VISIBLE);
-        bottomSheetBinding.recyclerNotifications.setVisibility(View.GONE);
-
         bottomSheetBinding.txtMarkAllRead.setOnClickListener(v -> {
+            markAllNotificationsAsRead();
             adapter.markAllAsRead();
             Toast.makeText(requireContext(), "Đã đánh dấu tất cả là đã đọc", Toast.LENGTH_SHORT).show();
         });
 
         bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
         bottomSheetDialog.show();
+    }
+    
+    /**
+     * Đánh dấu một thông báo đã đọc
+     */
+    private void markNotificationAsRead(String notificationId) {
+        apiService.markNotificationAsRead(notificationId).enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call,
+                                   Response<ApiService.ApiResponseWrapper<Void>> response) {
+                // Silent - không cần xử lý
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
+                // Silent - không cần xử lý
+            }
+        });
+    }
+    
+    /**
+     * Đánh dấu tất cả thông báo đã đọc
+     */
+    private void markAllNotificationsAsRead() {
+        apiService.markAllNotificationsAsRead().enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call,
+                                   Response<ApiService.ApiResponseWrapper<Void>> response) {
+                // Silent - không cần xử lý
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
+                // Silent - không cần xử lý
+            }
+        });
     }
 
     @Override

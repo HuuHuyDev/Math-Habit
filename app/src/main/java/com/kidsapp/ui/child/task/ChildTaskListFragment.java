@@ -71,6 +71,9 @@ public class ChildTaskListFragment extends Fragment {
         TaskPagerAdapter pagerAdapter = new TaskPagerAdapter(requireActivity());
         binding.viewPager.setAdapter(pagerAdapter);
         
+        // Disable prefetch để tránh load sai data
+        binding.viewPager.setOffscreenPageLimit(1);
+        
         // Kết nối TabLayout với ViewPager2 và set text cho từng tab
         new com.google.android.material.tabs.TabLayoutMediator(
                 binding.tabLayout,
@@ -78,10 +81,10 @@ public class ChildTaskListFragment extends Fragment {
                 (tab, position) -> {
                     switch (position) {
                         case 0:
-                            tab.setText("Công việc"); // HABIT tasks
+                            tab.setText("Thói quen"); // HABIT tasks
                             break;
                         case 1:
-                            tab.setText("Bài tập"); // EXERCISE tasks
+                            tab.setText("Học tập"); // EXERCISE tasks
                             break;
                         case 2:
                             tab.setText("Lịch sử"); // History

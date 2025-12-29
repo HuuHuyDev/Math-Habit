@@ -285,21 +285,92 @@ public class WeeklyPlanFragment extends Fragment {
         
         // Show loading state
         isLoading = true;
+        showLoading();
         
         // Clear existing tasks
         allTasks.clear();
         
-        // Load từ 3 API song song
+        // Load từ API
         SharedPref sharedPref = new SharedPref(requireContext());
         ApiService apiService = RetrofitClient.getInstance(sharedPref).getApiService();
         
-        // Use demo data for now since API methods are not available
-        hideLoading();
-        allTasks = WeekPlanHelper.getDemoTasks(childId);
-        WeekPlanHelper.updateWeekDaysStats(weekDays, allTasks);
-        weekDayAdapter.notifyDataSetChanged();
-        loadTasksForSelectedDay();
-        updateWeekSummary();
+        // Lấy ngày bắt đầu và kết thúc tuần
+        String weekStart = WeekPlanHelper.getWeekStartDate();
+        String weekEnd = WeekPlanHelper.getWeekEndDate();
+        
+        // Gọi API lấy tasks của child trong tuần
+        apiService.getTasksByChild(childId, null, null, null).enqueue(
+                new Callback<ApiService.ApiResponseWrapper<List<Task>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<Task>>> call,
+                                   Response<ApiService.ApiResponseWrapper<List<Task>>> response) {
+                if (!isAdded()) return;
+                hideLoading();
+                isLoading = false;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    List<Task> tasks = response.body().data;
+                    if (tasks != null) {
+                        for (Task task : tasks) {
+                            WeekTask weekTask = convertTaskToWeekTask(task);
+                            if (weekTask != null) {
+                                allTasks.add(weekTask);
+                            }
+                        }
+                    }
+                }
+                
+                WeekPlanHelper.updateWeekDaysStats(weekDays, allTasks);
+                weekDayAdapter.notifyDataSetChanged();
+                loadTasksForSelectedDay();
+                updateWeekSummary();
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<Task>>> call, Throwable t) {
+                if (!isAdded()) return;
+                hideLoading();
+                isLoading = false;
+                Toast.makeText(requireContext(), "Không thể tải nhiệm vụ", Toast.LENGTH_SHORT).show();
+                showEmptyState();
+            }
+        });
+    }
+    
+    /**
+     * Convert Task model to WeekTask for display
+     */
+    private WeekTask convertTaskToWeekTask(Task task) {
+        if (task == null) return null;
+        
+        // Determine task type
+        String type = task.getTaskType() != null ? task.getTaskType().toLowerCase() : "habit";
+        
+        // Calculate day index from dueDate
+        int dayIndex = calculateDayIndexFromDate(task.getDueDate());
+        
+        // Chỉ lấy tasks trong tuần hiện tại (dayIndex 0-6)
+        if (dayIndex < 0) {
+            return null;
+        }
+        
+        WeekTask weekTask = new WeekTask(
+                task.getId(),
+                task.getTitle() != null ? task.getTitle() : "Nhiệm vụ",
+                task.getDescription() != null ? task.getDescription() : "",
+                type,
+                task.getCoinsReward(),
+                task.getPointsReward(),
+                dayIndex
+        );
+        
+        // Set status
+        if (task.getStatus() != null) {
+            String status = task.getStatus().toLowerCase();
+            weekTask.setCompleted(status.equals("completed") || status.equals("approved"));
+        }
+        
+        return weekTask;
     }
     
     /**
@@ -333,20 +404,32 @@ public class WeeklyPlanFragment extends Fragment {
     }
     
     private int calculateDayIndexFromDate(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) return 0;
+        if (dateStr == null || dateStr.isEmpty()) return -1;
         
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            java.util.Date date = sdf.parse(dateStr);
+            java.util.Date taskDate = sdf.parse(dateStr);
+            
+            // Lấy ngày bắt đầu và kết thúc tuần
+            String weekStart = WeekPlanHelper.getWeekStartDate();
+            String weekEnd = WeekPlanHelper.getWeekEndDate();
+            java.util.Date startDate = sdf.parse(weekStart);
+            java.util.Date endDate = sdf.parse(weekEnd);
+            
+            // Kiểm tra task có nằm trong tuần hiện tại không
+            if (taskDate.before(startDate) || taskDate.after(endDate)) {
+                return -1; // Không thuộc tuần này
+            }
+            
             Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
+            cal.setTime(taskDate);
             
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int dayIndex = dayOfWeek - 2;
             if (dayIndex < 0) dayIndex = 6;
             return dayIndex;
         } catch (Exception e) {
-            return 0;
+            return -1;
         }
     }
 

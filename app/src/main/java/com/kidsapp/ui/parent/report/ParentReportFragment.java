@@ -55,6 +55,7 @@ public class ParentReportFragment extends Fragment {
     private TextView txtHabit, txtQuiz, txtTime;
     private WeeklyChartView chartView;
     private RecyclerView recyclerAchievements;
+    private View layoutEmptyAchievements;
     
     // Adapters
     private AchievementAdapter achievementAdapter;
@@ -140,6 +141,9 @@ public class ParentReportFragment extends Fragment {
 
         // Achievements RecyclerView
         recyclerAchievements = binding.getRoot().findViewById(R.id.recyclerAchievements);
+        
+        // Empty achievements state
+        layoutEmptyAchievements = binding.getRoot().findViewById(R.id.layoutEmptyAchievements);
     }
     
     /**
@@ -320,8 +324,14 @@ public class ParentReportFragment extends Fragment {
                         
                         if (response.isSuccessful() && response.body() != null && response.body().data != null) {
                             updateUI(response.body().data);
+                            
+                            // Nếu achievements trống, gọi API badges riêng
+                            if (response.body().data.achievements == null || response.body().data.achievements.isEmpty()) {
+                                loadBadges();
+                            }
                         } else {
                             showEmptyState();
+                            loadBadges(); // Vẫn thử load badges
                         }
                         hideLoading();
                     }
@@ -331,6 +341,57 @@ public class ParentReportFragment extends Fragment {
                         if (!isAdded()) return;
                         hideLoading();
                         showEmptyState();
+                        loadBadges(); // Vẫn thử load badges
+                    }
+                });
+    }
+    
+    /**
+     * Load badges từ API riêng
+     */
+    private void loadBadges() {
+        if (selectedChild == null) return;
+        
+        apiService.getChildBadges(selectedChild.getId())
+                .enqueue(new Callback<ApiService.ApiResponseWrapper<List<ApiService.BadgeResponse>>>() {
+                    @Override
+                    public void onResponse(Call<ApiService.ApiResponseWrapper<List<ApiService.BadgeResponse>>> call,
+                                           Response<ApiService.ApiResponseWrapper<List<ApiService.BadgeResponse>>> response) {
+                        if (!isAdded()) return;
+                        
+                        if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                            List<ApiService.BadgeResponse> badges = response.body().data;
+                            List<Achievement> achievements = new ArrayList<>();
+                            
+                            for (ApiService.BadgeResponse badge : badges) {
+                                // Chỉ hiển thị badges đã earned
+                                if (badge.earned) {
+                                    String icon = badge.iconUrl != null && !badge.iconUrl.isEmpty() 
+                                            ? badge.iconUrl : "🏆";
+                                    achievements.add(new Achievement(
+                                            badge.id,
+                                            badge.name,
+                                            icon,
+                                            1 // count = 1 cho mỗi badge earned
+                                    ));
+                                }
+                            }
+                            
+                            if (!achievements.isEmpty()) {
+                                achievementAdapter.setAchievementList(achievements);
+                                showAchievements(true);
+                            } else {
+                                showAchievements(false);
+                            }
+                        } else {
+                            showAchievements(false);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiService.ApiResponseWrapper<List<ApiService.BadgeResponse>>> call, Throwable t) {
+                        if (!isAdded()) return;
+                        showAchievements(false);
                     }
                 });
     }
@@ -360,8 +421,27 @@ public class ParentReportFragment extends Fragment {
                 achievements.add(new Achievement(ach.id, ach.name, ach.icon, ach.count));
             }
             achievementAdapter.setAchievementList(achievements);
+            showAchievements(true);
         } else {
             achievementAdapter.setAchievementList(new ArrayList<>());
+            showAchievements(false);
+        }
+    }
+    
+    /**
+     * Hiển thị/ẩn achievements và empty state
+     */
+    private void showAchievements(boolean hasAchievements) {
+        if (hasAchievements) {
+            recyclerAchievements.setVisibility(View.VISIBLE);
+            if (layoutEmptyAchievements != null) {
+                layoutEmptyAchievements.setVisibility(View.GONE);
+            }
+        } else {
+            recyclerAchievements.setVisibility(View.GONE);
+            if (layoutEmptyAchievements != null) {
+                layoutEmptyAchievements.setVisibility(View.VISIBLE);
+            }
         }
     }
     
@@ -374,6 +454,7 @@ public class ParentReportFragment extends Fragment {
         txtTime.setText("0m");
         chartView.setData(new ArrayList<>());
         achievementAdapter.setAchievementList(new ArrayList<>());
+        showAchievements(false);
     }
 
     @Override

@@ -19,6 +19,8 @@
             android:clipToPadding="false"
             android:paddingTop="8dp"
             android:paddingBottom="80dp"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="always"
             tools:listitem="@layout/item_exercise_task" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

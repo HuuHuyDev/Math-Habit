@@ -93,6 +93,46 @@
                 tools:itemCount="6"
                 tools:listitem="@layout/item_badge" />
 
+            <!-- Empty Achievements State -->
+            <LinearLayout
+                android:id="@+id/layoutEmptyAchievements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_20"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:layout_marginEnd="@dimen/spacing_20"
+                android:layout_marginBottom="@dimen/spacing_20"
+                android:background="@drawable/bg_chart_container"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_24"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🏆"
+                    android:textSize="48sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    android:text="Chưa có thành tích"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_size_medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_4"
+                    android:gravity="center"
+                    android:text="Hoàn thành nhiệm vụ để nhận huy hiệu!"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="@dimen/text_size_small" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

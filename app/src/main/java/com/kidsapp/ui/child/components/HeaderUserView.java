@@ -18,6 +18,8 @@ import com.kidsapp.R;
 public class HeaderUserView extends LinearLayout {
     private ImageView imgAvatar;
     private TextView txtUserName;
+    private FrameLayout btnChat;
+    private TextView txtChatBadge;
     private FrameLayout btnNotification;
     private TextView txtNotificationBadge;
 
@@ -41,6 +43,8 @@ public class HeaderUserView extends LinearLayout {
 
         imgAvatar = findViewById(R.id.imgAvatar);
         txtUserName = findViewById(R.id.txtUserName);
+        btnChat = findViewById(R.id.btnChat);
+        txtChatBadge = findViewById(R.id.txtChatBadge);
         btnNotification = findViewById(R.id.btnNotification);
         txtNotificationBadge = findViewById(R.id.txtNotificationBadge);
     }
@@ -76,6 +80,26 @@ public class HeaderUserView extends LinearLayout {
      */
     public void setAvatarClick(OnClickListener listener) {
         imgAvatar.setOnClickListener(listener);
+    }
+
+    /**
+     * Set click listener cho nút chat
+     */
+    public void setChatClick(OnClickListener listener) {
+        btnChat.setOnClickListener(listener);
+    }
+
+    /**
+     * Set số lượng tin nhắn chưa đọc
+     * @param count Số tin nhắn (0 = ẩn badge)
+     */
+    public void setChatCount(int count) {
+        if (count > 0) {
+            txtChatBadge.setVisibility(View.VISIBLE);
+            txtChatBadge.setText(count > 9 ? "9+" : String.valueOf(count));
+        } else {
+            txtChatBadge.setVisibility(View.GONE);
+        }
     }
 
     /**
