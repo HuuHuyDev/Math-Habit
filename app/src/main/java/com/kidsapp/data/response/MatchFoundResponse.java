@@ -16,6 +16,64 @@ public class MatchFoundResponse {
 
     public MatchFoundResponse() {}
 
+    // Builder pattern
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private MatchFoundResponse response = new MatchFoundResponse();
+
+        public Builder matched(boolean matched) {
+            response.matched = matched;
+            return this;
+        }
+
+        public Builder challengeId(String challengeId) {
+            response.challengeId = challengeId;
+            return this;
+        }
+
+        public Builder opponentName(String opponentName) {
+            response.opponentName = opponentName;
+            return this;
+        }
+
+        public Builder opponentId(String opponentId) {
+            response.opponentId = opponentId;
+            return this;
+        }
+
+        public Builder categoryName(String categoryName) {
+            response.categoryName = categoryName;
+            return this;
+        }
+
+        public Builder difficultyLevel(Integer difficultyLevel) {
+            response.difficultyLevel = difficultyLevel;
+            return this;
+        }
+
+        public Builder totalQuestions(Integer totalQuestions) {
+            response.totalQuestions = totalQuestions;
+            return this;
+        }
+
+        public Builder timeLimitMinutes(Integer timeLimitMinutes) {
+            response.timeLimitMinutes = timeLimitMinutes;
+            return this;
+        }
+
+        public Builder message(String message) {
+            response.message = message;
+            return this;
+        }
+
+        public MatchFoundResponse build() {
+            return response;
+        }
+    }
+
     // Getters and Setters
     public boolean isMatched() {
         return matched;
@@ -87,5 +145,20 @@ public class MatchFoundResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "MatchFoundResponse{" +
+                "matched=" + matched +
+                ", challengeId='" + challengeId + '\'' +
+                ", opponentName='" + opponentName + '\'' +
+                ", opponentId='" + opponentId + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                ", difficultyLevel=" + difficultyLevel +
+                ", totalQuestions=" + totalQuestions +
+                ", timeLimitMinutes=" + timeLimitMinutes +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

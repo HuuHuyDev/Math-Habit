@@ -6,6 +6,7 @@ import com.kidsapp.data.api.ApiService;
 import com.kidsapp.data.api.RetrofitClient;
 import com.kidsapp.data.local.SharedPref;
 import com.kidsapp.data.model.Child;
+import com.kidsapp.data.response.ChallengeResultResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -289,115 +290,433 @@ public class ChallengeRepository {
 
     /**
      * Tạo Challenge và gửi lời mời
+     * @deprecated Sử dụng createChallenge và inviteChild riêng biệt
      */
+    @Deprecated
     public void createChallengeAndInvite(String friendId, String categoryId, String categoryName, 
                                         int difficultyLevel, ResultCallback<String> callback) {
+        // Chuyển sang sử dụng method mới
+        createChallenge(categoryId, categoryName, new ResultCallback<String>() {
+            @Override
+            public void onSuccess(String challengeId) {
+                inviteChild(challengeId, friendId, callback);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
+    
+    /**
+     * Tạo Challenge mới (Bước 1)
+     */
+    public void createChallenge(String categoryId, String categoryName, 
+                               ResultCallback<String> callback) {
+        createChallenge(categoryId, categoryName, callback, new ResultCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                // This won't be called
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
+    
+    private void createChallenge(String categoryId, String categoryName,
+                                ResultCallback<String> successCallback, 
+                                ResultCallback<String> errorCallback) {
         String childId = sharedPref.getChildId();
         
-        android.util.Log.d("ChallengeRepository", "=== createChallengeAndInvite START ===");
-        android.util.Log.d("ChallengeRepository", "Token: " + (sharedPref.getAuthToken() != null ? "EXISTS" : "NULL"));
+        android.util.Log.d("ChallengeRepository", "=== createChallenge START ===");
         android.util.Log.d("ChallengeRepository", "childId: " + childId);
-        android.util.Log.d("ChallengeRepository", "friendId: " + friendId);
         android.util.Log.d("ChallengeRepository", "categoryId: " + categoryId);
         android.util.Log.d("ChallengeRepository", "categoryName: " + categoryName);
-        android.util.Log.d("ChallengeRepository", "difficultyLevel: " + difficultyLevel);
         
         if (childId == null || childId.isEmpty()) {
-            android.util.Log.e("ChallengeRepository", "childId is NULL!");
-            callback.onError("Chưa đăng nhập");
+            errorCallback.onError("Chưa đăng nhập");
             return;
         }
         
-        // 1. Tạo Challenge
-        com.kidsapp.data.request.CreateChallengeRequest createRequest = new com.kidsapp.data.request.CreateChallengeRequest();
-        createRequest.setChildId(childId);
-        createRequest.setCategoryId(categoryId);
-        createRequest.setTitle("Thách đấu - " + categoryName);
-        createRequest.setDescription("Thách đấu với độ khó " + difficultyLevel + " sao");
-        createRequest.setDifficultyLevel(difficultyLevel);
-        createRequest.setTimeLimitMinutes(10);
-        createRequest.setTotalQuestions(10);
+        com.kidsapp.data.request.CreateChallengeRequest request = new com.kidsapp.data.request.CreateChallengeRequest();
+        request.setChildId(childId);
+        request.setCategoryId(categoryId);
+        request.setTitle("Thách đấu - " + categoryName);
+        request.setDescription("Thách đấu câu đố mẹo với anh chị em");
+        request.setDifficultyLevel(1); // Mặc định = 1 cho câu đố mẹo
+        request.setTimeLimitMinutes(10);
+        request.setTotalQuestions(10);
         
-        android.util.Log.d("ChallengeRepository", "Calling createChallenge API...");
-        android.util.Log.d("ChallengeRepository", "Request: " + createRequest.toString());
-        
-        apiService.createChallenge(createRequest).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>>() {
+        apiService.createChallenge(request).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>>() {
             @Override
             public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call,
                                  Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> response) {
-                android.util.Log.d("ChallengeRepository", "=== createChallenge RESPONSE ===");
-                android.util.Log.d("ChallengeRepository", "Response code: " + response.code());
-                android.util.Log.d("ChallengeRepository", "Response message: " + response.message());
-                
-                try {
-                    if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                        String challengeId = response.body().data.getId();
-                        android.util.Log.d("ChallengeRepository", "Challenge created successfully! ID: " + challengeId);
-                        
-                        // 2. Gửi lời mời
-                        com.kidsapp.data.request.InviteChildRequest inviteRequest = new com.kidsapp.data.request.InviteChildRequest(friendId);
-                        
-                        android.util.Log.d("ChallengeRepository", "Calling inviteChild API...");
-                        android.util.Log.d("ChallengeRepository", "ChallengeId: " + challengeId);
-                        android.util.Log.d("ChallengeRepository", "CreatorId: " + childId);
-                        android.util.Log.d("ChallengeRepository", "InvitedChildId: " + friendId);
-                        
-                        apiService.inviteChild(challengeId, childId, inviteRequest).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>>() {
-                            @Override
-                            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> call,
-                                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> response) {
-                                android.util.Log.d("ChallengeRepository", "=== inviteChild RESPONSE ===");
-                                android.util.Log.d("ChallengeRepository", "Response code: " + response.code());
-                                
-                                if (response.isSuccessful() && response.body() != null) {
-                                    android.util.Log.d("ChallengeRepository", "Invite sent successfully!");
-                                    callback.onSuccess(challengeId);
-                                } else {
-                                    String errorMsg = "HTTP " + response.code();
-                                    try {
-                                        if (response.errorBody() != null) {
-                                            String errorBody = response.errorBody().string();
-                                            errorMsg += ": " + errorBody;
-                                            android.util.Log.e("ChallengeRepository", "inviteChild error body: " + errorBody);
-                                        }
-                                    } catch (Exception e) {
-                                        android.util.Log.e("ChallengeRepository", "Error reading inviteChild error body", e);
-                                    }
-                                    android.util.Log.e("ChallengeRepository", "inviteChild failed: " + errorMsg);
-                                    callback.onError("Không thể gửi lời mời: " + errorMsg);
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> call, Throwable t) {
-                                android.util.Log.e("ChallengeRepository", "inviteChild API call failed", t);
-                                callback.onError("Lỗi kết nối khi gửi lời mời: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
-                            }
-                        });
-                    } else {
-                        String errorMsg = "HTTP " + response.code();
-                        try {
-                            if (response.errorBody() != null) {
-                                String errorBody = response.errorBody().string();
-                                errorMsg += ": " + errorBody;
-                                android.util.Log.e("ChallengeRepository", "createChallenge error body: " + errorBody);
-                            }
-                        } catch (Exception e) {
-                            android.util.Log.e("ChallengeRepository", "Error reading createChallenge error body", e);
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    String challengeId = response.body().data.getId();
+                    android.util.Log.d("ChallengeRepository", "Challenge created: " + challengeId);
+                    successCallback.onSuccess(challengeId);
+                } else {
+                    String errorMsg = "HTTP " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg += ": " + response.errorBody().string();
                         }
-                        android.util.Log.e("ChallengeRepository", "createChallenge failed: " + errorMsg);
-                        callback.onError("Không thể tạo thách đấu: " + errorMsg);
+                    } catch (Exception e) {
+                        android.util.Log.e("ChallengeRepository", "Error reading error body", e);
                     }
-                } catch (Exception e) {
-                    android.util.Log.e("ChallengeRepository", "Exception processing createChallenge response", e);
-                    callback.onError("Lỗi xử lý phản hồi: " + e.getMessage());
+                    errorCallback.onError("Không thể tạo thách đấu: " + errorMsg);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call, Throwable t) {
-                android.util.Log.e("ChallengeRepository", "createChallenge API call failed", t);
-                callback.onError("Lỗi kết nối khi tạo thách đấu: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+                errorCallback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Mời child tham gia challenge (Bước 2)
+     */
+    public void inviteChild(String challengeId, String friendId, ResultCallback<String> callback) {
+        String creatorId = sharedPref.getChildId();
+        
+        android.util.Log.d("ChallengeRepository", "=== inviteChild START ===");
+        android.util.Log.d("ChallengeRepository", "challengeId: " + challengeId);
+        android.util.Log.d("ChallengeRepository", "creatorId: " + creatorId);
+        android.util.Log.d("ChallengeRepository", "friendId: " + friendId);
+        
+        if (creatorId == null || creatorId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        com.kidsapp.data.request.InviteChildRequest request = new com.kidsapp.data.request.InviteChildRequest(friendId);
+        
+        apiService.inviteChild(challengeId, creatorId, request).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    android.util.Log.d("ChallengeRepository", "Invite sent successfully");
+                    callback.onSuccess("Đã gửi lời mời thành công");
+                } else {
+                    String errorMsg = "HTTP " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg += ": " + response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("ChallengeRepository", "Error reading error body", e);
+                    }
+                    callback.onError("Không thể gửi lời mời: " + errorMsg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Lấy danh sách lời mời của tôi
+     */
+    public void getMyInvites(ResultCallback<List<com.kidsapp.data.response.ChallengeInviteResponse>> callback) {
+        String childId = sharedPref.getChildId();
+        
+        if (childId == null || childId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        apiService.getMyInvites(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeInviteResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeInviteResponse>>> call,
+                                 Response<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeInviteResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tải danh sách lời mời");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeInviteResponse>>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Chấp nhận lời mời (Bước 3a)
+     */
+    public void acceptInvite(String inviteId, ResultCallback<com.kidsapp.data.response.ChallengeResponse> callback) {
+        String childId = sharedPref.getChildId();
+        
+        android.util.Log.d("ChallengeRepository", "=== acceptInvite START ===");
+        android.util.Log.d("ChallengeRepository", "inviteId: " + inviteId);
+        android.util.Log.d("ChallengeRepository", "childId: " + childId);
+        
+        if (childId == null || childId.isEmpty()) {
+            android.util.Log.e("ChallengeRepository", "ChildId is null or empty");
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        if (inviteId == null || inviteId.isEmpty()) {
+            android.util.Log.e("ChallengeRepository", "InviteId is null or empty");
+            callback.onError("ID lời mời không hợp lệ");
+            return;
+        }
+        
+        apiService.acceptInvite(inviteId, childId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> response) {
+                
+                android.util.Log.d("ChallengeRepository", "=== acceptInvite RESPONSE ===");
+                android.util.Log.d("ChallengeRepository", "Response code: " + response.code());
+                android.util.Log.d("ChallengeRepository", "Response successful: " + response.isSuccessful());
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    android.util.Log.d("ChallengeRepository", "Response body: " + response.body());
+                    android.util.Log.d("ChallengeRepository", "Response data: " + response.body().data);
+                    
+                    if (response.body().data != null) {
+                        android.util.Log.d("ChallengeRepository", "SUCCESS - Challenge data received");
+                        callback.onSuccess(response.body().data);
+                    } else {
+                        android.util.Log.e("ChallengeRepository", "Response data is null");
+                        callback.onError("Dữ liệu phản hồi không hợp lệ");
+                    }
+                } else {
+                    String errorMsg = "Không thể chấp nhận lời mời";
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            android.util.Log.e("ChallengeRepository", "Error body: " + errorBody);
+                            errorMsg = "Lỗi " + response.code() + ": " + errorBody;
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("ChallengeRepository", "Error reading error body", e);
+                    }
+                    android.util.Log.e("ChallengeRepository", "ERROR: " + errorMsg);
+                    callback.onError(errorMsg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call, Throwable t) {
+                android.util.Log.e("ChallengeRepository", "=== acceptInvite FAILURE ===");
+                android.util.Log.e("ChallengeRepository", "Error: " + t.getMessage(), t);
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Lấy câu hỏi cho thách đấu
+     */
+    public void getChallengeQuestions(String challengeId, ResultCallback<List<com.kidsapp.data.response.QuestionResponse>> callback) {
+        android.util.Log.d("ChallengeRepository", "=== getChallengeQuestions START ===");
+        android.util.Log.d("ChallengeRepository", "challengeId: " + challengeId);
+        
+        apiService.getChallengeQuestions(challengeId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.QuestionResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.QuestionResponse>>> call,
+                                 Response<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.QuestionResponse>>> response) {
+                
+                android.util.Log.d("ChallengeRepository", "=== getChallengeQuestions RESPONSE ===");
+                android.util.Log.d("ChallengeRepository", "Response code: " + response.code());
+                android.util.Log.d("ChallengeRepository", "Response successful: " + response.isSuccessful());
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    List<com.kidsapp.data.response.QuestionResponse> questions = response.body().data;
+                    android.util.Log.d("ChallengeRepository", "SUCCESS - Received " + questions.size() + " questions");
+                    
+                    // Log first question for debugging
+                    if (!questions.isEmpty()) {
+                        com.kidsapp.data.response.QuestionResponse firstQ = questions.get(0);
+                        android.util.Log.d("ChallengeRepository", "First question: " + firstQ.getQuestionText());
+                        android.util.Log.d("ChallengeRepository", "Options count: " + (firstQ.getOptions() != null ? firstQ.getOptions().size() : 0));
+                        android.util.Log.d("ChallengeRepository", "Category: " + firstQ.getCategoryName());
+                        android.util.Log.d("ChallengeRepository", "Time limit: " + firstQ.getTimeLimit());
+                    }
+                    
+                    callback.onSuccess(questions);
+                } else {
+                    String errorMsg = "Không thể tải câu hỏi";
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            android.util.Log.e("ChallengeRepository", "Error body: " + errorBody);
+                            errorMsg = "Lỗi " + response.code() + ": " + errorBody;
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("ChallengeRepository", "Error reading error body", e);
+                    }
+                    android.util.Log.e("ChallengeRepository", "ERROR: " + errorMsg);
+                    callback.onError(errorMsg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.QuestionResponse>>> call, Throwable t) {
+                android.util.Log.e("ChallengeRepository", "=== getChallengeQuestions FAILURE ===");
+                android.util.Log.e("ChallengeRepository", "Error: " + t.getMessage(), t);
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Gửi câu trả lời
+     */
+    public void submitAnswer(String challengeId, String questionId, int selectedAnswer, long timeSpent, 
+                           ResultCallback<String> callback) {
+        String childId = sharedPref.getChildId();
+        
+        android.util.Log.d("ChallengeRepository", "=== submitAnswer START ===");
+        android.util.Log.d("ChallengeRepository", "challengeId: " + challengeId);
+        android.util.Log.d("ChallengeRepository", "questionId: " + questionId);
+        android.util.Log.d("ChallengeRepository", "selectedAnswer: " + selectedAnswer);
+        android.util.Log.d("ChallengeRepository", "timeSpent: " + timeSpent + "ms");
+        android.util.Log.d("ChallengeRepository", "childId: " + childId);
+        
+        if (childId == null || childId.isEmpty()) {
+            android.util.Log.e("ChallengeRepository", "ChildId is null or empty");
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        com.kidsapp.data.request.SubmitAnswerRequest request = new com.kidsapp.data.request.SubmitAnswerRequest(
+                childId, questionId, selectedAnswer, timeSpent);
+        
+        apiService.submitAnswer(challengeId, request).enqueue(new Callback<ApiService.ApiResponseWrapper<String>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<String>> call,
+                                 Response<ApiService.ApiResponseWrapper<String>> response) {
+                
+                android.util.Log.d("ChallengeRepository", "=== submitAnswer RESPONSE ===");
+                android.util.Log.d("ChallengeRepository", "Response code: " + response.code());
+                android.util.Log.d("ChallengeRepository", "Response successful: " + response.isSuccessful());
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    String result = response.body().data != null ? response.body().data : "OK";
+                    android.util.Log.d("ChallengeRepository", "SUCCESS - Answer submitted: " + result);
+                    callback.onSuccess(result);
+                } else {
+                    String errorMsg = "Không thể gửi câu trả lời";
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            android.util.Log.e("ChallengeRepository", "Error body: " + errorBody);
+                            errorMsg = "Lỗi " + response.code() + ": " + errorBody;
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("ChallengeRepository", "Error reading error body", e);
+                    }
+                    android.util.Log.e("ChallengeRepository", "ERROR: " + errorMsg);
+                    callback.onError(errorMsg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<String>> call, Throwable t) {
+                android.util.Log.e("ChallengeRepository", "=== submitAnswer FAILURE ===");
+                android.util.Log.e("ChallengeRepository", "Error: " + t.getMessage(), t);
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }/**
+     * Từ chối lời mời (Bước 3b)
+     */
+    public void declineInvite(String inviteId, ResultCallback<String> callback) {
+        String childId = sharedPref.getChildId();
+        
+        if (childId == null || childId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        apiService.declineInvite(inviteId, childId).enqueue(new Callback<ApiService.ApiResponseWrapper<String>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<String>> call,
+                                 Response<ApiService.ApiResponseWrapper<String>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess("Đã từ chối lời mời");
+                } else {
+                    callback.onError("Không thể từ chối lời mời");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<String>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Lấy danh sách challenge đang active
+     */
+    public void getActiveChallenges(ResultCallback<List<com.kidsapp.data.response.ChallengeResponse>> callback) {
+        String childId = sharedPref.getChildId();
+        
+        if (childId == null || childId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        apiService.getActiveChallenges(childId).enqueue(new Callback<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeResponse>>> call,
+                                 Response<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tải danh sách thách đấu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeResponse>>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Tham gia challenge đang active (Bước 5)
+     */
+    public void joinActiveChallenge(String challengeId, ResultCallback<com.kidsapp.data.response.ChallengeResponse> callback) {
+        String childId = sharedPref.getChildId();
+        
+        if (childId == null || childId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        apiService.joinActiveChallenge(challengeId, childId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tham gia thách đấu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
             }
         });
     }
@@ -409,6 +728,86 @@ public class ChallengeRepository {
         // TODO: Implement API call
         callback.onSuccess(null);
     }
+    
+    /**
+     * Hủy challenge (chỉ creator)
+     */
+    public void cancelChallenge(String challengeId, ResultCallback<String> callback) {
+        String creatorId = sharedPref.getChildId();
+        
+        if (creatorId == null || creatorId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        apiService.cancelChallenge(challengeId, creatorId).enqueue(new Callback<ApiService.ApiResponseWrapper<String>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<String>> call,
+                                 Response<ApiService.ApiResponseWrapper<String>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess("Đã hủy thách đấu");
+                } else {
+                    callback.onError("Không thể hủy thách đấu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<String>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Lấy chi tiết lời mời
+     */
+    public void getInviteDetail(String inviteId, ResultCallback<com.kidsapp.data.response.ChallengeInviteResponse> callback) {
+        apiService.getInviteDetail(inviteId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tải chi tiết lời mời");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
+    
+    /**
+     * Lấy thông tin challenge để tham gia
+     */
+    public void getChallengeForParticipant(String challengeId, ResultCallback<com.kidsapp.data.response.ChallengeResponse> callback) {
+        String childId = sharedPref.getChildId();
+        
+        if (childId == null || childId.isEmpty()) {
+            callback.onError("Chưa đăng nhập");
+            return;
+        }
+        
+        apiService.getChallengeForParticipant(challengeId, childId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    callback.onSuccess(response.body().data);
+                } else {
+                    callback.onError("Không thể tải thông tin thách đấu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + (t.getMessage() != null ? t.getMessage() : "Unknown error"));
+            }
+        });
+    }
 
     /**
      * Kiểm tra trạng thái lời mời
@@ -416,6 +815,76 @@ public class ChallengeRepository {
     public void checkInviteStatus(String inviteId, ResultCallback<InviteStatus> callback) {
         // TODO: Implement API call
         callback.onSuccess(InviteStatus.PENDING);
+    }
+
+    /**
+     * Lấy kết quả thách đấu
+     */
+    public void getChallengeResult(String challengeId, String childId, ResultCallback<ChallengeResultResponse> callback) {
+        android.util.Log.d("ChallengeRepository", "Getting challenge result for challengeId: " + challengeId + ", childId: " + childId);
+        
+        apiService.getChallengeResult(challengeId, childId).enqueue(new Callback<ApiService.ApiResponseWrapper<ChallengeResultResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<ChallengeResultResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<ChallengeResultResponse>> response) {
+                android.util.Log.d("ChallengeRepository", "Challenge result response code: " + response.code());
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.ApiResponseWrapper<ChallengeResultResponse> wrapper = response.body();
+                    if (wrapper.isSuccess() && wrapper.getData() != null) {
+                        android.util.Log.d("ChallengeRepository", "Challenge result loaded successfully");
+                        callback.onSuccess(wrapper.getData());
+                    } else {
+                        android.util.Log.w("ChallengeRepository", "Challenge result API success but no data: " + wrapper.getMessage());
+                        callback.onError(wrapper.getMessage() != null ? wrapper.getMessage() : "Chưa có kết quả");
+                    }
+                } else {
+                    android.util.Log.e("ChallengeRepository", "Challenge result API failed: " + response.code());
+                    callback.onError("Không thể tải kết quả thách đấu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<ChallengeResultResponse>> call, Throwable t) {
+                android.util.Log.e("ChallengeRepository", "Challenge result API error: " + t.getMessage());
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
+    }
+    
+    /**
+     * Lấy trạng thái thách đấu real-time (để đợi cả 2 người hoàn thành)
+     */
+    public void getChallengeStatus(String challengeId, String childId, ResultCallback<com.kidsapp.data.response.ChallengeGameResponse> callback) {
+        android.util.Log.d("ChallengeRepository", "Getting challenge status for challengeId: " + challengeId + ", childId: " + childId);
+        
+        apiService.getChallengeStatus(challengeId, childId).enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeGameResponse>>() {
+            @Override
+            public void onResponse(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeGameResponse>> call,
+                                 Response<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeGameResponse>> response) {
+                android.util.Log.d("ChallengeRepository", "Challenge status response code: " + response.code());
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeGameResponse> wrapper = response.body();
+                    if (wrapper.isSuccess() && wrapper.getData() != null) {
+                        android.util.Log.d("ChallengeRepository", "Challenge status loaded successfully: " + wrapper.getData().getStatus());
+                        callback.onSuccess(wrapper.getData());
+                    } else {
+                        android.util.Log.w("ChallengeRepository", "Challenge status API success but no data: " + wrapper.getMessage());
+                        callback.onError(wrapper.getMessage() != null ? wrapper.getMessage() : "Không thể lấy trạng thái");
+                    }
+                } else {
+                    android.util.Log.e("ChallengeRepository", "Challenge status API failed: " + response.code());
+                    callback.onError("Không thể lấy trạng thái thách đấu");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.ApiResponseWrapper<com.kidsapp.data.response.ChallengeGameResponse>> call, Throwable t) {
+                android.util.Log.e("ChallengeRepository", "Challenge status API error: " + t.getMessage());
+                callback.onError(t.getMessage() != null ? t.getMessage() : "Lỗi kết nối");
+            }
+        });
     }
 
     /**

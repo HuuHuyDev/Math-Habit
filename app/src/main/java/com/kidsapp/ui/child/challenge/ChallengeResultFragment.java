@@ -27,6 +27,8 @@ public class ChallengeResultFragment extends Fragment {
     private static final String ARG_WRONG = "wrong";
     private static final String ARG_TIME = "time";
     private static final String ARG_IS_WIN = "is_win";
+    private static final String ARG_OPPONENT_NAME = "opponent_name";
+    private static final String ARG_CHALLENGE_TITLE = "challenge_title";
 
     private FragmentChallengeResultBinding binding;
     private int player1Score;
@@ -35,9 +37,17 @@ public class ChallengeResultFragment extends Fragment {
     private int wrongCount;
     private long totalTime;
     private boolean isWin;
+    private String opponentName;
+    private String challengeTitle;
 
     public static ChallengeResultFragment newInstance(int player1Score, int player2Score,
                                                       int correct, int wrong, long time, boolean isWin) {
+        return newInstance(player1Score, player2Score, correct, wrong, time, isWin, null, null);
+    }
+    
+    public static ChallengeResultFragment newInstance(int player1Score, int player2Score,
+                                                      int correct, int wrong, long time, boolean isWin,
+                                                      String opponentName, String challengeTitle) {
         ChallengeResultFragment fragment = new ChallengeResultFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PLAYER1_SCORE, player1Score);
@@ -46,6 +56,8 @@ public class ChallengeResultFragment extends Fragment {
         args.putInt(ARG_WRONG, wrong);
         args.putLong(ARG_TIME, time);
         args.putBoolean(ARG_IS_WIN, isWin);
+        args.putString(ARG_OPPONENT_NAME, opponentName);
+        args.putString(ARG_CHALLENGE_TITLE, challengeTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,27 +87,59 @@ public class ChallengeResultFragment extends Fragment {
             wrongCount = getArguments().getInt(ARG_WRONG);
             totalTime = getArguments().getLong(ARG_TIME);
             isWin = getArguments().getBoolean(ARG_IS_WIN);
+            opponentName = getArguments().getString(ARG_OPPONENT_NAME, "Đối thủ");
+            challengeTitle = getArguments().getString(ARG_CHALLENGE_TITLE, "Thách đấu");
         }
     }
 
     private void displayResult() {
+        // Title
+        if (challengeTitle != null && !challengeTitle.isEmpty()) {
+            // Assuming there's a title TextView in the layout
+            // binding.txtChallengeTitle.setText(challengeTitle);
+        }
 
-        // Scores
+        // Scores with player names
         binding.txtPlayer1Score.setText(String.valueOf(player1Score));
         binding.txtPlayer2Score.setText(String.valueOf(player2Score));
+        
+        // If opponent name is available, show it
+        if (opponentName != null && !opponentName.isEmpty()) {
+            // Assuming there are TextViews for player names
+            // binding.txtPlayer1Name.setText("Bạn");
+            // binding.txtPlayer2Name.setText(opponentName);
+        }
 
         // Stats
         binding.txtCorrectCount.setText(String.valueOf(correctCount));
         binding.txtWrongCount.setText(String.valueOf(wrongCount));
         binding.txtTotalTime.setText(formatTime(totalTime));
 
+        // Result message
+        String resultMessage;
+        if (isWin) {
+            resultMessage = "🎉 Chúc mừng! Bạn đã thắng!";
+        } else if (player1Score == player2Score) {
+            resultMessage = "🤝 Hòa! Cả hai đều chơi rất tốt!";
+        } else {
+            resultMessage = "💪 Chúc mừng! Bạn đã hoàn thành thách đấu!";
+        }
+        
+        // Assuming there's a result message TextView
+        // binding.txtResultMessage.setText(resultMessage);
+
         // Rewards
         int rewardCoins = isWin ? 50 : 20;
-        binding.txtRewardCoins.setText("+" + rewardCoins + " xu");
+        int rewardXp = isWin ? 100 : 50;
         
-        // Hide rewards card if lost
-        if (!isWin) {
+        binding.txtRewardCoins.setText("+" + rewardCoins + " xu");
+        // binding.txtRewardXp.setText("+" + rewardXp + " XP");
+        
+        // Show/hide rewards card based on result
+        if (!isWin && player1Score != player2Score) {
             binding.cardRewards.setVisibility(View.GONE);
+        } else {
+            binding.cardRewards.setVisibility(View.VISIBLE);
         }
     }
 

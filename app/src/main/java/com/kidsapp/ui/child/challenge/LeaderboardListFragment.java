@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.kidsapp.data.model.LeaderboardItem;
+import com.kidsapp.data.api.ApiService;
 import com.kidsapp.databinding.FragmentLeaderboardListBinding;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class LeaderboardListFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new LeaderboardAdapter();
+        adapter = new LeaderboardAdapter(new ArrayList<>());
         binding.recyclerLeaderboard.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerLeaderboard.setAdapter(adapter);
     }
@@ -69,24 +69,24 @@ public class LeaderboardListFragment extends Fragment {
     private void loadLeaderboard() {
         // TODO: Load from repository based on tabIndex
         // 0 = Week, 1 = Month, 2 = All
-        List<LeaderboardItem> items = generateSampleData();
-        adapter.submitList(items);
+        List<ApiService.LeaderboardResponse> items = generateSampleData();
+        adapter.updateData(items);
     }
 
-    private List<LeaderboardItem> generateSampleData() {
-        List<LeaderboardItem> items = new ArrayList<>();
+    private List<ApiService.LeaderboardResponse> generateSampleData() {
+        List<ApiService.LeaderboardResponse> items = new ArrayList<>();
         
         // Sample data
-        items.add(new LeaderboardItem("1", "Nguyễn Văn A", 1250, 85, 15, 1));
-        items.add(new LeaderboardItem("2", "Trần Thị B", 1180, 80, 20, 2));
-        items.add(new LeaderboardItem("3", "Lê Văn C", 1050, 75, 25, 3));
-        items.add(new LeaderboardItem("4", "Phạm Thị D", 980, 70, 30, 4));
-        items.add(new LeaderboardItem("5", "Hoàng Văn E", 920, 68, 32, 5));
-        items.add(new LeaderboardItem("6", "Vũ Thị F", 850, 65, 35, 6));
-        items.add(new LeaderboardItem("7", "Đỗ Văn G", 780, 60, 40, 7));
-        items.add(new LeaderboardItem("8", "Bùi Thị H", 720, 58, 42, 8));
-        items.add(new LeaderboardItem("9", "Đinh Văn I", 650, 55, 45, 9));
-        items.add(new LeaderboardItem("10", "Ngô Thị K", 580, 50, 50, 10));
+        items.add(new ApiService.LeaderboardResponse("1", "Nguyễn Văn A", null, 1, 1250, 15, 20, 75.0, 5, 8, false));
+        items.add(new ApiService.LeaderboardResponse("2", "Trần Thị B", null, 2, 1180, 12, 18, 66.7, 3, 6, false));
+        items.add(new ApiService.LeaderboardResponse("3", "Lê Văn C", null, 3, 1050, 10, 16, 62.5, 2, 4, false));
+        items.add(new ApiService.LeaderboardResponse("4", "Phạm Thị D", null, 4, 980, 8, 15, 53.3, 1, 3, false));
+        items.add(new ApiService.LeaderboardResponse("5", "Hoàng Văn E", null, 5, 920, 6, 12, 50.0, 0, 2, false));
+        items.add(new ApiService.LeaderboardResponse("6", "Vũ Thị F", null, 6, 850, 5, 10, 50.0, 0, 1, false));
+        items.add(new ApiService.LeaderboardResponse("7", "Đỗ Văn G", null, 7, 780, 4, 8, 50.0, 0, 1, false));
+        items.add(new ApiService.LeaderboardResponse("8", "Bùi Thị H", null, 8, 720, 3, 6, 50.0, 0, 1, false));
+        items.add(new ApiService.LeaderboardResponse("9", "Đinh Văn I", null, 9, 650, 2, 4, 50.0, 0, 1, false));
+        items.add(new ApiService.LeaderboardResponse("10", "Ngô Thị K", null, 10, 580, 1, 2, 50.0, 0, 1, false));
 
         return items;
     }

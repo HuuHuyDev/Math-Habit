@@ -100,4 +100,16 @@ public class ChallengeResponse {
     public void setCreatedByName(String createdByName) {
         this.createdByName = createdByName;
     }
+
+    // Additional methods for enhanced challenge flow
+    public String getOpponentName() {
+        return createdByName; // For now, use createdByName as opponent
+    }
+
+    public String getTimeRemaining() {
+        if (timeLimitMinutes != null) {
+            return timeLimitMinutes + " phút";
+        }
+        return null;
+    }
 }

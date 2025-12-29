@@ -450,6 +450,19 @@ public interface ApiService {
         public boolean success;
         public String message;
         public T data;
+        
+        // Getter methods for compatibility
+        public boolean isSuccess() {
+            return success;
+        }
+        
+        public String getMessage() {
+            return message;
+        }
+        
+        public T getData() {
+            return data;
+        }
     }
     
     // Request/Response classes
@@ -1003,6 +1016,45 @@ public interface ApiService {
     );
     
     /**
+     * Lấy kết quả thách đấu
+     * GET /api/challenges/{challengeId}/result?childId={childId}
+     */
+    @GET("challenges/{challengeId}/result")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeResultResponse>> getChallengeResult(
+            @Path("challengeId") String challengeId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy trạng thái thách đấu real-time (để đợi cả 2 người hoàn thành)
+     * GET /api/challenges/{challengeId}/status?childId={childId}
+     */
+    @GET("challenges/{challengeId}/status")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeGameResponse>> getChallengeStatus(
+            @Path("challengeId") String challengeId,
+            @Query("childId") String childId
+    );
+
+    /**
+     * Lấy câu hỏi cho thách đấu
+     * GET /api/challenges/{challengeId}/questions
+     */
+    @GET("challenges/{challengeId}/questions")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.response.QuestionResponse>>> getChallengeQuestions(
+            @Path("challengeId") String challengeId
+    );
+    
+    /**
+     * Gửi câu trả lời
+     * POST /api/challenges/{challengeId}/answer
+     */
+    @POST("challenges/{challengeId}/answer")
+    Call<ApiResponseWrapper<String>> submitAnswer(
+            @Path("challengeId") String challengeId,
+            @Body com.kidsapp.data.request.SubmitAnswerRequest request
+    );
+    
+    /**
      * Từ chối lời mời
      * POST /api/challenges/invites/{inviteId}/decline?childId={childId}
      */
@@ -1011,4 +1063,103 @@ public interface ApiService {
             @Path("inviteId") String inviteId,
             @Query("childId") String childId
     );
+    
+    /**
+     * Lấy chi tiết lời mời
+     * GET /api/challenges/invites/{inviteId}
+     */
+    @GET("challenges/invites/{inviteId}")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeInviteResponse>> getInviteDetail(
+            @Path("inviteId") String inviteId
+    );
+    
+    /**
+     * Lấy thông tin challenge để tham gia
+     * GET /api/challenges/{challengeId}/join?childId={childId}
+     */
+    @GET("challenges/{challengeId}/join")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> getChallengeForParticipant(
+            @Path("challengeId") String challengeId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Lấy danh sách challenge đang active
+     * GET /api/challenges/active?childId={childId}
+     */
+    @GET("challenges/active")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.response.ChallengeResponse>>> getActiveChallenges(
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Tham gia challenge đang active
+     * POST /api/challenges/{challengeId}/join?childId={childId}
+     */
+    @POST("challenges/{challengeId}/join")
+    Call<ApiResponseWrapper<com.kidsapp.data.response.ChallengeResponse>> joinActiveChallenge(
+            @Path("challengeId") String challengeId,
+            @Query("childId") String childId
+    );
+    
+    /**
+     * Hủy challenge
+     * DELETE /api/challenges/{challengeId}?creatorId={creatorId}
+     */
+    @DELETE("challenges/{challengeId}")
+    Call<ApiResponseWrapper<String>> cancelChallenge(
+            @Path("challengeId") String challengeId,
+            @Query("creatorId") String creatorId
+    );
+    
+    // ==================== LEADERBOARD RESPONSE ====================
+    
+    /**
+     * Response class for leaderboard data
+     */
+    class LeaderboardResponse {
+        public String childId;
+        public String childName;
+        public String avatarUrl;
+        public Integer rank;
+        public Integer totalXp;
+        public Integer totalWins;
+        public Integer totalChallenges;
+        public Double winRate;
+        public Integer currentStreak;
+        public Integer longestStreak;
+        public Boolean isCurrentUser;
+        
+        // Additional fields for compatibility
+        public String rankDisplay;
+        public String childAvatar;
+        public Integer childLevel;
+        public Integer exercisesCompleted;
+        public Integer challengesWon;
+        
+        public LeaderboardResponse() {}
+        
+        public LeaderboardResponse(String childId, String childName, String avatarUrl, 
+                                 Integer rank, Integer totalXp, Integer totalWins, 
+                                 Integer totalChallenges, Double winRate, 
+                                 Integer currentStreak, Integer longestStreak, 
+                                 Boolean isCurrentUser) {
+            this.childId = childId;
+            this.childName = childName;
+            this.avatarUrl = avatarUrl;
+            this.childAvatar = avatarUrl; // Alias
+            this.rank = rank;
+            this.rankDisplay = "#" + rank; // Auto-generate
+            this.totalXp = totalXp;
+            this.totalWins = totalWins;
+            this.challengesWon = totalWins; // Alias
+            this.totalChallenges = totalChallenges;
+            this.winRate = winRate;
+            this.currentStreak = currentStreak;
+            this.longestStreak = longestStreak;
+            this.isCurrentUser = isCurrentUser;
+            this.childLevel = (totalXp != null) ? (totalXp / 100) + 1 : 1; // Calculate level
+            this.exercisesCompleted = totalChallenges; // Alias for now
+        }
+    }
 }

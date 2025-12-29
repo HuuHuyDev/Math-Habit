@@ -233,4 +233,14 @@
     <string name="matching_info">Hệ thống sẽ tìm đối thủ có cùng chủ đề và độ khó với bạn</string>
     <string name="category_icon">Icon chủ đề</string>
 
+    <!-- Quiz Battle -->
+    <string name="loading_questions">🔄 Đang tải câu hỏi...</string>
+    <string name="connecting_server">Đang kết nối server...</string>
+    <string name="no_questions_error">❌ Không có câu hỏi cho challenge này</string>
+    <string name="waiting_for_opponent">🎉 Bạn đã hoàn thành!\n\n⏳ Đang đợi đối thủ...</string>
+    <string name="connection_error_retry">Lỗi kết nối, đang thử lại...</string>
+    <string name="answer_submitted">Đã gửi ✓</string>
+    <string name="next_question">Câu tiếp theo</string>
+    <string name="battle_finished_waiting">🎉 Bạn đã hoàn thành! Đang đợi đối thủ...</string>
+
 </resources>

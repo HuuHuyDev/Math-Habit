@@ -120,7 +120,7 @@ public class QuickMatchFragment extends Fragment {
         try {
             String childId = sharedPref.getChildId();
             
-            android.util.Log.d("QuickMatchFragment", "=== joinQueue START ===");
+            android.util.Log.d("QuickMatchFragment", "=== RACE CONDITION FIX: joinQueue START ===");
             android.util.Log.d("QuickMatchFragment", "childId: " + (childId != null ? childId : "NULL"));
             android.util.Log.d("QuickMatchFragment", "categoryId: " + (categoryId != null ? categoryId : "NULL"));
             android.util.Log.d("QuickMatchFragment", "categoryName: " + (categoryName != null ? categoryName : "NULL"));
@@ -140,13 +140,13 @@ public class QuickMatchFragment extends Fragment {
                 return;
             }
             
-            android.util.Log.d("QuickMatchFragment", "Calling repository.joinQuickMatch...");
+            android.util.Log.d("QuickMatchFragment", "RACE CONDITION FIX: Calling repository.joinQuickMatch...");
             
             repository.joinQuickMatch(childId, categoryId, difficultyLevel, 
                 new ChallengeRepository.ResultCallback<MatchFoundResponse>() {
                     @Override
                     public void onSuccess(MatchFoundResponse response) {
-                        android.util.Log.d("QuickMatchFragment", "=== joinQuickMatch SUCCESS ===");
+                        android.util.Log.d("QuickMatchFragment", "=== RACE CONDITION FIX: joinQuickMatch SUCCESS ===");
                         android.util.Log.d("QuickMatchFragment", "Response: " + (response != null ? response.toString() : "NULL"));
                         
                         if (response == null) {
@@ -156,22 +156,22 @@ public class QuickMatchFragment extends Fragment {
                             return;
                         }
                         
-                        android.util.Log.d("QuickMatchFragment", "isMatched: " + response.isMatched());
+                        android.util.Log.d("QuickMatchFragment", "RACE CONDITION FIX: isMatched: " + response.isMatched());
                         
                         if (response.isMatched()) {
                             // Đã tìm thấy đối thủ ngay
-                            android.util.Log.d("QuickMatchFragment", "Match found immediately!");
+                            android.util.Log.d("QuickMatchFragment", "RACE CONDITION FIX: Match found immediately!");
                             onMatchFound(response);
                         } else {
-                            // Chưa tìm thấy, bắt đầu polling
-                            android.util.Log.d("QuickMatchFragment", "Not matched yet, starting polling...");
+                            // Chưa tìm thấy, bắt đầu polling với tần suất cao hơn
+                            android.util.Log.d("QuickMatchFragment", "RACE CONDITION FIX: Not matched yet, starting fast polling...");
                             startPolling();
                         }
                     }
 
                     @Override
                     public void onError(String error) {
-                        android.util.Log.e("QuickMatchFragment", "=== joinQuickMatch ERROR ===");
+                        android.util.Log.e("QuickMatchFragment", "=== RACE CONDITION FIX: joinQuickMatch ERROR ===");
                         android.util.Log.e("QuickMatchFragment", "Error: " + error);
                         Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
                         requireActivity().onBackPressed();
@@ -192,6 +192,8 @@ public class QuickMatchFragment extends Fragment {
         if (isPolling) return;
         
         isPolling = true;
+        android.util.Log.d("QuickMatchFragment", "Starting polling...");
+        
         pollingRunnable = new Runnable() {
             @Override
             public void run() {
@@ -200,22 +202,53 @@ public class QuickMatchFragment extends Fragment {
                 String childId = sharedPref.getChildId();
                 if (childId == null) return;
                 
+                android.util.Log.d("QuickMatchFragment", "Polling queue status...");
+                
                 repository.getQueueStatus(childId, new ChallengeRepository.ResultCallback<QueueResponse>() {
                     @Override
                     public void onSuccess(QueueResponse response) {
+                        android.util.Log.d("QuickMatchFragment", "Queue status response: " + 
+                                          (response != null ? response.toString() : "NULL"));
+                        
                         if (response == null) {
-                            // Không còn trong queue
-                            stopPolling();
+                            // Không còn trong queue - có thể đã được matched, kiểm tra challenge
+                            android.util.Log.d("QuickMatchFragment", "No queue found - checking for active challenge...");
+                            checkForActiveChallenge();
                             return;
                         }
                         
-                        if ("MATCHED".equals(response.getStatus())) {
-                            // Đã tìm thấy đối thủ
+                        String status = response.getStatus();
+                        android.util.Log.d("QuickMatchFragment", "Queue status: " + status);
+                        
+                        if ("MATCHED".equals(status)) {
+                            // Đã tìm thấy đối thủ!
+                            android.util.Log.d("QuickMatchFragment", "MATCHED status detected!");
                             stopPolling();
-                            // Gọi lại API để lấy thông tin match
-                            joinQueue();
-                        } else if ("EXPIRED".equals(response.getStatus())) {
+                            
+                            if (response.getChallengeId() != null) {
+                                // Có thông tin challenge, tạo MatchFoundResponse
+                                MatchFoundResponse matchResponse = MatchFoundResponse.builder()
+                                        .matched(true)
+                                        .challengeId(response.getChallengeId())
+                                        .opponentName(response.getOpponentName() != null ? response.getOpponentName() : "Đối thủ")
+                                        .categoryName(categoryName)
+                                        .difficultyLevel(difficultyLevel)
+                                        .totalQuestions(10)
+                                        .timeLimitMinutes(10)
+                                        .message("Đã tìm thấy đối thủ!")
+                                        .build();
+                                
+                                onMatchFound(matchResponse);
+                            } else {
+                                // Không có challenge info, thử lại polling nhanh hơn
+                                android.util.Log.d("QuickMatchFragment", "No challenge info yet, polling faster...");
+                                if (isPolling) {
+                                    handler.postDelayed(pollingRunnable, 500); // Poll nhanh hơn khi đã matched
+                                }
+                            }
+                        } else if ("EXPIRED".equals(status)) {
                             // Hết thời gian chờ
+                            android.util.Log.d("QuickMatchFragment", "Queue expired");
                             stopPolling();
                             Toast.makeText(requireContext(), 
                                 "Không tìm thấy đối thủ. Vui lòng thử lại!", 
@@ -223,24 +256,72 @@ public class QuickMatchFragment extends Fragment {
                             requireActivity().onBackPressed();
                         } else {
                             // Vẫn đang chờ, tiếp tục polling
+                            android.util.Log.d("QuickMatchFragment", "Still waiting, continue polling...");
                             if (isPolling) {
-                                handler.postDelayed(pollingRunnable, 2000); // Poll mỗi 2 giây
+                                handler.postDelayed(pollingRunnable, 1000); // Poll mỗi 1 giây để responsive hơn
                             }
                         }
                     }
 
                     @Override
                     public void onError(String error) {
-                        // Lỗi khi poll, thử lại sau
+                        android.util.Log.e("QuickMatchFragment", "Polling error: " + error);
+                        // Lỗi khi poll, thử lại sau với interval ngắn hơn
                         if (isPolling) {
-                            handler.postDelayed(pollingRunnable, 2000);
+                            handler.postDelayed(pollingRunnable, 1500);
                         }
                     }
                 });
             }
         };
         
-        handler.postDelayed(pollingRunnable, 2000); // Bắt đầu poll sau 2 giây
+        handler.postDelayed(pollingRunnable, 1000); // Bắt đầu poll sau 1 giây
+    }
+    
+    /**
+     * Kiểm tra xem có challenge active không (khi không tìm thấy queue)
+     */
+    private void checkForActiveChallenge() {
+        android.util.Log.d("QuickMatchFragment", "Checking for active challenges...");
+        
+        repository.getActiveChallenges(new ChallengeRepository.ResultCallback<java.util.List<com.kidsapp.data.response.ChallengeResponse>>() {
+            @Override
+            public void onSuccess(java.util.List<com.kidsapp.data.response.ChallengeResponse> challenges) {
+                android.util.Log.d("QuickMatchFragment", "Active challenges: " + 
+                                  (challenges != null ? challenges.size() : 0));
+                
+                if (challenges != null && !challenges.isEmpty()) {
+                    // Có challenge active, vào luôn
+                    com.kidsapp.data.response.ChallengeResponse challenge = challenges.get(0);
+                    
+                    MatchFoundResponse matchResponse = MatchFoundResponse.builder()
+                            .matched(true)
+                            .challengeId(challenge.getId())
+                            .opponentName("Đối thủ")
+                            .categoryName(categoryName)
+                            .difficultyLevel(difficultyLevel)
+                            .totalQuestions(10)
+                            .timeLimitMinutes(10)
+                            .message("Đã tìm thấy đối thủ!")
+                            .build();
+                    
+                    stopPolling();
+                    onMatchFound(matchResponse);
+                } else {
+                    // Không có challenge, thử gọi lại joinQueue để refresh
+                    android.util.Log.d("QuickMatchFragment", "No active challenge, trying joinQueue again...");
+                    joinQueue();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                android.util.Log.e("QuickMatchFragment", "Error checking active challenges: " + error);
+                // Lỗi khi check challenge, thử lại joinQueue
+                android.util.Log.d("QuickMatchFragment", "Retrying joinQueue due to error...");
+                joinQueue();
+            }
+        });
     }
     
     /**

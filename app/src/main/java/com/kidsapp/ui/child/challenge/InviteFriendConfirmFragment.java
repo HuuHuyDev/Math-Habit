@@ -125,41 +125,56 @@ public class InviteFriendConfirmFragment extends Fragment {
         
         showLoading(true);
         
-        repository.createChallengeAndInvite(
-            friendId, 
-            categoryId, 
-            categoryName, 
-            1, // Mặc định difficulty = 1 (không quan trọng)
-            new ChallengeRepository.ResultCallback<String>() {
-                @Override
-                public void onSuccess(String challengeId) {
-                    android.util.Log.d("InviteFriendConfirm", "=== createChallengeAndInvite SUCCESS ===");
-                    android.util.Log.d("InviteFriendConfirm", "challengeId: " + challengeId);
-                    
-                    showLoading(false);
-                    
-                    Toast.makeText(requireContext(), 
-                        "Đã gửi lời mời thành công!", 
-                        Toast.LENGTH_SHORT).show();
-                    
-                    // Navigate back to ChallengeHomeFragment
-                    android.util.Log.d("InviteFriendConfirm", "Popping back stack...");
-                    requireActivity().getSupportFragmentManager().popBackStack(null, 
-                        androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
+        // Bước 1: Tạo Challenge
+        repository.createChallenge(categoryId, categoryName, new ChallengeRepository.ResultCallback<String>() {
+            @Override
+            public void onSuccess(String challengeId) {
+                android.util.Log.d("InviteFriendConfirm", "=== createChallenge SUCCESS ===");
+                android.util.Log.d("InviteFriendConfirm", "challengeId: " + challengeId);
+                
+                // Bước 2: Mời bạn
+                repository.inviteChild(challengeId, friendId, new ChallengeRepository.ResultCallback<String>() {
+                    @Override
+                    public void onSuccess(String message) {
+                        android.util.Log.d("InviteFriendConfirm", "=== inviteChild SUCCESS ===");
+                        android.util.Log.d("InviteFriendConfirm", "message: " + message);
+                        
+                        showLoading(false);
+                        
+                        Toast.makeText(requireContext(), 
+                            "Đã gửi lời mời thành công!", 
+                            Toast.LENGTH_SHORT).show();
+                        
+                        // Navigate back to ChallengeHomeFragment
+                        android.util.Log.d("InviteFriendConfirm", "Popping back stack...");
+                        requireActivity().getSupportFragmentManager().popBackStack(null, 
+                            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
 
-                @Override
-                public void onError(String error) {
-                    android.util.Log.e("InviteFriendConfirm", "=== createChallengeAndInvite ERROR ===");
-                    android.util.Log.e("InviteFriendConfirm", "Error: " + error);
-                    
-                    showLoading(false);
-                    Toast.makeText(requireContext(), 
-                        "Lỗi: " + error, 
-                        Toast.LENGTH_SHORT).show();
-                }
+                    @Override
+                    public void onError(String error) {
+                        android.util.Log.e("InviteFriendConfirm", "=== inviteChild ERROR ===");
+                        android.util.Log.e("InviteFriendConfirm", "Error: " + error);
+                        
+                        showLoading(false);
+                        Toast.makeText(requireContext(), 
+                            "Lỗi gửi lời mời: " + error, 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        );
+
+            @Override
+            public void onError(String error) {
+                android.util.Log.e("InviteFriendConfirm", "=== createChallenge ERROR ===");
+                android.util.Log.e("InviteFriendConfirm", "Error: " + error);
+                
+                showLoading(false);
+                Toast.makeText(requireContext(), 
+                    "Lỗi tạo thách đấu: " + error, 
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showLoading(boolean show) {

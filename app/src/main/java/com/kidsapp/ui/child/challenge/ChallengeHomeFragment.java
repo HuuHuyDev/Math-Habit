@@ -86,6 +86,16 @@ public class ChallengeHomeFragment extends Fragment {
             navigateToFragment(fragment);
         });
 
+        // Invites - Lời mời thách đấu
+        binding.cardInvites.setOnClickListener(v -> {
+            navigateToFragment(new ChallengeInvitesFragment());
+        });
+
+        // Active Challenges - Thách đấu đang diễn ra
+        binding.cardActiveChallenges.setOnClickListener(v -> {
+            navigateToFragment(new ActiveChallengesFragment());
+        });
+
         // Join by Code - Tham gia bằng mã
         binding.cardJoinByCode.setOnClickListener(v -> {
             showJoinByCodeDialog();

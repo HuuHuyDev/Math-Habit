@@ -1,72 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardUseCompatPadding="true">
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
+        android:id="@+id/layoutItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_leaderboard_item">
 
-        <!-- Rank Badge -->
+        <!-- Rank -->
         <TextView
-            android:id="@+id/txtRank"
+            android:id="@+id/textRank"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/bg_round_20"
-            android:backgroundTint="@color/primary"
-            android:gravity="center"
-            android:text="1"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
+            android:text="#1"
+            android:textColor="@color/white"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:fontFamily="@font/inter_bold" />
+            android:gravity="center"
+            android:background="@drawable/bg_rank_default"
+            tools:background="@drawable/bg_rank_gold" />
+
+        <!-- Badge -->
+        <TextView
+            android:id="@+id/textBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🥇"
+            android:textSize="20sp"
+            android:layout_marginStart="8dp"
+            android:visibility="visible"
+            tools:visibility="visible" />
 
         <!-- Avatar -->
         <ImageView
-            android:id="@+id/imgAvatar"
+            android:id="@+id/imageAvatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="12dp"
-            android:src="@drawable/ic_child_avatar" />
+            android:src="@drawable/ic_child_avatar"
+            android:background="@drawable/bg_avatar_circle"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="12dp" />
 
-        <!-- Name and Stats -->
+        <!-- User Info -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
 
             <TextView
-                android:id="@+id/txtPlayerName"
+                android:id="@+id/textName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Người chơi"
+                android:text="Nguyễn Văn A"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_bold" />
+                tools:text="Nguyễn Văn A" />
 
             <TextView
-                android:id="@+id/txtWinRate"
+                android:id="@+id/textLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tỷ lệ thắng: 75%"
+                android:text="Level 5"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
-                android:fontFamily="@font/inter_regular" />
+                android:layout_marginTop="2dp"
+                tools:text="Level 5" />
+
+            <TextView
+                android:id="@+id/textStats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15 bài • 8 thắng"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                tools:text="15 bài • 8 thắng" />
+
         </LinearLayout>
 
-        <!-- Score -->
+        <!-- XP Score -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,24 +99,17 @@
             android:gravity="end">
 
             <TextView
-                android:id="@+id/txtScore"
+                android:id="@+id/textXp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1250"
+                android:text="1250 XP"
                 android:textColor="@color/primary"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_bold" />
+                tools:text="1250 XP" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="điểm"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:fontFamily="@font/inter_regular" />
         </LinearLayout>
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

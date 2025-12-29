@@ -1,38 +1,49 @@
 package com.kidsapp.data.request;
 
-import com.google.gson.annotations.SerializedName;
-import java.util.List;
-
-/**
- * Request để submit bài làm
- */
 public class SubmitAnswerRequest {
+    private String childId;
+    private String questionId;
+    private int selectedAnswer; // 1-based index
+    private long timeSpent; // milliseconds
     
-    @SerializedName("exerciseId")
-    private String exerciseId;
+    public SubmitAnswerRequest() {}
     
-    @SerializedName("answers")
-    private List<QuestionAnswer> answers;
-    
-    @SerializedName("timeSpentSeconds")
-    private Integer timeSpentSeconds;
-
-    public SubmitAnswerRequest(String exerciseId, List<QuestionAnswer> answers, Integer timeSpentSeconds) {
-        this.exerciseId = exerciseId;
-        this.answers = answers;
-        this.timeSpentSeconds = timeSpentSeconds;
+    public SubmitAnswerRequest(String childId, String questionId, int selectedAnswer, long timeSpent) {
+        this.childId = childId;
+        this.questionId = questionId;
+        this.selectedAnswer = selectedAnswer;
+        this.timeSpent = timeSpent;
     }
-
-    public static class QuestionAnswer {
-        @SerializedName("questionId")
-        private String questionId;
-        
-        @SerializedName("selectedOptionId")
-        private String selectedOptionId;
-
-        public QuestionAnswer(String questionId, String selectedOptionId) {
-            this.questionId = questionId;
-            this.selectedOptionId = selectedOptionId;
-        }
+    
+    public String getChildId() {
+        return childId;
+    }
+    
+    public void setChildId(String childId) {
+        this.childId = childId;
+    }
+    
+    public String getQuestionId() {
+        return questionId;
+    }
+    
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
+    }
+    
+    public int getSelectedAnswer() {
+        return selectedAnswer;
+    }
+    
+    public void setSelectedAnswer(int selectedAnswer) {
+        this.selectedAnswer = selectedAnswer;
+    }
+    
+    public long getTimeSpent() {
+        return timeSpent;
+    }
+    
+    public void setTimeSpent(long timeSpent) {
+        this.timeSpent = timeSpent;
     }
 }
