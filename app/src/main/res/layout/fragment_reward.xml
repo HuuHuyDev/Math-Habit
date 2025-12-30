@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_bold"
-                android:text="4"
+                android:text="0"
                 android:textColor="@color/primary"
                 android:textSize="28sp" />
 
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_bold"
-                android:text="2"
+                android:text="0"
                 android:textColor="@color/coin_orange"
                 android:textSize="28sp" />
 
@@ -124,7 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_bold"
-                android:text="6"
+                android:text="0"
                 android:textColor="@color/text_tertiary"
                 android:textSize="28sp" />
 
@@ -155,6 +155,7 @@
 
             <!-- Thành tựu đã đạt -->
             <LinearLayout
+                android:id="@+id/sectionEarned"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -171,109 +172,29 @@
                     android:textColor="@color/text_primary"
                     android:textSize="16sp" />
 
-                <!-- Achievement Grid -->
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvEmptyEarned"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                    android:gravity="center"
+                    android:text="Chưa có thành tựu nào"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
 
-                    <!-- Achievement 1 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/bg_achievement_gold">
-
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_calendar"
-                                app:tint="#FFD700" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:gravity="center"
-                            android:text="Tiến độ\nhằng tuần"
-                            android:textColor="@color/text_primary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:background="@drawable/bg_status_owned"
-                            android:fontFamily="@font/inter_medium"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="2dp"
-                            android:text="✓ Đạt"
-                            android:textColor="@android:color/white"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <!-- Achievement 2 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/bg_achievement_green">
-
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_star_filled"
-                                app:tint="#4CAF50" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:gravity="center"
-                            android:text="Học sinh\nchăm chỉ"
-                            android:textColor="@color/text_primary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:background="@drawable/bg_status_owned"
-                            android:fontFamily="@font/inter_medium"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="2dp"
-                            android:text="✓ Đạt"
-                            android:textColor="@android:color/white"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvEarnedBadges"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
 
             <!-- Đang tiến hành -->
             <LinearLayout
+                android:id="@+id/sectionInProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -291,121 +212,29 @@
                     android:textColor="@color/text_primary"
                     android:textSize="16sp" />
 
-                <!-- Achievement Grid -->
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvEmptyInProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                    android:gravity="center"
+                    android:text="Không có thành tựu đang tiến hành"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
 
-                    <!-- Achievement 3 - In Progress -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/bg_achievement_orange">
-
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_fire"
-                                app:tint="#FF5722" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:gravity="center"
-                            android:text="Chuỗi\nkỳ cựu"
-                            android:textColor="@color/text_primary"
-                            android:textSize="11sp" />
-
-                        <com.google.android.material.progressindicator.LinearProgressIndicator
-                            android:layout_width="60dp"
-                            android:layout_height="6dp"
-                            android:layout_marginTop="4dp"
-                            android:progress="60"
-                            app:indicatorColor="@color/coin_orange"
-                            app:trackColor="#FFE5CC"
-                            app:trackCornerRadius="3dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="18/30 ngày"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <!-- Achievement 4 - In Progress -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/bg_achievement_blue">
-
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_target"
-                                app:tint="@color/primary" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:gravity="center"
-                            android:text="Thử thách\nphép cộng"
-                            android:textColor="@color/text_primary"
-                            android:textSize="11sp" />
-
-                        <com.google.android.material.progressindicator.LinearProgressIndicator
-                            android:layout_width="60dp"
-                            android:layout_height="6dp"
-                            android:layout_marginTop="4dp"
-                            android:progress="35"
-                            app:indicatorColor="@color/primary"
-                            app:trackColor="#E3F2FD"
-                            app:trackCornerRadius="3dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="7/20 bài"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvInProgressBadges"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
 
             <!-- Chưa mở khóa -->
             <LinearLayout
+                android:id="@+id/sectionLocked"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -423,98 +252,23 @@
                     android:textColor="@color/text_primary"
                     android:textSize="16sp" />
 
-                <!-- Achievement Grid -->
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvEmptyLocked"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                    android:gravity="center"
+                    android:text="Tất cả thành tựu đã mở khóa!"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
 
-                    <!-- Locked Achievement 1 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/bg_achievement_locked">
-
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_lock"
-                                app:tint="@color/text_tertiary" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:gravity="center"
-                            android:text="Bậc thầy\nphép trừ"
-                            android:textColor="@color/text_tertiary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="Đạt level 15"
-                            android:textColor="@color/text_tertiary"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <!-- Locked Achievement 2 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/bg_achievement_locked">
-
-                            <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_lock"
-                                app:tint="@color/text_tertiary" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:gravity="center"
-                            android:text="Siêu sao\ntoán học"
-                            android:textColor="@color/text_tertiary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="Đạt level 20"
-                            android:textColor="@color/text_tertiary"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLockedBadges"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
 

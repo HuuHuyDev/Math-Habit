@@ -162,85 +162,170 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- MỤC TIÊU HÔM NAY -->
+            <!-- MỤC TIÊU HÔM NAY - Redesigned -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTodayGoal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
+                app:cardElevation="4dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_gradient_blue_cyan"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <FrameLayout
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/bg_action_circle_blue">
+                    <!-- Header row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_gravity="center"
                             android:src="@drawable/ic_target"
                             app:tint="@android:color/white" />
-                    </FrameLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="@string/child_today_goal"
+                            android:textColor="@android:color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/txtGoalPercent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical">
+                            android:text="0%"
+                            android:textColor="@android:color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Progress bar -->
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/progressTodayGoal"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="12dp"
+                        android:progress="0"
+                        app:indicatorColor="@android:color/white"
+                        app:trackColor="#4DFFFFFF"
+                        app:trackCornerRadius="6dp" />
+
+                    <!-- Stats row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <!-- Tasks completed -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/txtTasksCompleted"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0/5"
+                                android:textColor="@android:color/white"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/child_today_goal"
-                                android:textColor="@color/text_primary"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginStart="4dp"
-                                android:src="@drawable/ic_fire"
-                                app:tint="@color/coin_orange" />
+                                android:text="Nhiệm vụ"
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtTasksInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:drawableStart="@drawable/ic_dot_blue"
-                            android:drawablePadding="6dp"
-                            android:text="Hoàn thành 2/5 nhiệm vụ"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="13sp" />
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="40dp"
+                            android:background="#4DFFFFFF" />
 
-                        <TextView
-                            android:id="@+id/txtXpInfo"
-                            android:layout_width="wrap_content"
+                        <!-- XP earned today -->
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:drawableStart="@drawable/ic_dot_blue"
-                            android:drawablePadding="6dp"
-                            android:text="Nhận 50 XP"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="13sp" />
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/txtXpEarnedToday"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="@android:color/white"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="XP hôm nay"
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="40dp"
+                            android:background="#4DFFFFFF" />
+
+                        <!-- Streak -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/txtStreak"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="2dp"
+                                    android:src="@drawable/ic_fire"
+                                    app:tint="@color/coin_orange" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Streak"
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

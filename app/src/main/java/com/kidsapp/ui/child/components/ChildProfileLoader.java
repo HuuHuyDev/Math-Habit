@@ -81,12 +81,13 @@ public class ChildProfileLoader {
         String displayName = child.getDisplayName();
         headerView.setUserName(displayName);
         
-        // TODO: Load avatar từ URL nếu có
-        // if (child.getAvatarUrl() != null && !child.getAvatarUrl().isEmpty()) {
-        //     headerView.setAvatarUrl(child.getAvatarUrl());
-        // } else {
+        // Load avatar từ URL hoặc drawable name
+        String avatarUrl = child.getAvatarUrl();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            headerView.setAvatarUrl(avatarUrl);
+        } else {
             headerView.setAvatar(R.drawable.ic_child_face);
-        // }
+        }
     }
     
     /**

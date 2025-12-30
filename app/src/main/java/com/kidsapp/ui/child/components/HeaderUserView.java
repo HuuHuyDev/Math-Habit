@@ -66,13 +66,32 @@ public class HeaderUserView extends LinearLayout {
     }
     
     /**
-     * Set avatar từ URL (dùng Glide hoặc Picasso)
+     * Set avatar từ URL hoặc drawable name
      */
     public void setAvatarUrl(String url) {
-        // TODO: Implement với Glide
-        // if (url != null && !url.isEmpty()) {
-        //     Glide.with(getContext()).load(url).into(imgAvatar);
-        // }
+        if (url == null || url.isEmpty()) {
+            imgAvatar.setImageResource(R.drawable.ic_child_face);
+            return;
+        }
+        
+        if (url.startsWith("http")) {
+            // Load từ URL
+            com.bumptech.glide.Glide.with(getContext())
+                    .load(url)
+                    .placeholder(R.drawable.ic_child_face)
+                    .error(R.drawable.ic_child_face)
+                    .circleCrop()
+                    .into(imgAvatar);
+        } else {
+            // Load từ drawable name (vd: ic_avatar_boy)
+            int resId = getContext().getResources().getIdentifier(
+                    url, "drawable", getContext().getPackageName());
+            if (resId != 0) {
+                imgAvatar.setImageResource(resId);
+            } else {
+                imgAvatar.setImageResource(R.drawable.ic_child_face);
+            }
+        }
     }
 
     /**

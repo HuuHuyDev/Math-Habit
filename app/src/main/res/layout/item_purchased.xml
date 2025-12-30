@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Item Image -->
+        <ImageView
+            android:id="@+id/imgItem"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_avatar_default" />
+
+        <!-- Item Name -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="Avatar"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp" />
+
+        <!-- Status Badge -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="Đang dùng"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,6 +1,5 @@
 package com.kidsapp.ui.child.shop;
 
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,22 +17,37 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.kidsapp.R;
+import com.kidsapp.data.api.ApiService;
+import com.kidsapp.data.api.RetrofitClient;
+import com.kidsapp.data.local.SharedPref;
+import com.kidsapp.data.model.PurchasedItem;
 import com.kidsapp.data.model.ShopItem;
+import com.kidsapp.data.repository.ShopRepository;
 import com.kidsapp.databinding.FragmentShopBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
- * Shop Fragment - Mua vật phẩm (Skin)
+ * Shop Fragment - Mua vật phẩm (Avatar & Booster)
  */
 public class ShopFragment extends Fragment {
     private FragmentShopBinding binding;
-    private List<ShopItem> shopItems = new ArrayList<>();
+    private ShopRepository shopRepository;
+    private SharedPref sharedPref;
+    private ApiService apiService;
+
+    private List<ShopItem> avatarItems = new ArrayList<>();
+    private List<ShopItem> boosterItems = new ArrayList<>();
     private ShopItem selectedItem = null;
-    private int currentCoins = 1250;
-    private SharedPreferences sharedPreferences;
+    private String childId;
+    private int currentCoins = 0;
 
     @Nullable
     @Override
@@ -47,31 +61,45 @@ public class ShopFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        sharedPreferences = requireContext().getSharedPreferences("KidsAppPrefs", 0);
-        loadCoins();
-        initShopItems();
-        updateCoinsDisplay();
+        sharedPref = new SharedPref(requireContext());
+        shopRepository = new ShopRepository(requireContext());
+        apiService = RetrofitClient.getInstance(sharedPref).getApiService();
+
+        // Lấy childId
+        childId = sharedPref.getChildId();
+        if (childId == null || childId.isEmpty()) {
+            childId = sharedPref.getUserId();
+        }
+
         setupBackButton();
         setupBuyButton();
-        setupShopGrid();
+        loadChildInfo();
+        loadShopItems();
     }
 
-    private void loadCoins() {
-        currentCoins = sharedPreferences.getInt("child_coins", 1250);
-    }
+    private void loadChildInfo() {
+        // Gọi API để lấy thông tin child (coins, xp)
+        apiService.getMyProfile().enqueue(new Callback<ApiService.ApiResponseWrapper<com.kidsapp.data.model.Child>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<com.kidsapp.data.model.Child>> call,
+                                   @NonNull Response<ApiService.ApiResponseWrapper<com.kidsapp.data.model.Child>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    com.kidsapp.data.model.Child child = response.body().data;
+                    currentCoins = child.getCoins();
+                    int xp = child.getTotalXp();
 
-    private void saveCoins() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("child_coins", currentCoins);
-        editor.apply();
-    }
+                    updateCoinsDisplay();
+                    binding.tvXpAmount.setText(String.format("%,d", xp));
+                }
+            }
 
-    private void initShopItems() {
-        shopItems.clear();
-        shopItems.add(new ShopItem(1, "Mèo\nTinh nghịch", 500, R.drawable.ic_pet_cat));
-        shopItems.add(new ShopItem(2, "Thỏ\nNhanh nhẹn", 600, R.drawable.ic_pet_rabbit));
-        shopItems.add(new ShopItem(3, "Gấu trúc\nĐáng yêu", 750, R.drawable.ic_pet_panda));
-        shopItems.add(new ShopItem(4, "Chó\nTrung thành", 900, R.drawable.ic_pet_dog));
+            @Override
+            public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<com.kidsapp.data.model.Child>> call,
+                                  @NonNull Throwable t) {
+                // Fallback to 0
+                updateCoinsDisplay();
+            }
+        });
     }
 
     private void updateCoinsDisplay() {
@@ -79,9 +107,9 @@ public class ShopFragment extends Fragment {
     }
 
     private void setupBackButton() {
-        binding.btnBackShop.setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager().popBackStack();
-        });
+        binding.btnBackShop.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().popBackStack()
+        );
     }
 
     private void setupBuyButton() {
@@ -105,13 +133,49 @@ public class ShopFragment extends Fragment {
         });
     }
 
-    private void setupShopGrid() {
-        GridLayout gridLayout = binding.gridSkins;
-        gridLayout.removeAllViews();
+    private void loadShopItems() {
+        // Load avatars
+        shopRepository.getShopItems(childId, "AVATAR").observe(getViewLifecycleOwner(), items -> {
+            avatarItems.clear();
+            if (items != null && !items.isEmpty()) {
+                avatarItems.addAll(items);
+                binding.tvEmptyAvatars.setVisibility(View.GONE);
+                binding.gridSkins.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvEmptyAvatars.setVisibility(View.VISIBLE);
+                binding.gridSkins.setVisibility(View.GONE);
+            }
+            setupAvatarGrid();
+        });
 
-        for (ShopItem item : shopItems) {
+        // Load boosters
+        shopRepository.getShopItems(childId, "BOOSTER").observe(getViewLifecycleOwner(), items -> {
+            boosterItems.clear();
+            if (items != null && !items.isEmpty()) {
+                boosterItems.addAll(items);
+                binding.tvEmptyBoosters.setVisibility(View.GONE);
+                binding.gridBoosters.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvEmptyBoosters.setVisibility(View.VISIBLE);
+                binding.gridBoosters.setVisibility(View.GONE);
+            }
+            setupBoosterGrid();
+        });
+    }
+
+    private void setupAvatarGrid() {
+        binding.gridSkins.removeAllViews();
+        for (ShopItem item : avatarItems) {
             View itemView = createShopItemView(item);
-            gridLayout.addView(itemView);
+            binding.gridSkins.addView(itemView);
+        }
+    }
+
+    private void setupBoosterGrid() {
+        binding.gridBoosters.removeAllViews();
+        for (ShopItem item : boosterItems) {
+            View itemView = createShopItemView(item);
+            binding.gridBoosters.addView(itemView);
         }
     }
 
@@ -128,20 +192,43 @@ public class ShopFragment extends Fragment {
         container.setPadding(padding, padding, padding, padding);
 
         if (item.isSelected()) {
-            container.setBackgroundResource(R.drawable.bg_round_20);
             container.setBackgroundResource(R.drawable.bg_action_blue);
         }
 
+        // Image
         ImageView imageView = new ImageView(requireContext());
         LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(
-                (int) (150 * getResources().getDisplayMetrics().density),
-                (int) (150 * getResources().getDisplayMetrics().density)
+                (int) (80 * getResources().getDisplayMetrics().density),
+                (int) (80 * getResources().getDisplayMetrics().density)
         );
         imageView.setLayoutParams(imgParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        imageView.setImageResource(item.getImageRes());
+
+        // Load image - hỗ trợ cả URL và drawable name
+        String imageUrl = item.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (imageUrl.startsWith("http")) {
+                // Load từ URL
+                Glide.with(this)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.ic_avatar_default)
+                        .error(R.drawable.ic_avatar_default)
+                        .into(imageView);
+            } else {
+                // Load từ drawable name (vd: ic_avatar_boy)
+                int resId = getResources().getIdentifier(imageUrl, "drawable", requireContext().getPackageName());
+                if (resId != 0) {
+                    imageView.setImageResource(resId);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_avatar_default);
+                }
+            }
+        } else {
+            imageView.setImageResource(R.drawable.ic_avatar_default);
+        }
         container.addView(imageView);
 
+        // Name
         TextView nameView = new TextView(requireContext());
         nameView.setText(item.getName());
         nameView.setGravity(android.view.Gravity.CENTER);
@@ -156,6 +243,7 @@ public class ShopFragment extends Fragment {
         nameView.setLayoutParams(nameParams);
         container.addView(nameView);
 
+        // Price layout
         LinearLayout priceLayout = new LinearLayout(requireContext());
         priceLayout.setOrientation(LinearLayout.HORIZONTAL);
         priceLayout.setGravity(android.view.Gravity.CENTER);
@@ -169,16 +257,17 @@ public class ShopFragment extends Fragment {
         ImageView coinIcon = new ImageView(requireContext());
         coinIcon.setImageResource(R.mipmap.coin_foreground);
         LinearLayout.LayoutParams coinParams = new LinearLayout.LayoutParams(
-                (int) getResources().getDimension(R.dimen.icon_size_small),
-                (int) getResources().getDimension(R.dimen.icon_size_small)
+                (int) (18 * getResources().getDisplayMetrics().density),
+                (int) (18 * getResources().getDisplayMetrics().density)
         );
         coinIcon.setLayoutParams(coinParams);
         priceLayout.addView(coinIcon);
 
         TextView priceView = new TextView(requireContext());
         priceView.setText(String.valueOf(item.getPrice()));
-        priceView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
+        priceView.setTextColor(ContextCompat.getColor(requireContext(), R.color.coin_orange));
         priceView.setTextSize(12);
+        priceView.setTypeface(null, android.graphics.Typeface.BOLD);
         LinearLayout.LayoutParams priceParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -189,11 +278,12 @@ public class ShopFragment extends Fragment {
 
         container.addView(priceLayout);
 
+        // Purchased badge
         if (item.isPurchased()) {
             TextView ownedBadge = new TextView(requireContext());
             ownedBadge.setText("✓ Đã mua");
-            ownedBadge.setTextColor(Color.WHITE);
             ownedBadge.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.status_success));
+            ownedBadge.setTextColor(Color.WHITE);
             ownedBadge.setPadding(12, 4, 12, 4);
             ownedBadge.setTextSize(10);
             LinearLayout.LayoutParams badgeParams = new LinearLayout.LayoutParams(
@@ -207,14 +297,19 @@ public class ShopFragment extends Fragment {
 
         container.setOnClickListener(v -> {
             selectItem(item);
-            setupShopGrid();
+            setupAvatarGrid();
+            setupBoosterGrid();
         });
 
         return container;
     }
 
     private void selectItem(ShopItem item) {
-        for (ShopItem shopItem : shopItems) {
+        // Deselect all
+        for (ShopItem shopItem : avatarItems) {
+            shopItem.setSelected(false);
+        }
+        for (ShopItem shopItem : boosterItems) {
             shopItem.setSelected(false);
         }
 
@@ -225,7 +320,7 @@ public class ShopFragment extends Fragment {
             binding.btnBuySkin.setText("Đã sở hữu");
             binding.btnBuySkin.setEnabled(false);
         } else {
-            binding.btnBuySkin.setText("Mua - " + item.getPrice() + " Coins");
+            binding.btnBuySkin.setText("Mua - " + item.getPrice() + " 🪙");
             binding.btnBuySkin.setEnabled(true);
         }
     }
@@ -233,30 +328,47 @@ public class ShopFragment extends Fragment {
     private void showPurchaseConfirmDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Xác nhận mua")
-                .setMessage("Bạn có chắc muốn mua \"" + selectedItem.getName().replace("\n", " ") +
-                        "\" với giá " + selectedItem.getPrice() + " Coins?")
+                .setMessage("Bạn có chắc muốn mua \"" + selectedItem.getName() +
+                        "\" với giá " + selectedItem.getPrice() + " 🪙?")
                 .setPositiveButton("Mua", (dialog, which) -> purchaseItem())
                 .setNegativeButton("Hủy", null)
                 .show();
     }
 
     private void purchaseItem() {
-        currentCoins -= selectedItem.getPrice();
-        selectedItem.setPurchased(true);
-        saveCoins();
-        updateCoinsDisplay();
-        setupShopGrid();
+        shopRepository.purchaseItem(childId, selectedItem.getId(), new ShopRepository.PurchaseCallback() {
+            @Override
+            public void onSuccess(PurchasedItem item, String message) {
+                currentCoins -= selectedItem.getPrice();
+                selectedItem.setPurchased(true);
 
-        Toast.makeText(requireContext(),
-                "🎉 Mua thành công! Bạn đã có thú cưng " + selectedItem.getName().replace("\n", " "),
-                Toast.LENGTH_LONG).show();
+                updateCoinsDisplay();
+                setupAvatarGrid();
+                setupBoosterGrid();
+
+                String itemType = selectedItem.isAvatar() ? "avatar" : "booster";
+                Toast.makeText(requireContext(),
+                        "🎉 Mua thành công! Bạn đã có " + itemType + " " + selectedItem.getName(),
+                        Toast.LENGTH_LONG).show();
+
+                // Reset selection
+                selectedItem = null;
+                binding.btnBuySkin.setText("Chọn vật phẩm để mua");
+                binding.btnBuySkin.setEnabled(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showInsufficientCoinsDialog() {
         int needed = selectedItem.getPrice() - currentCoins;
         new AlertDialog.Builder(requireContext())
                 .setTitle("Không đủ Coins")
-                .setMessage("Bạn cần thêm " + needed + " Coins để mua vật phẩm này.\n\n" +
+                .setMessage("Bạn cần thêm " + needed + " 🪙 để mua vật phẩm này.\n\n" +
                         "Hãy hoàn thành nhiệm vụ để kiếm thêm Coins nhé!")
                 .setPositiveButton("OK", null)
                 .show();

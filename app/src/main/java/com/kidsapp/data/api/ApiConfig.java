@@ -119,4 +119,14 @@ public class ApiConfig {
     public static final String ENDPOINT_CHALLENGE_QUEUE_JOIN = "challenge-queue/join";
     public static final String ENDPOINT_CHALLENGE_QUEUE_STATUS = "challenge-queue/status/{childId}";
     public static final String ENDPOINT_CHALLENGE_QUEUE_LEAVE = "challenge-queue/leave/{childId}";
+    
+    // ==================== SHOP ====================
+    public static final String ENDPOINT_SHOP_ITEMS = "shop/items";
+    public static final String ENDPOINT_SHOP_ITEM_DETAIL = "shop/items/{itemId}";
+    public static final String ENDPOINT_SHOP_PURCHASE = "shop/purchase/{itemId}";
+    public static final String ENDPOINT_SHOP_MY_ITEMS = "shop/my-items";
+    public static final String ENDPOINT_SHOP_EQUIPPED_AVATAR = "shop/equipped-avatar";
+    public static final String ENDPOINT_SHOP_ACTIVE_BOOSTERS = "shop/active-boosters";
+    public static final String ENDPOINT_SHOP_EQUIP = "shop/equip/{purchasedItemId}";
+    public static final String ENDPOINT_SHOP_ACTIVATE_BOOSTER = "shop/activate-booster/{purchasedItemId}";
 }
