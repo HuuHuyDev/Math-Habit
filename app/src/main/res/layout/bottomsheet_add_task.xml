@@ -281,31 +281,6 @@
                 android:valueTo="5"
                 app:labelBehavior="withinBounds" />
 
-            <!-- Bắt buộc -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_8"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/inter_semibold"
-                    android:text="Bắt buộc hoàn thành"
-                    android:textColor="@color/text_primary"
-                    android:textSize="@dimen/text_size_medium" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchMandatory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>

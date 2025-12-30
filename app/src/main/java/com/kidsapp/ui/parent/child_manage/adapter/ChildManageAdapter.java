@@ -1,5 +1,6 @@
 package com.kidsapp.ui.parent.child_manage.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.kidsapp.R;
 import com.kidsapp.databinding.ItemChildManageBinding;
 import com.kidsapp.ui.parent.child_manage.model.ChildModel;
 
@@ -103,7 +106,9 @@ public class ChildManageAdapter extends RecyclerView.Adapter<ChildManageAdapter.
         }
 
         public void bind(ChildModel child) {
-            binding.txtChildAvatar.setText(child.getAvatar());
+            // Load avatar - hỗ trợ URL, drawable name, và emoji
+            loadAvatar(child.getAvatar());
+            
             binding.txtChildName.setText(child.getName());
             binding.txtChildClass.setText(child.getClassAndLevel());
             binding.txtChildXP.setText(child.getXPText());
@@ -115,6 +120,52 @@ public class ChildManageAdapter extends RecyclerView.Adapter<ChildManageAdapter.
             ViewGroup.LayoutParams params = binding.viewProgress.getLayoutParams();
             params.width = (int) (binding.getRoot().getWidth() * (progressPercentage / 100.0f));
             binding.viewProgress.setLayoutParams(params);
+        }
+        
+        /**
+         * Load avatar - hỗ trợ HTTP URL, drawable name, và emoji
+         */
+        private void loadAvatar(String avatar) {
+            Context context = binding.getRoot().getContext();
+            
+            if (avatar == null || avatar.isEmpty()) {
+                // Default emoji
+                binding.imgChildAvatar.setVisibility(View.GONE);
+                binding.txtChildAvatar.setVisibility(View.VISIBLE);
+                binding.txtChildAvatar.setText("👤");
+                return;
+            }
+            
+            if (avatar.startsWith("http")) {
+                // Load từ URL
+                binding.imgChildAvatar.setVisibility(View.VISIBLE);
+                binding.txtChildAvatar.setVisibility(View.GONE);
+                Glide.with(context)
+                        .load(avatar)
+                        .placeholder(R.drawable.ic_user_default)
+                        .error(R.drawable.ic_user_default)
+                        .circleCrop()
+                        .into(binding.imgChildAvatar);
+            } else if (avatar.startsWith("ic_") || avatar.startsWith("avatar_")) {
+                // Load từ drawable name
+                int resId = context.getResources().getIdentifier(
+                        avatar, "drawable", context.getPackageName());
+                if (resId != 0) {
+                    binding.imgChildAvatar.setVisibility(View.VISIBLE);
+                    binding.txtChildAvatar.setVisibility(View.GONE);
+                    binding.imgChildAvatar.setImageResource(resId);
+                } else {
+                    // Fallback to emoji
+                    binding.imgChildAvatar.setVisibility(View.GONE);
+                    binding.txtChildAvatar.setVisibility(View.VISIBLE);
+                    binding.txtChildAvatar.setText("👤");
+                }
+            } else {
+                // Emoji hoặc text
+                binding.imgChildAvatar.setVisibility(View.GONE);
+                binding.txtChildAvatar.setVisibility(View.VISIBLE);
+                binding.txtChildAvatar.setText(avatar);
+            }
         }
     }
 }

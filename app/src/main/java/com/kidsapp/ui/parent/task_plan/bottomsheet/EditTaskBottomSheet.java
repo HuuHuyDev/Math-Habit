@@ -149,7 +149,6 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
         binding.edtReminderTime.setText(taskData.getReminderTime() != null ? taskData.getReminderTime() : "");
         binding.edtParentNote.setText(taskData.getParentNote() != null ? taskData.getParentNote() : "");
         binding.sliderPriority.setValue(taskData.getPriority() > 0 ? taskData.getPriority() : 1);
-        binding.switchMandatory.setChecked(taskData.isMandatory());
         binding.switchRecurring.setChecked(taskData.isRecurring());
     }
 
@@ -177,7 +176,6 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
         binding.edtReminderTime.setText("");
         binding.edtParentNote.setText("");
         binding.sliderPriority.setValue(task.getLevel() > 0 ? task.getLevel() : 1);
-        binding.switchMandatory.setChecked(false);
         binding.switchRecurring.setChecked(false);
     }
 
@@ -269,12 +267,19 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
         String reminderTime = binding.edtReminderTime.getText().toString().trim();
         String parentNote = binding.edtParentNote.getText().toString().trim();
         int priority = (int) binding.sliderPriority.getValue();
-        boolean isMandatory = binding.switchMandatory.isChecked();
         boolean isRecurring = binding.switchRecurring.isChecked();
 
         if (dueDate.isEmpty()) {
             binding.tilDueDate.setError("Vui lòng chọn ngày hết hạn");
             return;
+        }
+
+        // Validate: giờ nhắc nhở phải trước giờ hoàn thành
+        if (!dueTime.isEmpty() && !reminderTime.isEmpty()) {
+            if (!isReminderBeforeDueTime(reminderTime, dueTime)) {
+                Toast.makeText(requireContext(), "Giờ nhắc nhở phải trước giờ hoàn thành", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         UpdateTaskRequest request = new UpdateTaskRequest();
@@ -283,7 +288,6 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
         if (!reminderTime.isEmpty()) request.setReminderTime(reminderTime);
         if (!parentNote.isEmpty()) request.setParentNote(parentNote);
         request.setPriority(priority);
-        request.setIsMandatory(isMandatory);
         request.setIsRecurring(isRecurring);
 
         setLoading(true);
@@ -312,6 +316,23 @@ public class EditTaskBottomSheet extends BottomSheetDialogFragment {
                 Toast.makeText(requireContext(), "Lỗi: " + message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    
+    /**
+     * Kiểm tra giờ nhắc nhở có trước giờ hoàn thành không
+     */
+    private boolean isReminderBeforeDueTime(String reminderTime, String dueTime) {
+        try {
+            String[] reminderParts = reminderTime.split(":");
+            String[] dueParts = dueTime.split(":");
+            
+            int reminderMinutes = Integer.parseInt(reminderParts[0]) * 60 + Integer.parseInt(reminderParts[1]);
+            int dueMinutes = Integer.parseInt(dueParts[0]) * 60 + Integer.parseInt(dueParts[1]);
+            
+            return reminderMinutes < dueMinutes;
+        } catch (Exception e) {
+            return true; // Nếu parse lỗi thì cho qua
+        }
     }
 
     private void setLoading(boolean loading) {

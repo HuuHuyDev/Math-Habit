@@ -18,16 +18,31 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <!-- Avatar -->
-        <TextView
-            android:id="@+id/txtChildAvatar"
+        <!-- Avatar Container -->
+        <FrameLayout
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_avatar_pink"
-            android:gravity="center"
-            android:text="😊"
-            android:textSize="32sp"
-            tools:text="😊" />
+            android:layout_height="60dp">
+
+            <ImageView
+                android:id="@+id/imgChildAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_pink"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="@string/app_name" />
+
+            <TextView
+                android:id="@+id/txtChildAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_pink"
+                android:gravity="center"
+                android:text="😊"
+                android:textSize="32sp"
+                tools:text="😊" />
+
+        </FrameLayout>
 
         <!-- Info -->
         <LinearLayout

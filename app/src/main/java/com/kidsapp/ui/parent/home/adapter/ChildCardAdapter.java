@@ -117,6 +117,17 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.Chil
                             .placeholder(R.drawable.ic_user_default)
                             .error(R.drawable.ic_user_default)
                             .into(imgChildAvatar);
+                } else if (avatarUrl.startsWith("ic_") || avatarUrl.startsWith("avatar_")) {
+                    // Load từ drawable name
+                    imgChildAvatar.setVisibility(View.VISIBLE);
+                    tvEmojiAvatar.setVisibility(View.GONE);
+                    int resId = itemView.getContext().getResources().getIdentifier(
+                            avatarUrl, "drawable", itemView.getContext().getPackageName());
+                    if (resId != 0) {
+                        imgChildAvatar.setImageResource(resId);
+                    } else {
+                        imgChildAvatar.setImageResource(R.drawable.ic_user_default);
+                    }
                 } else {
                     // avatarUrl is emoji - hiển thị emoji
                     imgChildAvatar.setVisibility(View.GONE);

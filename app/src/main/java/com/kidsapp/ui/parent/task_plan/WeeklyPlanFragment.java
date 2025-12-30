@@ -171,9 +171,11 @@ public class WeeklyPlanFragment extends Fragment {
     }
     
     private String getAvatarFromChild(ApiService.ChildResponse child) {
-        if (child.avatarUrl != null && !child.avatarUrl.isEmpty() && !child.avatarUrl.startsWith("http")) {
+        // Trả về avatarUrl trực tiếp (có thể là URL, drawable name, hoặc emoji)
+        if (child.avatarUrl != null && !child.avatarUrl.isEmpty()) {
             return child.avatarUrl;
         }
+        // Fallback to emoji based on gender
         return child.gender != null && child.gender ? "👦" : "👧";
     }
 
@@ -185,13 +187,53 @@ public class WeeklyPlanFragment extends Fragment {
         View childSelectorLayout = binding.getRoot().findViewById(R.id.childSelector);
         TextView txtSelectedChild = childSelectorLayout.findViewById(R.id.txtSelectedChild);
         TextView imgChildAvatar = childSelectorLayout.findViewById(R.id.imgChildAvatar);
+        android.widget.ImageView imgChildAvatarImage = childSelectorLayout.findViewById(R.id.imgChildAvatarImage);
         
         if (selectedChild != null) {
             txtSelectedChild.setText(selectedChild.getName() + " – Lớp " + selectedChild.getLevel());
-            imgChildAvatar.setText(selectedChild.getAvatar());
+            loadChildSelectorAvatar(selectedChild.getAvatar(), imgChildAvatar, imgChildAvatarImage);
         }
         
         childSelectorLayout.setOnClickListener(v -> showChildBottomSheet());
+    }
+    
+    /**
+     * Load avatar cho child selector - hỗ trợ URL, drawable name, và emoji
+     */
+    private void loadChildSelectorAvatar(String avatar, TextView txtAvatar, android.widget.ImageView imgAvatar) {
+        if (avatar == null || avatar.isEmpty()) {
+            imgAvatar.setVisibility(View.GONE);
+            txtAvatar.setVisibility(View.VISIBLE);
+            txtAvatar.setText("👤");
+            return;
+        }
+        
+        if (avatar.startsWith("http")) {
+            imgAvatar.setVisibility(View.VISIBLE);
+            txtAvatar.setVisibility(View.GONE);
+            com.bumptech.glide.Glide.with(requireContext())
+                    .load(avatar)
+                    .placeholder(R.drawable.ic_user_default)
+                    .error(R.drawable.ic_user_default)
+                    .circleCrop()
+                    .into(imgAvatar);
+        } else if (avatar.startsWith("ic_") || avatar.startsWith("avatar_")) {
+            int resId = requireContext().getResources().getIdentifier(
+                    avatar, "drawable", requireContext().getPackageName());
+            if (resId != 0) {
+                imgAvatar.setVisibility(View.VISIBLE);
+                txtAvatar.setVisibility(View.GONE);
+                imgAvatar.setImageResource(resId);
+            } else {
+                imgAvatar.setVisibility(View.GONE);
+                txtAvatar.setVisibility(View.VISIBLE);
+                txtAvatar.setText("👤");
+            }
+        } else {
+            imgAvatar.setVisibility(View.GONE);
+            txtAvatar.setVisibility(View.VISIBLE);
+            txtAvatar.setText(avatar);
+        }
     }
 
     private void showChildBottomSheet() {
@@ -213,7 +255,10 @@ public class WeeklyPlanFragment extends Fragment {
             TextView txtSelectedChild = childSelectorLayout.findViewById(R.id.txtSelectedChild);
             TextView imgChildAvatar = childSelectorLayout.findViewById(R.id.imgChildAvatar);
             txtSelectedChild.setText(child.getName() + " – Lớp " + child.getLevel());
-            imgChildAvatar.setText(child.getAvatar());
+            
+            // Load avatar
+            android.widget.ImageView imgChildAvatarImage = childSelectorLayout.findViewById(R.id.imgChildAvatarImage);
+            loadChildSelectorAvatar(child.getAvatar(), imgChildAvatar, imgChildAvatarImage);
             
             bottomSheetDialog.dismiss();
             loadData();

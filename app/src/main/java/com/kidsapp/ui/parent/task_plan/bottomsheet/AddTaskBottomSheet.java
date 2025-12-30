@@ -159,7 +159,14 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
         String reminderTime = binding.edtReminderTime.getText().toString().trim();
         String parentNote = binding.edtParentNote.getText().toString().trim();
         int priority = (int) binding.sliderPriority.getValue();
-        boolean isMandatory = binding.switchMandatory.isChecked();
+
+        // Validate: giờ nhắc nhở phải trước giờ hoàn thành
+        if (!dueTime.isEmpty() && !reminderTime.isEmpty()) {
+            if (!isReminderBeforeDueTime(reminderTime, dueTime)) {
+                Toast.makeText(requireContext(), "Giờ nhắc nhở phải trước giờ hoàn thành", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
 
         CreateTaskRequest request;
 
@@ -199,7 +206,6 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
             request.setParentNote(parentNote);
         }
         request.setPriority(priority);
-        request.setIsMandatory(isMandatory);
 
         setLoading(true);
 
@@ -226,6 +232,23 @@ public class AddTaskBottomSheet extends BottomSheetDialogFragment {
                 Toast.makeText(requireContext(), "Lỗi: " + message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    
+    /**
+     * Kiểm tra giờ nhắc nhở có trước giờ hoàn thành không
+     */
+    private boolean isReminderBeforeDueTime(String reminderTime, String dueTime) {
+        try {
+            String[] reminderParts = reminderTime.split(":");
+            String[] dueParts = dueTime.split(":");
+            
+            int reminderMinutes = Integer.parseInt(reminderParts[0]) * 60 + Integer.parseInt(reminderParts[1]);
+            int dueMinutes = Integer.parseInt(dueParts[0]) * 60 + Integer.parseInt(dueParts[1]);
+            
+            return reminderMinutes < dueMinutes;
+        } catch (Exception e) {
+            return true; // Nếu parse lỗi thì cho qua
+        }
     }
 
     private void loadExercises() {

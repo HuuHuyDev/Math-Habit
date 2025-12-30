@@ -159,9 +159,12 @@ public class ParentReportFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().data != null) {
                     childList.clear();
                     for (ApiService.ChildResponse child : response.body().data) {
-                        String avatar = (child.gender != null && child.gender) ? "👦" : "👧";
-                        if (child.avatarUrl != null && !child.avatarUrl.isEmpty() && !child.avatarUrl.startsWith("http")) {
+                        // Sử dụng avatarUrl trực tiếp (có thể là URL, drawable name, hoặc emoji)
+                        String avatar;
+                        if (child.avatarUrl != null && !child.avatarUrl.isEmpty()) {
                             avatar = child.avatarUrl;
+                        } else {
+                            avatar = (child.gender != null && child.gender) ? "👦" : "👧";
                         }
                         int level = child.currentLevel != null ? child.currentLevel : 1;
                         int xp = child.totalXp != null ? child.totalXp : 0;
@@ -213,11 +216,51 @@ public class ParentReportFragment extends Fragment {
     private void setupChildSelector() {
         if (selectedChild != null) {
             txtSelectedChild.setText(selectedChild.getName() + " – " + selectedChild.getLevelText());
-            imgChildAvatar.setText(selectedChild.getAvatar());
+            android.widget.ImageView imgChildAvatarImage = binding.getRoot().findViewById(R.id.imgChildAvatarImage);
+            loadChildSelectorAvatar(selectedChild.getAvatar(), imgChildAvatar, imgChildAvatarImage);
         }
 
         View childSelectorLayout = binding.getRoot().findViewById(R.id.childSelector);
         childSelectorLayout.setOnClickListener(v -> showChildBottomSheet());
+    }
+    
+    /**
+     * Load avatar cho child selector - hỗ trợ URL, drawable name, và emoji
+     */
+    private void loadChildSelectorAvatar(String avatar, TextView txtAvatar, android.widget.ImageView imgAvatar) {
+        if (avatar == null || avatar.isEmpty()) {
+            imgAvatar.setVisibility(View.GONE);
+            txtAvatar.setVisibility(View.VISIBLE);
+            txtAvatar.setText("👤");
+            return;
+        }
+        
+        if (avatar.startsWith("http")) {
+            imgAvatar.setVisibility(View.VISIBLE);
+            txtAvatar.setVisibility(View.GONE);
+            com.bumptech.glide.Glide.with(requireContext())
+                    .load(avatar)
+                    .placeholder(R.drawable.ic_user_default)
+                    .error(R.drawable.ic_user_default)
+                    .circleCrop()
+                    .into(imgAvatar);
+        } else if (avatar.startsWith("ic_") || avatar.startsWith("avatar_")) {
+            int resId = requireContext().getResources().getIdentifier(
+                    avatar, "drawable", requireContext().getPackageName());
+            if (resId != 0) {
+                imgAvatar.setVisibility(View.VISIBLE);
+                txtAvatar.setVisibility(View.GONE);
+                imgAvatar.setImageResource(resId);
+            } else {
+                imgAvatar.setVisibility(View.GONE);
+                txtAvatar.setVisibility(View.VISIBLE);
+                txtAvatar.setText("👤");
+            }
+        } else {
+            imgAvatar.setVisibility(View.GONE);
+            txtAvatar.setVisibility(View.VISIBLE);
+            txtAvatar.setText(avatar);
+        }
     }
 
     /**
@@ -233,7 +276,11 @@ public class ParentReportFragment extends Fragment {
         ReportChildSelectorAdapter adapter = new ReportChildSelectorAdapter(child -> {
             selectedChild = child;
             txtSelectedChild.setText(child.getName() + " – " + child.getLevelText());
-            imgChildAvatar.setText(child.getAvatar());
+            
+            // Load avatar
+            android.widget.ImageView imgChildAvatarImage = binding.getRoot().findViewById(R.id.imgChildAvatarImage);
+            loadChildSelectorAvatar(child.getAvatar(), imgChildAvatar, imgChildAvatarImage);
+            
             bottomSheetDialog.dismiss();
             loadReport();
         });

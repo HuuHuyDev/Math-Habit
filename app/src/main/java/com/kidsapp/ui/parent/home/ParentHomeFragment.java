@@ -229,11 +229,11 @@ public class ParentHomeFragment extends Fragment {
         child.setGrade(response.grade);
         child.setDailyProgress(response.dailyProgress != null ? response.dailyProgress : 0f);
         
-        // Set avatar: ưu tiên avatarUrl, fallback theo gender
+        // Set avatar: sử dụng avatarUrl trực tiếp (có thể là URL, drawable name, hoặc emoji)
         if (response.avatarUrl != null && !response.avatarUrl.isEmpty()) {
             child.setAvatarUrl(response.avatarUrl);
         } else {
-            // Dùng emoji theo giới tính
+            // Fallback to emoji theo giới tính
             String defaultAvatar = (response.gender != null && response.gender) ? "👦" : "👧";
             child.setAvatarUrl(defaultAvatar);
         }

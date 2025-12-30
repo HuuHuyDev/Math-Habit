@@ -81,14 +81,30 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
         }
         
         private void loadAvatar(String avatarUrl) {
-            if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("http")) {
+            if (avatarUrl == null || avatarUrl.isEmpty()) {
+                imgChildAvatar.setImageResource(R.drawable.ic_user_default);
+                return;
+            }
+            
+            if (avatarUrl.startsWith("http")) {
+                // Load từ URL
                 Glide.with(itemView.getContext())
                         .load(avatarUrl)
                         .transform(new CircleCrop())
                         .placeholder(R.drawable.ic_user_default)
                         .error(R.drawable.ic_user_default)
                         .into(imgChildAvatar);
+            } else if (avatarUrl.startsWith("ic_") || avatarUrl.startsWith("avatar_")) {
+                // Load từ drawable name
+                int resId = itemView.getContext().getResources().getIdentifier(
+                        avatarUrl, "drawable", itemView.getContext().getPackageName());
+                if (resId != 0) {
+                    imgChildAvatar.setImageResource(resId);
+                } else {
+                    imgChildAvatar.setImageResource(R.drawable.ic_user_default);
+                }
             } else {
+                // Fallback to default
                 imgChildAvatar.setImageResource(R.drawable.ic_user_default);
             }
         }

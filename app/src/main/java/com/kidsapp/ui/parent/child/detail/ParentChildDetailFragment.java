@@ -161,7 +161,7 @@ public class ParentChildDetailFragment extends Fragment {
         binding.header.txtCoin.setText(formatNumber(coins));
         binding.header.txtXP.setText(String.format("%s XP", formatNumber(xp)));
         
-        // Avatar - hiển thị emoji nếu có
+        // Avatar - hiển thị theo loại: URL, drawable name, hoặc emoji
         if (child.avatarUrl != null && !child.avatarUrl.isEmpty()) {
             if (child.avatarUrl.startsWith("http")) {
                 // URL hình ảnh
@@ -173,6 +173,20 @@ public class ParentChildDetailFragment extends Fragment {
                         .into(binding.header.imgChildAvatar);
                 binding.header.txtChildEmoji.setVisibility(View.GONE);
                 binding.header.imgChildAvatar.setVisibility(View.VISIBLE);
+            } else if (child.avatarUrl.startsWith("ic_") || child.avatarUrl.startsWith("avatar_")) {
+                // Drawable name (vd: ic_avatar_boy)
+                int resId = requireContext().getResources().getIdentifier(
+                        child.avatarUrl, "drawable", requireContext().getPackageName());
+                if (resId != 0) {
+                    binding.header.imgChildAvatar.setImageResource(resId);
+                    binding.header.txtChildEmoji.setVisibility(View.GONE);
+                    binding.header.imgChildAvatar.setVisibility(View.VISIBLE);
+                } else {
+                    // Fallback to default
+                    binding.header.imgChildAvatar.setImageResource(R.drawable.ic_child_face);
+                    binding.header.txtChildEmoji.setVisibility(View.GONE);
+                    binding.header.imgChildAvatar.setVisibility(View.VISIBLE);
+                }
             } else {
                 // Emoji
                 binding.header.txtChildEmoji.setText(child.avatarUrl);
@@ -572,12 +586,31 @@ public class ParentChildDetailFragment extends Fragment {
             binding.header.txtXP.setText(String.format("%s XP", formatNumber(xp)));
 
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                Glide.with(this)
-                        .load(avatarUrl)
-                        .placeholder(R.drawable.ic_child_face)
-                        .error(R.drawable.ic_child_face)
-                        .circleCrop()
-                        .into(binding.header.imgChildAvatar);
+                if (avatarUrl.startsWith("http")) {
+                    Glide.with(this)
+                            .load(avatarUrl)
+                            .placeholder(R.drawable.ic_child_face)
+                            .error(R.drawable.ic_child_face)
+                            .circleCrop()
+                            .into(binding.header.imgChildAvatar);
+                    binding.header.txtChildEmoji.setVisibility(View.GONE);
+                    binding.header.imgChildAvatar.setVisibility(View.VISIBLE);
+                } else if (avatarUrl.startsWith("ic_") || avatarUrl.startsWith("avatar_")) {
+                    int resId = requireContext().getResources().getIdentifier(
+                            avatarUrl, "drawable", requireContext().getPackageName());
+                    if (resId != 0) {
+                        binding.header.imgChildAvatar.setImageResource(resId);
+                    } else {
+                        binding.header.imgChildAvatar.setImageResource(R.drawable.ic_child_face);
+                    }
+                    binding.header.txtChildEmoji.setVisibility(View.GONE);
+                    binding.header.imgChildAvatar.setVisibility(View.VISIBLE);
+                } else {
+                    // Emoji
+                    binding.header.txtChildEmoji.setText(avatarUrl);
+                    binding.header.txtChildEmoji.setVisibility(View.VISIBLE);
+                    binding.header.imgChildAvatar.setVisibility(View.GONE);
+                }
             }
         }
     }

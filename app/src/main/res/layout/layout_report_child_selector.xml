@@ -16,18 +16,34 @@
     android:paddingEnd="@dimen/spacing_16"
     android:paddingBottom="@dimen/spacing_12">
 
-    <!-- Avatar emoji -->
-    <TextView
-        android:id="@+id/imgChildAvatar"
+    <!-- Avatar Container -->
+    <FrameLayout
+        android:id="@+id/avatarContainer"
         android:layout_width="@dimen/spacing_40"
         android:layout_height="@dimen/spacing_40"
-        android:background="@drawable/bg_avatar_circle"
-        android:gravity="center"
-        android:text="👦"
-        android:textSize="@dimen/spacing_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imgChildAvatarImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_avatar_circle"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:contentDescription="@string/app_name" />
+
+        <TextView
+            android:id="@+id/imgChildAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_avatar_circle"
+            android:gravity="center"
+            android:text="👦"
+            android:textSize="@dimen/spacing_24" />
+
+    </FrameLayout>
 
     <!-- Child name and level -->
     <TextView
@@ -42,7 +58,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imgDropdownArrow"
-        app:layout_constraintStart_toEndOf="@+id/imgChildAvatar"
+        app:layout_constraintStart_toEndOf="@+id/avatarContainer"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Dropdown arrow icon -->

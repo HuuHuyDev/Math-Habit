@@ -113,40 +113,34 @@ public class ChildHomeFragment extends Fragment {
      * Cập nhật Today Goal card với dữ liệu từ API
      */
     private void updateTodayGoalCard(Child child) {
-        // Daily progress (0-100)
+        // Tasks completed today
+        int dailyGoalTasks = child.getDailyGoalExercises() > 0 ? child.getDailyGoalExercises() : 5;
+        int tasksCompletedToday = child.getTotalTasksCompleted();
+        
+        // Đảm bảo không vượt quá mục tiêu (cho hiển thị)
+        int displayTasksCompleted = Math.min(tasksCompletedToday, dailyGoalTasks);
+        
+        // Tính progress percent dựa trên số task hoàn thành
+        int progressPercent;
         float dailyProgress = child.getDailyProgress();
-        int progressPercent = Math.round(dailyProgress);
+        
+        if (dailyProgress > 0) {
+            // Ưu tiên dùng dailyProgress từ API nếu có
+            progressPercent = Math.round(dailyProgress);
+        } else if (dailyGoalTasks > 0) {
+            // Tính dựa trên số task hoàn thành / mục tiêu
+            progressPercent = (displayTasksCompleted * 100) / dailyGoalTasks;
+        } else {
+            progressPercent = 0;
+        }
         
         // Đảm bảo progress trong khoảng 0-100
         if (progressPercent < 0) progressPercent = 0;
         if (progressPercent > 100) progressPercent = 100;
         
-        // Tasks completed today (not total tasks)
-        int dailyGoalTasks = child.getDailyGoalExercises() > 0 ? child.getDailyGoalExercises() : 5;
-        int tasksCompletedToday;
-        
-        if (dailyProgress > 0) {
-            // Tính dựa trên dailyProgress
-            tasksCompletedToday = Math.round((dailyProgress / 100.0f) * dailyGoalTasks);
-        } else {
-            // Fallback: Dùng totalTasksCompleted nếu dailyProgress = 0
-            // Giả sử trong ngày hoàn thành ít nhất 1 task nếu có totalTasksCompleted
-            tasksCompletedToday = child.getTotalTasksCompleted() > 0 ? 
-                Math.min(child.getTotalTasksCompleted(), dailyGoalTasks) : 0;
-        }
-        
-        // Đảm bảo không vượt quá mục tiêu
-        if (tasksCompletedToday > dailyGoalTasks) {
-            tasksCompletedToday = dailyGoalTasks;
-        }
-        
         // XP earned today
-        int xpToday = 0;
-        
-        // Ưu tiên dùng dữ liệu từ API nếu có
-        if (child.getXpEarnedToday() > 0) {
-            xpToday = child.getXpEarnedToday();
-        } else if (tasksCompletedToday > 0) {
+        int xpToday = child.getXpEarnedToday();
+        if (xpToday <= 0 && tasksCompletedToday > 0) {
             // Estimate dựa trên số task hoàn thành
             int avgXpPerTask = 15; // Giả sử mỗi task trung bình 15 XP
             xpToday = tasksCompletedToday * avgXpPerTask;
@@ -158,14 +152,14 @@ public class ChildHomeFragment extends Fragment {
         // Update UI
         binding.txtGoalPercent.setText(progressPercent + "%");
         binding.progressTodayGoal.setProgress(progressPercent);
-        binding.txtTasksCompleted.setText(tasksCompletedToday + "/" + dailyGoalTasks);
+        binding.txtTasksCompleted.setText(displayTasksCompleted + "/" + dailyGoalTasks);
         binding.txtXpEarnedToday.setText(String.valueOf(xpToday));
         binding.txtStreak.setText(String.valueOf(streak));
         
         // Debug log
         android.util.Log.d("ChildHome", String.format(
-            "Daily Progress: %.1f%%, Tasks: %d/%d, XP Today: %d, Streak: %d",
-            dailyProgress, tasksCompletedToday, dailyGoalTasks, xpToday, streak
+            "Daily Progress: %.1f%%, Calculated: %d%%, Tasks: %d/%d, XP Today: %d, Streak: %d",
+            dailyProgress, progressPercent, displayTasksCompleted, dailyGoalTasks, xpToday, streak
         ));
     }
 

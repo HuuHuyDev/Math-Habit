@@ -190,14 +190,9 @@ public class ChildManageFragment extends Fragment {
         
         // Handle avatar: prioritize avatarUrl, fallback to gender emoji
         String avatar;
-        if (response.avatarUrl != null && !response.avatarUrl.isEmpty() && !response.avatarUrl.startsWith("http")) {
-            // If avatarUrl is emoji or text, use it directly
+        if (response.avatarUrl != null && !response.avatarUrl.isEmpty()) {
+            // Sử dụng avatarUrl trực tiếp (có thể là URL, drawable name, hoặc emoji)
             avatar = response.avatarUrl;
-        } else if (response.avatarUrl != null && response.avatarUrl.startsWith("http")) {
-            // If avatarUrl is URL, use first letter of name as fallback for now
-            // TODO: Load image from URL using Glide/Picasso
-            avatar = response.name != null && !response.name.isEmpty() ? 
-                    String.valueOf(response.name.charAt(0)).toUpperCase() : "👤";
         } else {
             // Fallback to emoji based on gender
             avatar = response.gender != null && response.gender ? "👦" : "👧";
