@@ -418,16 +418,32 @@
                     android:textSize="16sp" />
 
                 <!-- Empty state -->
-                <TextView
-                    android:id="@+id/tvEmptyBadges"
+                <LinearLayout
+                    android:id="@+id/layoutEmptyBadges"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
-                    android:text="Chưa có huy hiệu nào"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_trophy"
+                        app:tint="@color/text_hint" />
+
+                    <TextView
+                        android:id="@+id/tvEmptyBadges"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="Chưa có huy hiệu nào\nHãy hoàn thành nhiệm vụ để nhận huy hiệu!"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
                 <!-- Grid badges - Dynamic -->
                 <androidx.recyclerview.widget.RecyclerView

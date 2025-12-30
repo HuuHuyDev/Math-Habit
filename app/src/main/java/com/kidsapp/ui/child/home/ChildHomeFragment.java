@@ -117,22 +117,56 @@ public class ChildHomeFragment extends Fragment {
         float dailyProgress = child.getDailyProgress();
         int progressPercent = Math.round(dailyProgress);
         
-        // Tasks
-        int tasksCompleted = child.getTotalTasksCompleted();
+        // Đảm bảo progress trong khoảng 0-100
+        if (progressPercent < 0) progressPercent = 0;
+        if (progressPercent > 100) progressPercent = 100;
+        
+        // Tasks completed today (not total tasks)
         int dailyGoalTasks = child.getDailyGoalExercises() > 0 ? child.getDailyGoalExercises() : 5;
+        int tasksCompletedToday;
+        
+        if (dailyProgress > 0) {
+            // Tính dựa trên dailyProgress
+            tasksCompletedToday = Math.round((dailyProgress / 100.0f) * dailyGoalTasks);
+        } else {
+            // Fallback: Dùng totalTasksCompleted nếu dailyProgress = 0
+            // Giả sử trong ngày hoàn thành ít nhất 1 task nếu có totalTasksCompleted
+            tasksCompletedToday = child.getTotalTasksCompleted() > 0 ? 
+                Math.min(child.getTotalTasksCompleted(), dailyGoalTasks) : 0;
+        }
+        
+        // Đảm bảo không vượt quá mục tiêu
+        if (tasksCompletedToday > dailyGoalTasks) {
+            tasksCompletedToday = dailyGoalTasks;
+        }
+        
+        // XP earned today
+        int xpToday = 0;
+        
+        // Ưu tiên dùng dữ liệu từ API nếu có
+        if (child.getXpEarnedToday() > 0) {
+            xpToday = child.getXpEarnedToday();
+        } else if (tasksCompletedToday > 0) {
+            // Estimate dựa trên số task hoàn thành
+            int avgXpPerTask = 15; // Giả sử mỗi task trung bình 15 XP
+            xpToday = tasksCompletedToday * avgXpPerTask;
+        }
         
         // Streak
         int streak = child.getCurrentStreak();
         
-        // XP earned today (estimate from daily progress)
-        int xpToday = Math.round(dailyProgress * 10); // Rough estimate
-        
         // Update UI
         binding.txtGoalPercent.setText(progressPercent + "%");
         binding.progressTodayGoal.setProgress(progressPercent);
-        binding.txtTasksCompleted.setText(tasksCompleted + "/" + dailyGoalTasks);
+        binding.txtTasksCompleted.setText(tasksCompletedToday + "/" + dailyGoalTasks);
         binding.txtXpEarnedToday.setText(String.valueOf(xpToday));
         binding.txtStreak.setText(String.valueOf(streak));
+        
+        // Debug log
+        android.util.Log.d("ChildHome", String.format(
+            "Daily Progress: %.1f%%, Tasks: %d/%d, XP Today: %d, Streak: %d",
+            dailyProgress, tasksCompletedToday, dailyGoalTasks, xpToday, streak
+        ));
     }
 
     private void setupHeader() {

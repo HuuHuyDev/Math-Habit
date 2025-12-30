@@ -87,4 +87,14 @@
         <item name="android:windowMinWidthMinor">95%</item>
     </style>
 
+    <!-- FAB Chat Style -->
+    <style name="FabChatStyle" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:layout_margin">24dp</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="tint">@android:color/white</item>
+        <item name="elevation">6dp</item>
+        <item name="fabSize">normal</item>
+        <item name="useCompatPadding">true</item>
+    </style>
+
 </resources>

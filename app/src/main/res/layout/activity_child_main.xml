@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.child.main.ChildMainActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -17,28 +18,26 @@
     <!-- FAB Chat với Phụ huynh -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabChat"
+        style="@style/FabChatStyle"
         android:layout_width="wrap_content"
-        android:layout_height="29dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:contentDescription="Chat với phụ huynh"
-        android:src="@drawable/ic_chat"
-        app:backgroundTint="@color/primary"
-        app:elevation="6dp"
-        app:fabSize="normal"
-        app:tint="@android:color/white" />
+        android:src="@drawable/ic_chat" />
 
     <!-- Badge tin nhắn mới -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/badgeChat"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="72dp"
         android:visibility="gone"
         app:cardBackgroundColor="@color/error"
-        app:cardCornerRadius="11dp"
+        app:cardCornerRadius="12dp"
         app:cardElevation="8dp"
         app:strokeWidth="0dp">
 
@@ -49,7 +48,7 @@
             android:gravity="center"
             android:text="3"
             android:textColor="@android:color/white"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 

@@ -103,7 +103,10 @@ public class BadgeRewardAdapter extends RecyclerView.Adapter<BadgeRewardAdapter.
             } else if (mode == DisplayMode.IN_PROGRESS) {
                 layoutProgress.setVisibility(View.VISIBLE);
                 progressBadge.setProgress(badge.getProgressPercent());
-                tvProgressText.setText(badge.getProgressValue() + "/" + badge.getRequirementValue());
+                
+                // Sử dụng method getProgressText() đã có logic giới hạn
+                tvProgressText.setText(badge.getProgressText());
+                
                 tvBadgeName.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.text_primary));
                 
                 // Set progress color based on rarity

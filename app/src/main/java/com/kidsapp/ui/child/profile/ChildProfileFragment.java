@@ -106,6 +106,9 @@ public class ChildProfileFragment extends Fragment {
                 
                 // Hiển thị dữ liệu lên UI
                 displayChildData(child);
+                
+                // Kiểm tra và cấp badges mới sau khi load profile
+                checkForNewBadges();
             }
 
             @Override
@@ -120,6 +123,43 @@ public class ChildProfileFragment extends Fragment {
                 
                 // Load dữ liệu mặc định hoặc từ cache
                 loadDefaultData();
+            }
+        });
+    }
+    
+    /**
+     * Kiểm tra và cấp badges mới cho child
+     */
+    private void checkForNewBadges() {
+        android.util.Log.d("ChildProfile", "Checking for new badges...");
+        
+        apiService.checkAndAwardMyBadges().enqueue(new Callback<ApiService.ApiResponseWrapper<List<Badge>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<Badge>>> call,
+                                   @NonNull Response<ApiService.ApiResponseWrapper<List<Badge>>> response) {
+                if (getActivity() == null) return;
+                
+                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
+                    List<Badge> newBadges = response.body().data;
+                    android.util.Log.d("ChildProfile", "Received " + newBadges.size() + " new badges");
+                    
+                    if (!newBadges.isEmpty()) {
+                        // Hiển thị thông báo có badges mới
+                        Toast.makeText(requireContext(), 
+                                "Chúc mừng! Bạn đã đạt " + newBadges.size() + " huy hiệu mới!", 
+                                Toast.LENGTH_LONG).show();
+                        
+                        // Reload badges để hiển thị badges mới
+                        loadBadges();
+                    }
+                } else {
+                    android.util.Log.d("ChildProfile", "No new badges or API error");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<Badge>>> call, @NonNull Throwable t) {
+                android.util.Log.e("ChildProfile", "Failed to check for new badges", t);
             }
         });
     }
@@ -237,26 +277,53 @@ public class ChildProfileFragment extends Fragment {
      * Load badges từ API
      */
     private void loadBadges() {
+        android.util.Log.d("ChildProfile", "Loading badges for childId: " + childId);
+        
         apiService.getMyEarnedBadges().enqueue(new Callback<ApiService.ApiResponseWrapper<List<Badge>>>() {
             @Override
             public void onResponse(@NonNull Call<ApiService.ApiResponseWrapper<List<Badge>>> call,
                                    @NonNull Response<ApiService.ApiResponseWrapper<List<Badge>>> response) {
                 if (getActivity() == null) return;
                 
-                if (response.isSuccessful() && response.body() != null && response.body().data != null) {
-                    badges.clear();
-                    badges.addAll(response.body().data);
-                    badgeAdapter.notifyDataSetChanged();
+                android.util.Log.d("ChildProfile", "Badge API Response - Success: " + response.isSuccessful() + 
+                        ", Code: " + response.code());
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    android.util.Log.d("ChildProfile", "Response body success: " + response.body().success + 
+                            ", message: " + response.body().message);
                     
-                    if (badges.isEmpty()) {
-                        binding.tvEmptyBadges.setVisibility(View.VISIBLE);
-                        binding.rvBadges.setVisibility(View.GONE);
+                    if (response.body().data != null) {
+                        android.util.Log.d("ChildProfile", "Earned badges count: " + response.body().data.size());
+                        
+                        badges.clear();
+                        badges.addAll(response.body().data);
+                        badgeAdapter.notifyDataSetChanged();
+                        
+                        if (badges.isEmpty()) {
+                            android.util.Log.d("ChildProfile", "No earned badges found - showing empty state");
+                            binding.layoutEmptyBadges.setVisibility(View.VISIBLE);
+                            binding.rvBadges.setVisibility(View.GONE);
+                        } else {
+                            android.util.Log.d("ChildProfile", "Showing " + badges.size() + " earned badges");
+                            binding.layoutEmptyBadges.setVisibility(View.GONE);
+                            binding.rvBadges.setVisibility(View.VISIBLE);
+                        }
                     } else {
-                        binding.tvEmptyBadges.setVisibility(View.GONE);
-                        binding.rvBadges.setVisibility(View.VISIBLE);
+                        android.util.Log.d("ChildProfile", "Response data is null");
+                        binding.layoutEmptyBadges.setVisibility(View.VISIBLE);
+                        binding.rvBadges.setVisibility(View.GONE);
                     }
                 } else {
-                    binding.tvEmptyBadges.setVisibility(View.VISIBLE);
+                    android.util.Log.e("ChildProfile", "Badge API failed - Code: " + response.code() + 
+                            ", Message: " + response.message());
+                    if (response.errorBody() != null) {
+                        try {
+                            android.util.Log.e("ChildProfile", "Error body: " + response.errorBody().string());
+                        } catch (Exception e) {
+                            android.util.Log.e("ChildProfile", "Error reading error body", e);
+                        }
+                    }
+                    binding.layoutEmptyBadges.setVisibility(View.VISIBLE);
                     binding.rvBadges.setVisibility(View.GONE);
                 }
             }
@@ -264,7 +331,9 @@ public class ChildProfileFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<ApiService.ApiResponseWrapper<List<Badge>>> call, @NonNull Throwable t) {
                 if (getActivity() == null) return;
-                binding.tvEmptyBadges.setVisibility(View.VISIBLE);
+                android.util.Log.e("ChildProfile", "Badge API call failed", t);
+                Toast.makeText(requireContext(), "Lỗi tải huy hiệu: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.layoutEmptyBadges.setVisibility(View.VISIBLE);
                 binding.rvBadges.setVisibility(View.GONE);
             }
         });

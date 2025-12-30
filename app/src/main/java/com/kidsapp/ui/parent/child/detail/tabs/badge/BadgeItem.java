@@ -77,6 +77,8 @@ public class BadgeItem {
     public void setCoinsReward(int coinsReward) { this.coinsReward = coinsReward; }
     
     public String getProgressText() {
-        return progressValue + "/" + requirementValue;
+        // Giới hạn progress value không vượt quá requirement value
+        int currentProgress = Math.min(progressValue, requirementValue);
+        return currentProgress + "/" + requirementValue;
     }
 }
