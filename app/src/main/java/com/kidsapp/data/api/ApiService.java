@@ -1116,4 +1116,11 @@ public interface ApiService {
      */
     @GET("api/badges/me/earned")
     Call<ApiResponseWrapper<List<com.kidsapp.data.model.Badge>>> getMyEarnedBadges();
+    
+    /**
+     * Kiểm tra và cấp badges mới cho child hiện tại
+     * POST /api/badges/me/check
+     */
+    @POST("api/badges/me/check")
+    Call<ApiResponseWrapper<List<com.kidsapp.data.model.Badge>>> checkAndAwardMyBadges();
 }

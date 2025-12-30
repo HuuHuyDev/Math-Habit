@@ -74,6 +74,10 @@ public class Child {
     // Tiến độ hoàn thành task trong ngày (0-100%)
     @SerializedName("dailyProgress")
     private float dailyProgress;
+    
+    // XP kiếm được hôm nay
+    @SerializedName("xpEarnedToday")
+    private int xpEarnedToday;
 
     public Child() {
     }
@@ -277,6 +281,14 @@ public class Child {
     
     public void setDailyProgress(float dailyProgress) {
         this.dailyProgress = dailyProgress;
+    }
+    
+    public int getXpEarnedToday() {
+        return xpEarnedToday;
+    }
+    
+    public void setXpEarnedToday(int xpEarnedToday) {
+        this.xpEarnedToday = xpEarnedToday;
     }
     
     /**

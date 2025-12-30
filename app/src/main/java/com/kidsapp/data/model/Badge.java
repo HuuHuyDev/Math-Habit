@@ -152,4 +152,13 @@ public class Badge {
     public void setProgressPercent(int progressPercent) {
         this.progressPercent = progressPercent;
     }
+    
+    /**
+     * Lấy text hiển thị progress, giới hạn không vượt quá requirement
+     */
+    public String getProgressText() {
+        // Giới hạn progress value không vượt quá requirement value
+        int currentProgress = Math.min(progressValue, requirementValue);
+        return currentProgress + "/" + requirementValue;
+    }
 }

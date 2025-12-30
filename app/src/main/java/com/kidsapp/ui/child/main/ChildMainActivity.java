@@ -72,6 +72,9 @@ public class ChildMainActivity extends AppCompatActivity {
     private void setupFabChat() {
         binding.fabChat.setOnClickListener(v -> openChat());
         
+        // Đảm bảo FAB hiển thị đúng cách
+        binding.fabChat.show();
+        
         // Demo: Hiển thị badge với 3 tin nhắn mới
         updateBadge(3);
     }
@@ -114,15 +117,19 @@ public class ChildMainActivity extends AppCompatActivity {
     }
 
     public void showFab() {
-        binding.fabChat.show();
-        if (unreadCount > 0) {
-            binding.badgeChat.setVisibility(View.VISIBLE);
+        if (binding.fabChat != null) {
+            binding.fabChat.show();
+            if (unreadCount > 0) {
+                binding.badgeChat.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     public void hideFab() {
-        binding.fabChat.hide();
-        binding.badgeChat.setVisibility(View.GONE);
+        if (binding.fabChat != null) {
+            binding.fabChat.hide();
+            binding.badgeChat.setVisibility(View.GONE);
+        }
     }
 
     @Override
