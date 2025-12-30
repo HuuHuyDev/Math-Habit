@@ -61,7 +61,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         
         // Gửi token lên server nếu đã đăng nhập
         if (sharedPref.isLoggedIn()) {
-            sendTokenToServer(token);
+            FcmTokenManager fcmTokenManager = new FcmTokenManager(this);
+            fcmTokenManager.sendTokenToServer(token);
         }
     }
 
@@ -135,11 +136,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
     }
 
-    /**
-     * Gửi FCM token lên server
-     */
-    private void sendTokenToServer(String token) {
-        // Sẽ được gọi từ FcmTokenManager
-        Log.d(TAG, "Token will be sent to server: " + token);
-    }
 }

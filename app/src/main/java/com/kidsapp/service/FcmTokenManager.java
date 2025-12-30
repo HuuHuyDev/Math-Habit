@@ -16,114 +16,144 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Manager để quản lý FCM Token
- * - Lấy token từ Firebase
- * - Gửi token lên server
- * - Xóa token khi logout
+ * Quản lý FCM Token - Gửi lên server khi có token mới
  */
 public class FcmTokenManager {
-
+    
     private static final String TAG = "FcmTokenManager";
     private final Context context;
     private final SharedPref sharedPref;
     private final ApiService apiService;
-
+    
     public FcmTokenManager(Context context) {
         this.context = context;
         this.sharedPref = new SharedPref(context);
         this.apiService = RetrofitClient.getInstance(sharedPref).getApiService();
     }
-
+    
     /**
-     * Lấy FCM token và gửi lên server
-     * Gọi sau khi đăng nhập thành công
+     * Đăng ký FCM token (alias cho refreshAndSendToken)
      */
     public void registerToken() {
+        refreshAndSendToken();
+    }
+    
+    /**
+     * Hủy đăng ký FCM token (alias cho removeTokenFromServer)
+     */
+    public void unregisterToken() {
+        removeTokenFromServer();
+    }
+    
+    /**
+     * Lấy FCM token hiện tại và gửi lên server
+     */
+    public void refreshAndSendToken() {
+        if (!sharedPref.isLoggedIn()) {
+            Log.d(TAG, "User not logged in, skip sending FCM token");
+            return;
+        }
+        
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM token failed", task.getException());
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
                         return;
                     }
-
+                    
+                    // Get new FCM registration token
                     String token = task.getResult();
                     Log.d(TAG, "FCM Token: " + token);
                     
-                    // Lưu token local
+                    // Lưu token vào SharedPref
                     sharedPref.saveFcmToken(token);
                     
-                    // Gửi lên server
+                    // Gửi token lên server
                     sendTokenToServer(token);
                 });
     }
-
+    
     /**
      * Gửi FCM token lên server
      */
     public void sendTokenToServer(String token) {
-        if (token == null || token.isEmpty()) {
-            Log.w(TAG, "FCM token is empty");
-            return;
-        }
-
         if (!sharedPref.isLoggedIn()) {
-            Log.w(TAG, "User not logged in, skip sending token");
+            Log.d(TAG, "User not logged in, skip sending FCM token");
             return;
         }
-
-        Map<String, String> request = new HashMap<>();
-        request.put("fcmToken", token);
-
-        apiService.registerFcmToken(request).enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
-            @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call,
-                                   Response<ApiService.ApiResponseWrapper<Void>> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "FCM token registered successfully");
-                } else {
-                    Log.e(TAG, "Failed to register FCM token: " + response.code());
+        
+        try {
+            Map<String, String> request = new HashMap<>();
+            request.put("fcmToken", token);
+            
+            Call<ApiService.ApiResponseWrapper<Void>> call = apiService.registerFcmToken(request);
+            
+            call.enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+                @Override
+                public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call, 
+                                     Response<ApiService.ApiResponseWrapper<Void>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().success) {
+                        Log.i(TAG, "FCM token sent to server successfully");
+                    } else {
+                        Log.e(TAG, "Failed to send FCM token: " + response.code());
+                    }
                 }
-            }
-
-            @Override
-            public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
-                Log.e(TAG, "Error registering FCM token", t);
-            }
-        });
+                
+                @Override
+                public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
+                    Log.e(TAG, "Error sending FCM token: " + t.getMessage());
+                }
+            });
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating FCM token request: " + e.getMessage());
+        }
     }
-
+    
+    /**
+     * Gửi lại FCM token đã lưu (nếu có) lên server
+     */
+    public void resendSavedToken() {
+        if (!sharedPref.isLoggedIn()) {
+            Log.d(TAG, "User not logged in, skip resending FCM token");
+            return;
+        }
+        
+        String savedToken = sharedPref.getFcmToken();
+        if (savedToken != null && !savedToken.isEmpty()) {
+            Log.d(TAG, "Resending saved FCM token");
+            sendTokenToServer(savedToken);
+        } else {
+            Log.d(TAG, "No saved FCM token, getting new one");
+            refreshAndSendToken();
+        }
+    }
+    
     /**
      * Xóa FCM token khỏi server (khi logout)
      */
-    public void unregisterToken() {
-        apiService.removeFcmToken().enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+    public void removeTokenFromServer() {
+        if (!sharedPref.isLoggedIn()) {
+            return;
+        }
+        
+        Call<ApiService.ApiResponseWrapper<Void>> call = apiService.removeFcmToken();
+        
+        call.enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
             @Override
-            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call,
-                                   Response<ApiService.ApiResponseWrapper<Void>> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "FCM token removed successfully");
+            public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call, 
+                                 Response<ApiService.ApiResponseWrapper<Void>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    Log.i(TAG, "FCM token removed from server successfully");
+                } else {
+                    Log.e(TAG, "Failed to remove FCM token: " + response.code());
                 }
-                // Xóa token local
-                sharedPref.clearFcmToken();
             }
-
+            
             @Override
             public void onFailure(Call<ApiService.ApiResponseWrapper<Void>> call, Throwable t) {
-                Log.e(TAG, "Error removing FCM token", t);
-                sharedPref.clearFcmToken();
+                Log.e(TAG, "Error removing FCM token: " + t.getMessage());
             }
         });
-    }
-
-    /**
-     * Gửi lại token đã lưu (nếu có)
-     */
-    public void resendSavedToken() {
-        String savedToken = sharedPref.getFcmToken();
-        if (savedToken != null && !savedToken.isEmpty()) {
-            sendTokenToServer(savedToken);
-        } else {
-            registerToken();
-        }
     }
 }
