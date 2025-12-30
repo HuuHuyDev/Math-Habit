@@ -32,14 +32,14 @@ public class FcmTokenManager {
     }
     
     /**
-     * Đăng ký FCM token (alias cho refreshAndSendToken)
+     * Đăng ký FCM token
      */
     public void registerToken() {
         refreshAndSendToken();
     }
     
     /**
-     * Hủy đăng ký FCM token (alias cho removeTokenFromServer)
+     * Hủy đăng ký FCM token
      */
     public void unregisterToken() {
         removeTokenFromServer();
@@ -61,14 +61,10 @@ public class FcmTokenManager {
                         return;
                     }
                     
-                    // Get new FCM registration token
                     String token = task.getResult();
-                    Log.d(TAG, "FCM Token: " + token);
+                    Log.d(TAG, "FCM Token obtained");
                     
-                    // Lưu token vào SharedPref
                     sharedPref.saveFcmToken(token);
-                    
-                    // Gửi token lên server
                     sendTokenToServer(token);
                 });
     }
@@ -86,9 +82,7 @@ public class FcmTokenManager {
             Map<String, String> request = new HashMap<>();
             request.put("fcmToken", token);
             
-            Call<ApiService.ApiResponseWrapper<Void>> call = apiService.registerFcmToken(request);
-            
-            call.enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+            apiService.registerFcmToken(request).enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
                 @Override
                 public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call, 
                                      Response<ApiService.ApiResponseWrapper<Void>> response) {
@@ -104,28 +98,8 @@ public class FcmTokenManager {
                     Log.e(TAG, "Error sending FCM token: " + t.getMessage());
                 }
             });
-            
         } catch (Exception e) {
             Log.e(TAG, "Error creating FCM token request: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Gửi lại FCM token đã lưu (nếu có) lên server
-     */
-    public void resendSavedToken() {
-        if (!sharedPref.isLoggedIn()) {
-            Log.d(TAG, "User not logged in, skip resending FCM token");
-            return;
-        }
-        
-        String savedToken = sharedPref.getFcmToken();
-        if (savedToken != null && !savedToken.isEmpty()) {
-            Log.d(TAG, "Resending saved FCM token");
-            sendTokenToServer(savedToken);
-        } else {
-            Log.d(TAG, "No saved FCM token, getting new one");
-            refreshAndSendToken();
         }
     }
     
@@ -137,16 +111,12 @@ public class FcmTokenManager {
             return;
         }
         
-        Call<ApiService.ApiResponseWrapper<Void>> call = apiService.removeFcmToken();
-        
-        call.enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
+        apiService.removeFcmToken().enqueue(new Callback<ApiService.ApiResponseWrapper<Void>>() {
             @Override
             public void onResponse(Call<ApiService.ApiResponseWrapper<Void>> call, 
                                  Response<ApiService.ApiResponseWrapper<Void>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().success) {
-                    Log.i(TAG, "FCM token removed from server successfully");
-                } else {
-                    Log.e(TAG, "Failed to remove FCM token: " + response.code());
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "FCM token removed from server");
                 }
             }
             
@@ -155,5 +125,21 @@ public class FcmTokenManager {
                 Log.e(TAG, "Error removing FCM token: " + t.getMessage());
             }
         });
+    }
+    
+    /**
+     * Gửi lại FCM token đã lưu (nếu có) lên server
+     */
+    public void resendSavedToken() {
+        if (!sharedPref.isLoggedIn()) {
+            return;
+        }
+        
+        String savedToken = sharedPref.getFcmToken();
+        if (savedToken != null && !savedToken.isEmpty()) {
+            sendTokenToServer(savedToken);
+        } else {
+            refreshAndSendToken();
+        }
     }
 }

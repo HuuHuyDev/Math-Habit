@@ -225,8 +225,10 @@ public class AuthRepository {
         // Reset RetrofitClient để sử dụng token mới
         RetrofitClient.resetInstance();
         
-        // Đăng ký FCM token sau khi login thành công
-        registerFcmToken();
+        // Đăng ký FCM token sau khi login thành công (delay để đảm bảo token đã được lưu)
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            registerFcmToken();
+        }, 500);
     }
     
     /**
@@ -234,6 +236,7 @@ public class AuthRepository {
      */
     private void registerFcmToken() {
         try {
+            android.util.Log.d("AuthRepository", "Registering FCM token...");
             FcmTokenManager fcmTokenManager = new FcmTokenManager(context);
             fcmTokenManager.registerToken();
         } catch (Exception e) {
